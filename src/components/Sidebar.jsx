@@ -1,18 +1,19 @@
-import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { AlignJustify, LayoutDashboard, ChartColumn, Settings } from 'lucide-react';
 
-const Sidebar = () => {
-  const [isExpanded, setIsExpanded] = useState(false);
+const Sidebar = ({ isExpanded, setIsExpanded }) => {
 
   const toggleSidebar = () => {
     setIsExpanded(!isExpanded);
   };
 
   return (
-    <div className="flex">
+    <div>
       {/* Sidebar */}
-      <div className={`h-screen ${isExpanded ? 'w-60' : 'w-16'} fixed left-0 top-0 bg-[#FDFAF6] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] transition-all duration-300`}>
+      <div 
+        className={`h-screen ${isExpanded ? 'w-60' : 'w-16'} 
+        fixed left-0 top-0 bg-[#FDFAF6] shadow-lg transition-all duration-300`}
+      >
         {/* Sidebar Header */}
         <div className='flex items-center justify-between p-4 cursor-pointer' onClick={toggleSidebar}>
           <AlignJustify size={30} color='#3E3F5B' />
@@ -65,8 +66,6 @@ const Sidebar = () => {
           </NavLink>
         </ul>
       </div>
-      
-      
     </div>
   );
 };

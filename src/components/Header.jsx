@@ -7,7 +7,7 @@ const Header = () => {
 
   return (
     <div>
-      <div className='flex pt-5 ml-20 mr-10 justify-between'>
+      <div className='flex pt-5 ml-15 mr-10 justify-between'>
         <div className='flex items-center gap-1'>
           <h2 className='font-bold text-sm text-[#3E3F5B]'>TODO LIST</h2>
           <PencilLine size={15} color='#3E3F5B'/>
