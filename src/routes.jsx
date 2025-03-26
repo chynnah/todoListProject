@@ -7,7 +7,7 @@ import Settings from "./pages/Settings";
 import Chart from "./pages/Chart";
 
 const ProtectedRoute = ({ element }) => {
-  const isAuthenticated = localStorage.getItem("username"); // Check if user is logged in
+  const isAuthenticated = localStorage.getItem("username"); 
   return isAuthenticated ? element : <Navigate to="/login" replace />;
 };
 

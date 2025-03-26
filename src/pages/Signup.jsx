@@ -32,7 +32,7 @@ const handleSignup = async (e) => {
     console.log(response.data);
 
     if (response.data.status === "success") {
-      navigate("/login"); // Redirect to login page after success
+      navigate("/login"); 
     } else {
       setError(response.data.message);
     }

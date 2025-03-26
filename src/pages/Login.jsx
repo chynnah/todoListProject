@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
-  const navigate = useNavigate(); // React Router Navigation
+  const navigate = useNavigate(); 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -106,7 +106,7 @@ const Login = () => {
             Don’t have an account?{" "}
             <span 
               className="font-bold hover:underline cursor-pointer" 
-              onClick={() => navigate("/signup")} // 👈 Navigate to /signup
+              onClick={() => navigate("/signup")} 
             >
               Sign Up
             </span>
