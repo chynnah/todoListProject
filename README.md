@@ -1,13 +1,19 @@
-//TODO List Web Application
-#
-A task management web application for organizing daily tasks. The project includes login and signup functionality but is still in development. Features like adding, editing, and deleting tasks, as well as responsiveness, are not yet fully implemented.
-#
-//Technologies Used
-Frontend: React.js, Tailwind CSS
-#
-//Backend: PHP, MySQL
-#
-//Routing: React Router
-#
-//Status
-This project is still in progress, with ongoing improvements.
+TODO List Web Application
+A task management web application designed for organizing daily tasks. Currently, the project includes login and signup functionality, but other features are still in development.
+
+🚧 Project Status
+🔹 The project is still in progress with ongoing improvements.
+🔹 Features like adding, editing, and deleting tasks are not yet fully implemented.
+🔹 The application is not yet fully responsive.
+
+🛠️ Technologies Used
+Frontend
+✅ React.js
+✅ Tailwind CSS
+
+Backend
+✅ PHP
+✅ MySQL
+
+Routing
+✅ React Router
