@@ -1,4 +1,4 @@
-# TODO List Web Application  
+# TODO List 
 
 A task management web application designed for organizing daily tasks.  
 Currently, the project includes **login and signup functionality**, but other features are still in development.  
