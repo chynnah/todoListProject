@@ -23,7 +23,7 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
         {/* Sidebar Menu */}
         <ul className='flex flex-col gap-5 px-2 mt-15'>
           <NavLink 
-            to="/" 
+            to="/dashboard" 
             end 
             className={({ isActive }) => 
               `flex items-center gap-3 p-3 rounded-md transition ${isActive ? "bg-[#3E3F5B] text-white" : "text-[#3E3F5B]"}`
@@ -38,7 +38,7 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
           </NavLink>
 
           <NavLink 
-            to="/chart"
+            to="/dashboard/chart"
             className={({ isActive }) => 
               `flex items-center gap-3 p-3 rounded-md transition ${isActive ? "bg-[#3E3F5B] text-white" : "text-[#3E3F5B]"}`
             }
@@ -52,7 +52,7 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
           </NavLink>
 
           <NavLink 
-            to="/settings"
+            to="/dashboard/settings"
             className={({ isActive }) => 
               `flex items-center gap-3 p-3 rounded-md transition ${isActive ? "bg-[#3E3F5B] text-white" : "text-[#3E3F5B]"}`
             }
