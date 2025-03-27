@@ -2,14 +2,16 @@ import { NavLink } from 'react-router-dom';
 import { AlignJustify, LayoutDashboard, ChartColumn, Settings } from 'lucide-react';
 
 const Sidebar = ({ isExpanded, setIsExpanded }) => {
-
   const toggleSidebar = () => {
     setIsExpanded(!isExpanded);
   };
 
+ 
+  const userEmail = localStorage.getItem('email');
+  const profilePic = localStorage.getItem('profilePic'); 
+
   return (
     <div>
-      {/* Sidebar */}
       <div 
         className={`h-screen ${isExpanded ? 'w-60' : 'w-16'} 
         fixed left-0 top-0 bg-[#FDFAF6] shadow-lg transition-all duration-300`}
@@ -65,6 +67,24 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
             )}
           </NavLink>
         </ul>
+
+        {/* Profile Section (Bottom of Sidebar) */}
+        <div className="absolute bottom-4 left-0 w-full p-4 flex justify-center items-center">
+          <div className="flex items-center gap-3">
+            {isExpanded ? (
+              <>
+                <div className="h-10 w-10 rounded-full overflow-hidden">
+                  <img src={profilePic || 'default-profile-pic.jpg'} alt="Profile" className="w-full h-full object-cover" />
+                </div>
+                <span>{userEmail}</span>
+              </>
+            ) : (
+              <div className="h-10 w-10 rounded-full overflow-hidden">
+                <img src={profilePic || 'default-profile-pic.jpg'} alt="Profile" className="w-full h-full object-cover" />
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

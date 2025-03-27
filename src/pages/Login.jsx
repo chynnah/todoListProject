@@ -5,6 +5,7 @@ import { Eye, EyeOff } from "lucide-react";
 const Login = () => {
   const navigate = useNavigate(); 
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
@@ -17,14 +18,18 @@ const Login = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
-        credentials: "include",  // Send cookies (sessions)
+        credentials: "include", // Send cookies (sessions)
       });
   
       const data = await response.json();
   
       if (data.success) {
-        localStorage.setItem("username", data.username); 
-        navigate("/dashboard"); 
+        // Save the username, email, user_id, and any other information in localStorage
+        localStorage.setItem("username", data.username);
+        localStorage.setItem("email", data.email);  
+        localStorage.setItem("user_id", data.user_id);  
+        localStorage.setItem("profilePic", data.profilePic || 'default-profile-pic.jpg');
+        navigate("/dashboard");
       } else {
         setError("Invalid username or password");
       }
