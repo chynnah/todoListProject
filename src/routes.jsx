@@ -1,13 +1,13 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './pages/Layout';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
-import Settings from "./pages/Settings";
-import Chart from "./pages/Chart";
+import Settings from './pages/Settings';
+import Chart from './pages/Chart';
 
 const ProtectedRoute = ({ element }) => {
-  const isAuthenticated = localStorage.getItem("username"); 
+  const isAuthenticated = localStorage.getItem('username'); 
   return isAuthenticated ? element : <Navigate to="/login" replace />;
 };
 
@@ -23,10 +23,10 @@ const RoutesComponent = () => {
         <Route path="/signup" element={<Signup />} />
 
         {/* Protected Routes for Logged-in Users */}
-        <Route path="/dashboard" element={<ProtectedRoute element={<Layout />} />}>
-          <Route index element={<Dashboard />} /> {/* Default route inside Layout */}
-          <Route path="settings" element={<Settings />} />
-          <Route path="chart" element={<Chart />} />
+        <Route element={<ProtectedRoute element={<Layout />} />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/settings" element={<Settings />} />
+          <Route path="/dashboard/chart" element={<Chart />} />
         </Route>
       </Routes>
     </BrowserRouter>

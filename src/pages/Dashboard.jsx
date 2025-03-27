@@ -4,13 +4,16 @@ import { Plus } from 'lucide-react';
 
 
 const Dashboard = () => {
+  
+  const username = localStorage.getItem('username');
+
   return (
     <div >
       <Header />
 
       <div className='flex mt-9 mr-10 justify-end'> 
         <div className='bg-[#3E3F5B] h-10 w-70 rounded-tl-[50px] rounded-bl-[50px] rounded-tr-[50px] flex justify-center items-center'>
-            <h1 className='text-[#FDFAF6] font-medium'>Welcome back, Username!</h1>
+            <h1 className='text-[#FDFAF6] font-medium'>Welcome back, {username}!</h1>
         </div>
       </div>
 

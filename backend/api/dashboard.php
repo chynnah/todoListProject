@@ -1,9 +1,13 @@
 <?php
 session_start();
-if (!isset($_SESSION["user_id"])) {
-    header("Location: login.php");
-    exit;
+
+// Check if the user is logged in
+if (isset($_SESSION["username"])) {
+    $username = $_SESSION["username"];
+    // Return the username in JSON format
+    echo json_encode(["status" => "success", "username" => $username]);
+} else {
+    // Handle the case where the user is not logged in
+    echo json_encode(["status" => "error", "message" => "User not logged in"]);
 }
 ?>
-<h1>Welcome, <?php echo $_SESSION["username"]; ?>!</h1>
-<a href="logout.php">Logout</a>

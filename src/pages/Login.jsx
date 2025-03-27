@@ -11,16 +11,17 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
+  
     try {
       const response = await fetch("http://localhost:3000/backend/api/login.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
+        credentials: "include",  // Send cookies (sessions)
       });
-
+  
       const data = await response.json();
-
+  
       if (data.success) {
         localStorage.setItem("username", data.username); 
         navigate("/dashboard"); 
