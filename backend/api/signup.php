@@ -16,9 +16,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $username = $conn->real_escape_string($data->username);
     $email = $conn->real_escape_string($data->email);
-    $password = password_hash($data->password, PASSWORD_DEFAULT); // Hash password for security
+    $password = password_hash($data->password, PASSWORD_DEFAULT); 
 
-    // Insert into database
     $sql = "INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$password')";
     
     if ($conn->query($sql) === TRUE) {
@@ -27,7 +26,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         echo json_encode(["status" => "error", "message" => "Error: " . $conn->error]);
     }
 
-    // Close the database connection
     $conn->close();
 } else {
     echo json_encode(["status" => "error", "message" => "Invalid request"]);

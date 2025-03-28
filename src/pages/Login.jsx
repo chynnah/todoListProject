@@ -1,14 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate(); 
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState('');
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (localStorage.getItem("user_id")) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -18,7 +23,7 @@ const Login = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
-        credentials: "include", // Send cookies (sessions)
+        credentials: "include", 
       });
   
       const data = await response.json();

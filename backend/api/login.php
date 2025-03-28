@@ -1,6 +1,6 @@
 <?php 
 
-header("Access-Control-Allow-Origin: http://localhost:5173"); // Change to your frontend URL
+header("Access-Control-Allow-Origin: http://localhost:5173"); 
 header("Content-Type: application/json");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
@@ -15,7 +15,6 @@ if (!empty($data->username) && !empty($data->password)) {
     $username = htmlspecialchars(strip_tags($data->username));
     $password = htmlspecialchars(strip_tags($data->password));
 
-    // Modify the query to also fetch the email and any other info you need
     $stmt = $conn->prepare("SELECT id, username, email, password FROM users WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
