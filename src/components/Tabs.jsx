@@ -2,15 +2,16 @@ import React from "react";
 import Card from "./Card";
 import { ListChecks, Hourglass, CheckCircle, Star } from "lucide-react";
 
-const Tabs = ({ tasks, updateTaskStatus, deleteTask }) => {
+const Tabs = ({ tasks = [], updateTaskStatus, deleteTask, editTask, setEditingTask = () => {}, setIsModalOpen = () => {} }) => {
   const tabs = [
     { name: "All Tasks", icon: <ListChecks size={15} />, filter: "all", badgeColor: "bg-gray-400" },
     { name: "Pending", icon: <Hourglass size={15} />, filter: "pending", badgeColor: "bg-yellow-400" },
     { name: "Completed", icon: <CheckCircle size={15} />, filter: "completed", badgeColor: "bg-green-400" },
-    { name: "Favorites", icon: <Star size={15} />, filter: "favorite", badgeColor: "bg-cyan-400" },
+    { name: "Favorites", icon: <Star size={15} />, filter: "favorites", badgeColor: "bg-cyan-400" },
   ];
+  
 
-  console.log("Current tasks:", tasks); // Debugging to see if tasks are updating
+  console.log("Current tasks:", tasks); 
 
   return (
     <div className="flex gap-2 m-auto justify-center mt-5 gap-3">
@@ -18,13 +19,16 @@ const Tabs = ({ tasks, updateTaskStatus, deleteTask }) => {
         const filteredTasks =
           tab.filter === "all"
             ? tasks
+            : tab.filter === "favorites"
+            ? tasks.filter((task) => task.is_favorite) 
             : tasks.filter((task) => task.status === tab.filter);
 
         return (
           <div
             key={index}
-            className="border border-[#DDD9D9] h-[70vh] w-[23%] flex flex-col pt-5 rounded-tl-[50px] rounded-tr-[8px] rounded-b-[8px] text-[#3E3F5B] overflow-auto"
+            className="border border-[#DDD9D9] min-h-[70vh] w-[23%] flex flex-col pt-5 rounded-tl-[50px] rounded-tr-[8px] rounded-b-[8px] text-[#3E3F5B]"
           >
+
             {/* Tab Header */}
             <div className="flex justify-between px-5">
               <div className="flex gap-2 items-center">
@@ -40,7 +44,15 @@ const Tabs = ({ tasks, updateTaskStatus, deleteTask }) => {
             <div className="mt-4 px-4">
               {filteredTasks.length > 0 ? (
                 filteredTasks.map((taskData, i) => (
-                  <Card key={i} task={taskData} updateTaskStatus={updateTaskStatus} deleteTask={deleteTask} />
+                  <Card 
+                  key={taskData.id} 
+                  task={taskData} 
+                  updateTaskStatus={updateTaskStatus} 
+                  deleteTask={deleteTask} 
+                  setEditingTask={setEditingTask} 
+                  setIsModalOpen={setIsModalOpen}  
+                  />
+
                 ))
               ) : (
                 <p className="text-gray-500 text-center mt-4">No tasks here.</p>

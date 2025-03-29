@@ -15,25 +15,19 @@ if (!isset($_SESSION["user_id"])) {
     exit;
 }
 
-if (!empty($data->task_id)) {
+if (!empty($data->task_id) && !empty($data->task)) {
     $task_id = $data->task_id;
+    $task = $data->task;
 
-    if (isset($data->status)) {
-        // Update status (Completed & Pending)
-        $stmt = $conn->prepare("UPDATE tasks SET status = ? WHERE id = ?");
-        $stmt->bind_param("si", $data->status, $task_id);
-    } elseif (isset($data->is_favorite)) {
-        // Toggle Favorite
-        $stmt = $conn->prepare("UPDATE tasks SET is_favorite = ? WHERE id = ?");
-        $stmt->bind_param("ii", $data->is_favorite, $task_id);
-    }
+    $stmt = $conn->prepare("UPDATE tasks SET task = ? WHERE id = ?");
+    $stmt->bind_param("si", $task, $task_id);
 
     if ($stmt->execute()) {
         echo json_encode(["success" => true]);
     } else {
-        echo json_encode(["success" => false, "message" => "Update failed"]);
+        echo json_encode(["success" => false, "message" => "Failed to update task"]);
     }
 } else {
-    echo json_encode(["success" => false, "message" => "Missing task ID"]);
+    echo json_encode(["success" => false, "message" => "Missing task ID or new task text"]);
 }
 ?>

@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState(null);
+  
   const [tasks, setTasks] = useState([]);
   const username = localStorage.getItem("username");
   const navigate = useNavigate();
@@ -17,6 +19,8 @@ const Dashboard = () => {
     }
   }, [navigate]);
 
+  
+
   const fetchTasks = () => {
     const userId = localStorage.getItem("user_id"); 
     fetch(`http://localhost:3000/backend/api/get_tasks.php?user_id=${userId}`, {
@@ -25,10 +29,15 @@ const Dashboard = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        setTasks(data.tasks || []); 
+        setTasks(data.tasks.map(task => ({
+          ...task,
+          is_favorite: task.is_favorite === 1, // Convert to boolean
+        })));
       })
       .catch((err) => console.error("Error fetching tasks:", err));
   };
+  
+
 
   useEffect(() => {
     fetchTasks();
@@ -52,23 +61,25 @@ const Dashboard = () => {
       });
   };
 
-  const updateTaskStatus = (taskId, newStatus) => {
+  const updateTaskStatus = (taskId, newStatus, isFavorite = null) => {
     fetch("http://localhost:3000/backend/api/update_task.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({
         task_id: taskId,
-        status: newStatus,
+        ...(isFavorite !== null ? { is_favorite: isFavorite } : { status: newStatus }),
       }),
     })
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          fetchTasks(); 
+          fetchTasks();
         }
       });
   };
+  
+  
 
   const deleteTask = (taskId) => {
     fetch("http://localhost:3000/backend/api/delete_task.php", {
@@ -86,28 +97,6 @@ const Dashboard = () => {
       .catch((err) => console.error("Error deleting task:", err));
   };
 
-  // **Favorite Task**
-  const toggleFavorite = (taskId, isFavorite) => {
-    const newFavoriteStatus = isFavorite ? 0 : 1;
-    
-    fetch("http://localhost:3000/backend/api/update_task.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
-        task_id: taskId,
-        favorite: newFavoriteStatus, 
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          fetchTasks(); // Refresh tasks after update
-        }
-      })
-      .catch((err) => console.error("Error updating favorite:", err));
-  };
-  
 
   // **Edit Task**
   const editTask = (taskId, newTaskText) => {
@@ -148,14 +137,26 @@ const Dashboard = () => {
       </div>
 
       <Tabs
-      tasks={tasks}
-      updateTaskStatus={updateTaskStatus}
-      deleteTask={deleteTask}
-      toggleFavorite={toggleFavorite}
-      editTask={editTask} // Pass editTask here
-    />
+        tasks={tasks}
+        updateTaskStatus={updateTaskStatus}
+        deleteTask={deleteTask}
+        editTask={editTask}
+        setEditingTask={setEditingTask} 
+        setIsModalOpen={setIsModalOpen} 
+      />
 
-      <Input isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onAddTask={addTask} />
+
+      <Input
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingTask(null); 
+        }}
+        onAddTask={addTask}
+        onEditTask={editTask} 
+        editingTask={editingTask} 
+      />
+
     </div>
   );
 };
