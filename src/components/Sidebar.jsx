@@ -1,27 +1,40 @@
-import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom"; 
+import { useState, useEffect } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import { AlignJustify, LayoutDashboard, ChartColumn, Settings, LogOut } from "lucide-react";
 
 const Sidebar = ({ isExpanded, setIsExpanded }) => {
   const [showModal, setShowModal] = useState(false);
   const [showConfirmLogout, setShowConfirmLogout] = useState(false);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setIsExpanded(!isExpanded);
   };
 
+  // Store profile pic in state (default to stored value or placeholder)
+  const [profilePic, setProfilePic] = useState(
+    localStorage.getItem("profile_pic") || "default-profile-pic.jpg"
+  );
+
   const userEmail = localStorage.getItem("email");
-  const profilePic = localStorage.getItem("profilePic");
+
+  // Update profile picture dynamically when localStorage changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setProfilePic(localStorage.getItem("profile_pic") || "default-profile-pic.jpg");
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
 
   const handleLogout = () => {
-    // Clear all session data
-    localStorage.clear(); 
-
-    // Redirect to login page
+    localStorage.clear();
     navigate("/login", { replace: true });
 
-    // Prevent back navigation
     setTimeout(() => {
       window.history.pushState(null, null, window.location.href);
       window.onpopstate = function () {
@@ -32,18 +45,15 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
 
   return (
     <>
-      {/* Sidebar */}
       <div
         className={`h-screen ${isExpanded ? "w-60" : "w-16"} 
         fixed left-0 top-0 bg-[#FDFAF6] shadow-lg transition-all duration-300`}
       >
-        {/* Sidebar Header */}
         <div className="flex items-center justify-between p-4 cursor-pointer" onClick={toggleSidebar}>
           <AlignJustify size={30} color="#3E3F5B" />
         </div>
         <hr className="w-[80%] border-t border-[#3E3F5B] border-opacity-30 mx-auto my-2" />
 
-        {/* Sidebar Menu */}
         <ul className="flex flex-col gap-5 px-2 mt-15">
           <NavLink
             to="/dashboard"
@@ -101,7 +111,7 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
             {isExpanded ? (
               <>
                 <div className="h-10 w-10 rounded-full overflow-hidden cursor-pointer" onClick={() => setShowModal(!showModal)}>
-                  <img src={profilePic || "default-profile-pic.jpg"} alt="Profile" className="w-full h-full object-cover" />
+                  <img src={profilePic} alt="Profile" className="w-full h-full object-cover" />
                 </div>
                 <span className="cursor-pointer text-[#3E3F5B]" onClick={() => setShowModal(!showModal)}>
                   {userEmail}
@@ -109,7 +119,7 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
               </>
             ) : (
               <div className="h-10 w-10 rounded-full overflow-hidden cursor-pointer" onClick={() => setShowModal(!showModal)}>
-                <img src={profilePic || "default-profile-pic.jpg"} alt="Profile" className="w-full h-full object-cover" />
+                <img src={profilePic} alt="Profile" className="w-full h-full object-cover" />
               </div>
             )}
           </div>
@@ -122,7 +132,7 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
           <button
             onClick={() => {
               setShowConfirmLogout(true);
-              setShowModal(false); 
+              setShowModal(false);
             }}
             className="w-full text-left text-red-500 p-2 hover:bg-gray-100 rounded-md flex justify-evenly"
           >
@@ -140,17 +150,17 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
               <button
                 onClick={() => {
                   setShowConfirmLogout(false);
-                  setShowModal(false); 
+                  setShowModal(false);
                 }}
                 className="px-4 py-2 bg-gray-300 rounded-md bg-[#DDD9D9] cursor-pointer"
               >
                 Cancel
               </button>
               <button
-                onClick={handleLogout} 
+                onClick={handleLogout}
                 className="px-4 py-2 bg-red-500 text-white rounded-md cursor-pointer"
               >
-                Logout 
+                Logout
               </button>
             </div>
           </div>

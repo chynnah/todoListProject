@@ -5,8 +5,9 @@ header("Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 header("Access-Control-Allow-Credentials: true"); // 🔥 This is the missing line
 
+
 session_start();
-require_once "../config/db.php";
+require_once __DIR__ . "/../../config/db.php";
 
 $data = json_decode(file_get_contents("php://input"));
 
@@ -15,19 +16,19 @@ if (!isset($_SESSION["user_id"])) {
     exit;
 }
 
-if (!empty($data->task)) {
-    $task = htmlspecialchars(strip_tags($data->task));
+if (!empty($data->task_id)) {
+    $task_id = $data->task_id;
     $user_id = $_SESSION["user_id"];
 
-    $stmt = $conn->prepare("INSERT INTO tasks (user_id, task) VALUES (?, ?)");
-    $stmt->bind_param("is", $user_id, $task);
+    $stmt = $conn->prepare("DELETE FROM tasks WHERE id = ? AND user_id = ?");
+    $stmt->bind_param("ii", $task_id, $user_id);
 
     if ($stmt->execute()) {
-        echo json_encode(["success" => true, "message" => "Task added successfully"]);
+        echo json_encode(["success" => true, "message" => "Task deleted successfully"]);
     } else {
-        echo json_encode(["success" => false, "message" => "Failed to add task"]);
+        echo json_encode(["success" => false, "message" => "Failed to delete task"]);
     }
 } else {
-    echo json_encode(["success" => false, "message" => "Task cannot be empty"]);
+    echo json_encode(["success" => false, "message" => "Invalid task ID"]);
 }
 ?>

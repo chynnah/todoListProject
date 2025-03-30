@@ -2,7 +2,7 @@ import React from "react";
 import Card from "./Card";
 import { ListChecks, Hourglass, CheckCircle, Star } from "lucide-react";
 
-const Tabs = ({ tasks = [], updateTaskStatus, deleteTask, editTask, setEditingTask = () => {}, setIsModalOpen = () => {} }) => {
+const Tabs = ({ tasks = [], updateTaskStatus, deleteTask, setEditingTask = () => {}, setIsModalOpen = () => {} }) => {
   const tabs = [
     { name: "All Tasks", icon: <ListChecks size={15} />, filter: "all", badgeColor: "bg-gray-400" },
     { name: "Pending", icon: <Hourglass size={15} />, filter: "pending", badgeColor: "bg-yellow-400" },

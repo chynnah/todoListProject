@@ -23,7 +23,7 @@ const Dashboard = () => {
 
   const fetchTasks = () => {
     const userId = localStorage.getItem("user_id"); 
-    fetch(`http://localhost:3000/backend/api/get_tasks.php?user_id=${userId}`, {
+    fetch(`http://localhost:3000/backend/api/tasks/get_tasks.php?user_id=${userId}`, {
       method: "GET",
       credentials: "include",
     })
@@ -44,7 +44,7 @@ const Dashboard = () => {
   }, []);
 
   const addTask = (taskData) => {
-    fetch("http://localhost:3000/backend/api/add_task.php", {
+    fetch("http://localhost:3000/backend/api/tasks//add_task.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -62,7 +62,7 @@ const Dashboard = () => {
   };
 
   const updateTaskStatus = (taskId, newStatus, isFavorite = null) => {
-    fetch("http://localhost:3000/backend/api/update_task.php", {
+    fetch("http://localhost:3000/backend/api/tasks/update_task.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -82,7 +82,7 @@ const Dashboard = () => {
   
 
   const deleteTask = (taskId) => {
-    fetch("http://localhost:3000/backend/api/delete_task.php", {
+    fetch("http://localhost:3000/backend/api/tasks/delete_task.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -100,7 +100,7 @@ const Dashboard = () => {
 
   // **Edit Task**
   const editTask = (taskId, newTaskText) => {
-    fetch("http://localhost:3000/backend/api/edit_task.php", {
+    fetch("http://localhost:3000/backend/api/tasks/edit_task.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -112,7 +112,7 @@ const Dashboard = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          fetchTasks();  // Refresh tasks after update
+          fetchTasks(); 
         }
       })
       .catch((err) => console.error("Error editing task:", err));
@@ -129,7 +129,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="ml-4">
+      <div className="ml-5">
         <button className="h-10 w-50 flex justify-center items-center gap-2 cursor-pointer" onClick={() => setIsModalOpen(true)}>
           <Plus color="#3E3F5B" size={16} className="mt-[-3px]" />
           <h4 className="text-[#3E3F5B]">Add New Task</h4>

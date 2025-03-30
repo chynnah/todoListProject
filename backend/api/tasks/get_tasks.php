@@ -6,7 +6,7 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-W
 header("Access-Control-Allow-Credentials: true"); // 🔥 This is the missing line
 
 session_start();
-require_once "../config/db.php";
+require_once __DIR__ . "/../../config/db.php";
 
 if (!isset($_SESSION["user_id"])) {
     echo json_encode(["success" => false, "message" => "Unauthorized"]);

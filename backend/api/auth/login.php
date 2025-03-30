@@ -7,7 +7,7 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-W
 header("Access-Control-Allow-Credentials: true"); 
 
 session_start();
-require_once "../config/db.php"; 
+require_once __DIR__ . "/../../config/db.php";
 
 $data = json_decode(file_get_contents("php://input"));
 

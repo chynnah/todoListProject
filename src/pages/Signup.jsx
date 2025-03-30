@@ -23,7 +23,7 @@ const handleSignup = async (e) => {
   }
 
   try {
-    const response = await axios.post('http://localhost:3000/backend/api/signup.php', {
+    const response = await axios.post('http://localhost:3000/backend/api/auth/signup.php', {
       username,
       email,
       password,
