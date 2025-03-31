@@ -31,7 +31,7 @@ const Dashboard = () => {
       .then((data) => {
         setTasks(data.tasks.map(task => ({
           ...task,
-          is_favorite: task.is_favorite === 1, // Convert to boolean
+          is_favorite: task.is_favorite === 1, 
         })));
       })
       .catch((err) => console.error("Error fetching tasks:", err));
@@ -44,7 +44,7 @@ const Dashboard = () => {
   }, []);
 
   const addTask = (taskData) => {
-    fetch("http://localhost:3000/backend/api/tasks//add_task.php", {
+    fetch("http://localhost:3000/backend/api/tasks/add_task.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",

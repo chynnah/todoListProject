@@ -11,25 +11,24 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
     setIsExpanded(!isExpanded);
   };
 
-  // Store profile pic in state (default to stored value or placeholder)
   const [profilePic, setProfilePic] = useState(
     localStorage.getItem("profile_pic") || "default-profile-pic.jpg"
   );
 
   const userEmail = localStorage.getItem("email");
 
-  // Update profile picture dynamically when localStorage changes
   useEffect(() => {
-    const handleStorageChange = () => {
+    const handleProfilePicUpdate = () => {
       setProfilePic(localStorage.getItem("profile_pic") || "default-profile-pic.jpg");
     };
-
-    window.addEventListener("storage", handleStorageChange);
-
+  
+    window.addEventListener("storage", handleProfilePicUpdate);
+  
     return () => {
-      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("storage", handleProfilePicUpdate);
     };
   }, []);
+  
 
   const handleLogout = () => {
     localStorage.clear();

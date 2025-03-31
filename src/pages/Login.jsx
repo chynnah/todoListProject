@@ -29,11 +29,10 @@ const Login = () => {
       const data = await response.json();
   
       if (data.success) {
-        // Save the username, email, user_id, and any other information in localStorage
         localStorage.setItem("username", data.username);
         localStorage.setItem("email", data.email);  
         localStorage.setItem("user_id", data.user_id);  
-        localStorage.setItem("profilePic", data.profilePic || 'default-profile-pic.jpg');
+        localStorage.setItem("profile_pic", data.profile_pic || "/default-profile.png");
         navigate("/dashboard");
       } else {
         setError("Invalid username or password");

@@ -7,8 +7,10 @@ const ManageAccount = ({ isOpen, onClose }) => {
   const [username, setUsername] = useState(localStorage.getItem("username") || "");
   const [email, setEmail] = useState(localStorage.getItem("email") || "");
   const [profilePic, setProfilePic] = useState(
-    localStorage.getItem("profile_pic") || "https://picsum.photos/80"
+    localStorage.getItem("profile_pic") || "/default-profile.png"
   );
+  
+  
   const [selectedFile, setSelectedFile] = useState(null);
 
   const userId = localStorage.getItem("user_id"); 
@@ -46,29 +48,33 @@ const ManageAccount = ({ isOpen, onClose }) => {
         }
       })
       .catch((error) => console.error("Error updating user:", error));
-  
+ 
     if (selectedFile) {
       const formData = new FormData();
       formData.append("profile_pic", selectedFile);
       formData.append("id", userId);
   
-      fetch("http://localhost:3000/backend/api/upload_profile_pic.php", {
+      fetch("http://localhost:3000/backend/api/users/upload_profile_pic.php", {
         method: "POST",
         body: formData,
       })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            const imageUrl = `http://localhost:3000/backend/uploads/${data.profile_pic}`; // Ensure full URL
-            setProfilePic(imageUrl);
-            localStorage.setItem("profile_pic", imageUrl); // Save to local storage
+        .then((response) => response.json()) // Directly parse JSON
+        .then((jsonData) => {
+          console.log("Profile Pic Upload Response:", jsonData);
+          if (jsonData.success) {
+            localStorage.setItem("profile_pic", jsonData.profile_pic);
+            setProfilePic(jsonData.profile_pic);
+            window.dispatchEvent(new Event("profilePicUpdated"));
           } else {
-            alert(data.message);
+            console.error("Failed to update profile picture:", jsonData.message);
           }
         })
         .catch((error) => console.error("Error uploading profile picture:", error));
+    } else {
+      console.warn("No file selected for upload.");
     }
   };
+  
   
 
   return (
