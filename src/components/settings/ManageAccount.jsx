@@ -75,8 +75,6 @@ const ManageAccount = ({ isOpen, onClose }) => {
     }
   };
   
-  
-
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
       <div className="bg-[#FDFAF6] rounded-tl-[50px] rounded-tr-[8px] rounded-b-[8px] p-6 w-[500px] shadow-lg relative">

@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
-  
+  const [categories, setCategories] = useState([]);  // Make sure categories state is here
   const [tasks, setTasks] = useState([]);
   const username = localStorage.getItem("username");
   const navigate = useNavigate();
@@ -19,10 +19,31 @@ const Dashboard = () => {
     }
   }, [navigate]);
 
+  // Fetch Categories
+  useEffect(() => {
+    const fetchCategories = () => {
+      fetch("http://localhost:3000/backend/api/tasks/get_categories.php", {
+        method: "GET",
+        credentials: "include",
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data); 
+          if (data.categories) {
+            setCategories(data.categories);
+          } else {
+            console.error("Error fetching categories:", data.message);
+          }
+        })
+        .catch((err) => console.error("Error fetching categories:", err));
+    };
   
+    fetchCategories();
+  }, []);
 
+  // Fetch Tasks
   const fetchTasks = () => {
-    const userId = localStorage.getItem("user_id"); 
+    const userId = localStorage.getItem("user_id");
     fetch(`http://localhost:3000/backend/api/tasks/get_tasks.php?user_id=${userId}`, {
       method: "GET",
       credentials: "include",
@@ -32,35 +53,57 @@ const Dashboard = () => {
         setTasks(data.tasks.map(task => ({
           ...task,
           is_favorite: task.is_favorite === 1, 
+          category: task.category_name || 'Uncategorized', // Ensure category name is included
         })));
       })
       .catch((err) => console.error("Error fetching tasks:", err));
   };
   
 
-
   useEffect(() => {
     fetchTasks();
   }, []);
 
   const addTask = (taskData) => {
+    if (!taskData.task || !taskData.category) {
+      console.error("Task and category are required");
+      alert("Please provide both task and category.");
+      return;
+    }
+  
+    // Find the category object by name
+    const category = categories.find(c => c.name === taskData.category);
+  
+    if (!category) {
+      console.error("Invalid category:", taskData.category);
+      alert("Invalid category selected.");
+      return;
+    }
+  
     fetch("http://localhost:3000/backend/api/tasks/add_task.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({
-        user_id: localStorage.getItem("user_id"), 
         task: taskData.task,
+        category_id: category.id, // Send category ID here
       }),
     })
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
           fetchTasks();
+        } else {
+          console.error("Error adding task:", data.message);
         }
-      });
+      })
+      .catch((err) => console.error("Request failed:", err));
   };
-
+  
+  
+  
+  
+  
   const updateTaskStatus = (taskId, newStatus, isFavorite = null) => {
     fetch("http://localhost:3000/backend/api/tasks/update_task.php", {
       method: "POST",
@@ -78,8 +121,6 @@ const Dashboard = () => {
         }
       });
   };
-  
-  
 
   const deleteTask = (taskId) => {
     fetch("http://localhost:3000/backend/api/tasks/delete_task.php", {
@@ -91,12 +132,11 @@ const Dashboard = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          fetchTasks(); 
+          fetchTasks();
         }
       })
       .catch((err) => console.error("Error deleting task:", err));
   };
-
 
   // **Edit Task**
   const editTask = (taskId, newTaskText) => {
@@ -112,13 +152,11 @@ const Dashboard = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          fetchTasks(); 
+          fetchTasks();
         }
       })
       .catch((err) => console.error("Error editing task:", err));
   };
-  
-  
 
   return (
     <div>
@@ -141,22 +179,21 @@ const Dashboard = () => {
         updateTaskStatus={updateTaskStatus}
         deleteTask={deleteTask}
         editTask={editTask}
-        setEditingTask={setEditingTask} 
-        setIsModalOpen={setIsModalOpen} 
+        setEditingTask={setEditingTask}
+        setIsModalOpen={setIsModalOpen}
       />
-
 
       <Input
         isOpen={isModalOpen}
         onClose={() => {
           setIsModalOpen(false);
-          setEditingTask(null); 
+          setEditingTask(null);
         }}
         onAddTask={addTask}
-        onEditTask={editTask} 
-        editingTask={editingTask} 
+        onEditTask={editTask}
+        editingTask={editingTask}
+        categories={categories}  // Pass fetched categories here
       />
-
     </div>
   );
 };

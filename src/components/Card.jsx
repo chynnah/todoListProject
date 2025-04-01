@@ -1,56 +1,71 @@
 import React from "react";
-import { Star, CheckCircle, Edit, Trash } from "lucide-react";
+import { Star, CheckCircle, Edit, Trash, Calendar } from "lucide-react";
 
 const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOpen }) => {
+  const categoryEmojis = {
+    Work: "💼",
+    Personal: "🏡",
+    Shopping: "🛒",
+    Fitness: "🏋️",
+    Health: "🩺",
+    Urgent: "⚠️",
+    Hobby: "🎨",
+  };
+
+  // Ensure category exists, otherwise default to "Uncategorized"
+  const categoryName = typeof task.category === "string" ? task.category : task.category?.name || "Uncategorized";
+  const categoryEmoji = categoryEmojis[categoryName] || "📌";
+
+
   return (
-    <div className="p-7 rounded-lg border border-[#DDD9D9] flex justify-between items-center mb-3">
+    <div className="p-4 rounded-lg border border-[#DDD9D9] flex flex-col mb-3 w-full max-w-[390px] bg-[#FDFAF6]">
+      {/* Category Badge with Emoji */}
+      <span className="px-2 py-1 text-xs font-semibold rounded-full mb-2 self-start flex items-center gap-1">
+        {categoryEmoji} {categoryName}
+      </span>
+
       {/* Task Name */}
       <h3
-        className={`text-lg font-medium relative ${
-          task.status === "completed" ? "line-through text-gray-400" : "text-[#3E3F5B]"
-        } max-h-[60px] max-w-[200px] overflow-hidden`}
+        className={`text-lg font-medium ${task.status === "completed" ? "line-through text-gray-400" : "text-[#3E3F5B]"}`}
         style={{
           display: "-webkit-box",
+          WebkitLineClamp: 2,
           WebkitBoxOrient: "vertical",
-          WebkitLineClamp: 3,
-          position: "relative",
+          overflow: "hidden",
+          whiteSpace: "normal",
         }}
       >
         {task.task}
-        <span className="absolute bottom-0 left-0 w-full h-6 bg-gradient-to-t from-white to-transparent"></span>
       </h3>
 
-
+      {/* Display Date and Time */}
+      <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+        <Calendar size={16} className="text-gray-500" />
+        {task.updated_at
+          ? `Updated: ${new Date(task.updated_at).toLocaleString()}`
+          : `Created: ${new Date(task.created_at || Date.now()).toLocaleString()}`}
+      </p>
 
       {/* Icons */}
-      <div className="flex gap-3">
-
-        {/* Favorite */}
+      <div className="flex gap-2 flex-shrink-0 mt-3">
         <Star
           size={18}
           className={`cursor-pointer ${task.is_favorite ? "text-yellow-500" : "text-gray-500"}`}
-          onClick={() => updateTaskStatus(task.id, null, task.is_favorite ? 0 : 1)} 
+          onClick={() => updateTaskStatus(task.id, null, task.is_favorite ? 0 : 1)}
         />
-
-        {/* Mark Completed */}
         <CheckCircle
           size={18}
           className={`cursor-pointer ${task.status === "completed" ? "text-green-500" : "text-gray-500"}`}
           onClick={() => updateTaskStatus(task.id, task.status === "completed" ? "pending" : "completed")}
         />
-
-        {/* Edit */}
         <Edit
           size={18}
           className="text-blue-500 cursor-pointer"
           onClick={() => {
-            setEditingTask(task); // Set the task being edited
+            setEditingTask(task);
             setIsModalOpen(true);
           }}
         />
-
-
-        {/* Delete */}
         <Trash
           size={18}
           className="text-red-500 cursor-pointer"
