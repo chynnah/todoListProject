@@ -10,10 +10,19 @@ const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOp
     Health: "🩺",
     Urgent: "⚠️",
     Hobby: "🎨",
+    Education: "🎓",
+    Home: "🏠",
+    Travel: "✈️",
+    Finance: "💰",
+    Events: "📅",
+    Social: "🤝",
+    Career: "🚀",
+    SelfCare: "💆",
+    Maintenance: "🔧",
   };
-
-  // Ensure category exists, otherwise default to "Uncategorized"
-  const categoryName = typeof task.category === "string" ? task.category : task.category?.name || "Uncategorized";
+  
+  
+  const categoryName = task.category && task.category !== "null" ? task.category : "Uncategorized";
   const categoryEmoji = categoryEmojis[categoryName] || "📌";
 
 

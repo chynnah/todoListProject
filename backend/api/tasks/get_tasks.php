@@ -15,11 +15,13 @@ if (!isset($_SESSION["user_id"])) {
 
 $user_id = $_SESSION["user_id"];
 $stmt = $conn->prepare("
-    SELECT t.id, t.task, t.status, t.is_favorite, t.created_at, t.updated_at, c.name AS category
-    FROM tasks t
-    LEFT JOIN categories c ON t.category_id = c.id
-    WHERE t.user_id = ?
+    SELECT tasks.*, categories.name AS category 
+    FROM tasks 
+    LEFT JOIN categories ON tasks.category_id = categories.id
+    WHERE tasks.user_id = ?
+
 ");
+
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();

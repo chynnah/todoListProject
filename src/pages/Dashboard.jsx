@@ -8,10 +8,11 @@ import { useNavigate } from "react-router-dom";
 const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
-  const [categories, setCategories] = useState([]);  // Make sure categories state is here
+  const [categories, setCategories] = useState([]);  
   const [tasks, setTasks] = useState([]);
   const username = localStorage.getItem("username");
   const navigate = useNavigate();
+
 
   useEffect(() => {
     if (!localStorage.getItem("user_id")) {
@@ -28,7 +29,6 @@ const Dashboard = () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log(data); 
           if (data.categories) {
             setCategories(data.categories);
           } else {
@@ -50,60 +50,59 @@ const Dashboard = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        setTasks(data.tasks.map(task => ({
-          ...task,
-          is_favorite: task.is_favorite === 1, 
-          category: task.category_name || 'Uncategorized', // Ensure category name is included
-        })));
+        if (data.success) {
+          setTasks(
+            data.tasks.map((task) => ({
+              ...task,
+              is_favorite: task.is_favorite === 1,
+              category: task.category || "Uncategorized", 
+            }))
+          );
+        } else {
+          console.error("Error fetching tasks:", data.message);
+        }
       })
       .catch((err) => console.error("Error fetching tasks:", err));
   };
   
-
+  
   useEffect(() => {
     fetchTasks();
   }, []);
 
+  //add task
   const addTask = (taskData) => {
-    if (!taskData.task || !taskData.category) {
-      console.error("Task and category are required");
-      alert("Please provide both task and category.");
-      return;
-    }
+  if (!taskData.task) {
+    alert("Please provide a task.");
+    return;
+  }
+
+  const category = categories.find((c) => c.name === taskData.category);
+  const categoryId = category ? category.id : null;
   
-    // Find the category object by name
-    const category = categories.find(c => c.name === taskData.category);
-  
-    if (!category) {
-      console.error("Invalid category:", taskData.category);
-      alert("Invalid category selected.");
-      return;
-    }
-  
-    fetch("http://localhost:3000/backend/api/tasks/add_task.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
-        task: taskData.task,
-        category_id: category.id, // Send category ID here
-      }),
+  fetch("http://localhost:3000/backend/api/tasks/add_task.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({
+      task: taskData.task,
+      category_id: categoryId, 
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.success) {
+        fetchTasks(); // Refresh tasks after adding
+      } else {
+        console.error("Error adding task:", data.message);
+      }
     })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          fetchTasks();
-        } else {
-          console.error("Error adding task:", data.message);
-        }
-      })
-      .catch((err) => console.error("Request failed:", err));
-  };
+    .catch((err) => console.error("Request failed:", err));
+};
+
   
   
-  
-  
-  
+  //update task
   const updateTaskStatus = (taskId, newStatus, isFavorite = null) => {
     fetch("http://localhost:3000/backend/api/tasks/update_task.php", {
       method: "POST",
@@ -122,6 +121,7 @@ const Dashboard = () => {
       });
   };
 
+  //delete task
   const deleteTask = (taskId) => {
     fetch("http://localhost:3000/backend/api/tasks/delete_task.php", {
       method: "POST",
@@ -138,8 +138,11 @@ const Dashboard = () => {
       .catch((err) => console.error("Error deleting task:", err));
   };
 
-  // **Edit Task**
-  const editTask = (taskId, newTaskText) => {
+  // edit task
+  const editTask = (taskId, newTaskText, newCategory) => {
+    const category = categories.find(c => c.name === newCategory);
+    const categoryId = category ? category.id : null;
+
     fetch("http://localhost:3000/backend/api/tasks/edit_task.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -147,17 +150,26 @@ const Dashboard = () => {
       body: JSON.stringify({
         task_id: taskId,
         task: newTaskText,
+        category_id: categoryId, 
       }),
     })
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          fetchTasks();
+          setTasks((prevTasks) => 
+            prevTasks.map((task) =>
+              task.id === taskId
+                ? { ...task, task: newTaskText, category: newCategory }
+                : task
+            )
+          );
         }
       })
       .catch((err) => console.error("Error editing task:", err));
   };
-
+  
+  
+  
   return (
     <div>
       <Header />

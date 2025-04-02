@@ -18,16 +18,19 @@ if (!isset($_SESSION["user_id"])) {
 if (!empty($data->task_id) && !empty($data->task)) {
     $task_id = $data->task_id;
     $task = $data->task;
+    $category_id = !empty($data->category_id) ? $data->category_id : null; 
 
-    $stmt = $conn->prepare("UPDATE tasks SET task = ? WHERE id = ?");
-    $stmt->bind_param("si", $task, $task_id);
+    $stmt = $conn->prepare("UPDATE tasks SET task = ?, category_id = ? WHERE id = ?");
+    $stmt->bind_param("sii", $task, $category_id, $task_id);
 
     if ($stmt->execute()) {
-        echo json_encode(["success" => true]);
+        echo json_encode(["success" => true, "message" => "Task updated successfully."]);
     } else {
-        echo json_encode(["success" => false, "message" => "Failed to update task"]);
+        echo json_encode(["success" => false, "message" => "Failed to update task."]);
     }
 } else {
-    echo json_encode(["success" => false, "message" => "Missing task ID or new task text"]);
+    echo json_encode(["success" => false, "message" => "Invalid input."]);
 }
-?>
+
+
+        

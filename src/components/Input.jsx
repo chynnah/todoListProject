@@ -24,17 +24,15 @@ const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories
   }, [isOpen]);
 
   useEffect(() => {
-    if (isOpen) {
-      if (editingTask) {
-        setTask(editingTask.task);
-        setCategory(editingTask.category || ""); // Set category when editing
-      } else {
-        setTask("");
-        setCategory("");
-      }
+    if (isOpen && editingTask) {
+      setTask(editingTask.task);
+      setCategory(editingTask.category || ""); // Ensure category is correctly set
+    } else {
+      setTask("");
+      setCategory(""); // Reset category when modal is closed or for new task
     }
-  }, [isOpen, editingTask]);
-
+  }, [isOpen, editingTask]);  
+  
   if (!isOpen) return null;
 
   return (
@@ -61,17 +59,19 @@ const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories
 
         {/* Category Selection */}
         <select
+          className="border rounded p-2 w-full max-h-20 overflow-y-auto"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="w-full mb-3 p-2 border border-gray-300 rounded"
         >
-          <option value="">Select Category</option>
+          <option value="">Select a Category</option>
           {categories.map((cat) => (
             <option key={cat.id} value={cat.name}>
               {cat.name}
             </option>
           ))}
         </select>
+
+
 
 
         {/* Date and Time */}
@@ -88,19 +88,19 @@ const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories
           <button
             className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900"
             onClick={() => {
-              if (task.trim() !== "" && category.trim() !== "") {  // Ensure both fields are non-empty
+              if (task.trim() !== "" && category.trim() !== "") {
                 if (editingTask) {
                   onEditTask(editingTask.id, task, category);
                 } else {
                   onAddTask({
                     task,
-                    category,  // Ensure this is just the category name
+                    category,
                     dateTime,
                     status: "pending",
                   });
                 }
                 setTask("");
-                setCategory(""); // Reset category after task is added/edited
+                setCategory(""); // Reset fields after editing/adding
                 onClose();
               } else {
                 alert("Task and category are required.");
@@ -109,6 +109,7 @@ const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories
           >
             {editingTask ? "Update" : "Add"}
           </button>
+
         </div>
       </div>
     </div>
