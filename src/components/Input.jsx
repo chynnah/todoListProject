@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 
 const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories }) => {
   const [task, setTask] = useState("");
-  const [category, setCategory] = useState(""); // New category state
+  const [category, setCategory] = useState("");
   const [dateTime, setDateTime] = useState("");
+  const [deadline, setDeadline] = useState(""); // State for deadline
 
   useEffect(() => {
     if (isOpen) {
@@ -26,13 +27,15 @@ const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories
   useEffect(() => {
     if (isOpen && editingTask) {
       setTask(editingTask.task);
-      setCategory(editingTask.category || ""); // Ensure category is correctly set
+      setCategory(editingTask.category || "");
+      setDeadline(editingTask.deadline || "");
     } else {
       setTask("");
-      setCategory(""); // Reset category when modal is closed or for new task
+      setCategory(""); 
+      setDeadline(""); 
     }
-  }, [isOpen, editingTask]);  
-  
+  }, [isOpen, editingTask]);
+
   if (!isOpen) return null;
 
   return (
@@ -52,14 +55,14 @@ const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories
         <input
           type="text"
           placeholder="Enter task..."
-          className="w-full p-2 mb-4 rounded-lg outline-none resize-none overflow-auto h-20 border border-gray-300"
+          className="w-full p-2 mb-4 rounded-lg outline-none resize-none overflow-auto h-20 "
           value={task}
           onChange={(e) => setTask(e.target.value)}
         />
 
         {/* Category Selection */}
         <select
-          className="border rounded p-2 w-full max-h-20 overflow-y-auto"
+          className="border border-[#DDD9D9] rounded p-2 w-full max-h-20 overflow-y-auto"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
         >
@@ -71,11 +74,16 @@ const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories
           ))}
         </select>
 
-
-
+        {/* Deadline Input */}
+        <input
+          type="datetime-local"
+          value={deadline}
+          onChange={(e) => setDeadline(e.target.value)}
+          className="w-full p-2 mt-4 border rounded-lg"
+        />
 
         {/* Date and Time */}
-        <div className="text-gray-500 text-sm mb-4">{dateTime}</div>
+        <div className="text-gray-500 text-sm mb-4 mt-5">{dateTime}</div>
 
         {/* Buttons */}
         <div className="flex justify-end space-x-2">
@@ -90,17 +98,19 @@ const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories
             onClick={() => {
               if (task.trim() !== "" && category.trim() !== "") {
                 if (editingTask) {
-                  onEditTask(editingTask.id, task, category);
+                  onEditTask(editingTask.id, task, category, deadline); 
                 } else {
                   onAddTask({
                     task,
                     category,
                     dateTime,
+                    deadline, 
                     status: "pending",
                   });
                 }
                 setTask("");
-                setCategory(""); // Reset fields after editing/adding
+                setCategory(""); 
+                setDeadline(""); // Reset fields
                 onClose();
               } else {
                 alert("Task and category are required.");
@@ -109,11 +119,11 @@ const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories
           >
             {editingTask ? "Update" : "Add"}
           </button>
-
         </div>
       </div>
     </div>
   );
 };
+
 
 export default Input;

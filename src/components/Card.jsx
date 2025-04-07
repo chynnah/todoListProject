@@ -21,7 +21,6 @@ const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOp
     Maintenance: "🔧",
   };
   
-  
   const categoryName = task.category && task.category !== "null" ? task.category : "Uncategorized";
   const categoryEmoji = categoryEmojis[categoryName] || "📌";
 
@@ -47,6 +46,8 @@ const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOp
         {task.task}
       </h3>
 
+      
+
       {/* Display Date and Time */}
       <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
         <Calendar size={16} className="text-gray-500" />
@@ -54,6 +55,14 @@ const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOp
           ? `Updated: ${new Date(task.updated_at).toLocaleString()}`
           : `Created: ${new Date(task.created_at || Date.now()).toLocaleString()}`}
       </p>
+
+      {/* Deadline Display */}
+      {task.deadline && (
+        <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+          <Calendar size={16} className="text-gray-500" />
+          Deadline: {new Date(task.deadline).toLocaleString()}
+        </p>
+      )}
 
       {/* Icons */}
       <div className="flex gap-2 flex-shrink-0 mt-3">
@@ -84,5 +93,6 @@ const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOp
     </div>
   );
 };
+
 
 export default Card;
