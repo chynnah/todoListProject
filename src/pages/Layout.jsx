@@ -8,7 +8,7 @@ const Layout = () => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="bg-[#FDFAF6] min-h-screen flex">
+    <div className="bg-[#FDFDFD] min-h-screen flex">
       {/* Sidebar */}
       <Sidebar isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
       

@@ -13,13 +13,15 @@ if (!isset($_SESSION["user_id"])) {
     exit;
 }
 
+// Get the user ID from the session
 $user_id = $_SESSION["user_id"];
+
+// Fetch tasks for the logged-in user
 $stmt = $conn->prepare("
     SELECT tasks.*, categories.name AS category 
     FROM tasks 
     LEFT JOIN categories ON tasks.category_id = categories.id
     WHERE tasks.user_id = ?
-
 ");
 
 $stmt->bind_param("i", $user_id);
@@ -31,5 +33,6 @@ while ($row = $result->fetch_assoc()) {
     $tasks[] = $row;
 }
 
+// Return tasks as a JSON response
 echo json_encode(["success" => true, "tasks" => $tasks]);
 ?>

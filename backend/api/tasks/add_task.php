@@ -15,14 +15,18 @@ if (!isset($_SESSION["user_id"])) {
     exit;
 }
 
+// Check if task, category_id, and deadline are provided
 if (!empty($data->task) && !empty($data->category_id)) {
     $task = htmlspecialchars(strip_tags($data->task));
     $category_id = intval($data->category_id);
     $user_id = $_SESSION["user_id"];
+    $deadline = isset($data->deadline) ? htmlspecialchars(strip_tags($data->deadline)) : null;
 
-    $stmt = $conn->prepare("INSERT INTO tasks (user_id, task, category_id) VALUES (?, ?, ?)");
-    $stmt->bind_param("isi", $user_id, $task, $category_id);
+    // Prepare SQL query to insert task and deadline into the database
+    $stmt = $conn->prepare("INSERT INTO tasks (user_id, task, category_id, deadline) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("isis", $user_id, $task, $category_id, $deadline);
 
+    // Execute the query and return appropriate response
     if ($stmt->execute()) {
         echo json_encode(["success" => true, "message" => "Task added successfully"]);
     } else {
@@ -37,3 +41,4 @@ if (empty($data->task) || empty($data->category_id)) {
     echo json_encode(["success" => false, "message" => "Task and category are required"]);
     exit;
 }
+

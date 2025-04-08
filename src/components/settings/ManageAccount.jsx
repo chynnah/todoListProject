@@ -58,7 +58,7 @@ const ManageAccount = ({ isOpen, onClose }) => {
         method: "POST",
         body: formData,
       })
-        .then((response) => response.json()) // Directly parse JSON
+        .then((response) => response.json()) 
         .then((jsonData) => {
           console.log("Profile Pic Upload Response:", jsonData);
           if (jsonData.success) {
@@ -79,7 +79,7 @@ const ManageAccount = ({ isOpen, onClose }) => {
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
       <div className="bg-[#FDFAF6] rounded-tl-[50px] rounded-tr-[8px] rounded-b-[8px] p-6 w-[500px] shadow-lg relative">
         <div className="relative bg-[#3E3F5B] w-60 text-white pt-3 pb-3 rounded-tl-[50px] rounded-tr-[50px] rounded-br-[50px] rounded-bl-[8px]">
-          <h2 className="text-lg font-medium text-center">Manage your account!</h2>
+          <h2 className="text-lg font-medium text-center">Manage your account</h2>
         </div>
 
         <div className="flex justify-center mt-4">
@@ -103,7 +103,7 @@ const ManageAccount = ({ isOpen, onClose }) => {
         </div>
 
         <div className="mt-6 flex justify-end space-x-3">
-          <button className="bg-[#3E3F5B] text-white px-4 py-2 rounded-md cursor-pointer" onClick={handleSaveChanges}>
+          <button className="bg-[#3E3F5B] text-white px-4 py-2 rounded-md cursor-pointer hover:bg-[#6B6DA6] transition" onClick={handleSaveChanges}>
             Save Changes
           </button>
           <button className="px-4 py-2 rounded-md border border-[#DDD9D9] cursor-pointer" onClick={onClose}>

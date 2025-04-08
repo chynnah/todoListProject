@@ -10,27 +10,25 @@ require_once __DIR__ . "/../../config/db.php";
 
 $data = json_decode(file_get_contents("php://input"));
 
-if (!isset($_SESSION["user_id"])) {
-    echo json_encode(["success" => false, "message" => "Unauthorized"]);
-    exit;
-}
+$task_id = $data->task_id;
+$task = $data->task;
+$category_id = $data->category_id;
+$deadline = $data->deadline;
 
-if (!empty($data->task_id) && !empty($data->task)) {
-    $task_id = $data->task_id;
-    $task = $data->task;
-    $category_id = !empty($data->category_id) ? $data->category_id : null; 
+$query = "UPDATE tasks SET task = ?, category_id = ?, deadline = ? WHERE id = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("sisi", $task, $category_id, $deadline, $task_id);
+$stmt->execute();
 
-    $stmt = $conn->prepare("UPDATE tasks SET task = ?, category_id = ? WHERE id = ?");
-    $stmt->bind_param("sii", $task, $category_id, $task_id);
-
-    if ($stmt->execute()) {
-        echo json_encode(["success" => true, "message" => "Task updated successfully."]);
-    } else {
-        echo json_encode(["success" => false, "message" => "Failed to update task."]);
-    }
+if ($stmt->affected_rows > 0) {
+    echo json_encode(["success" => true]);
 } else {
-    echo json_encode(["success" => false, "message" => "Invalid input."]);
+    echo json_encode(["success" => false, "message" => "Failed to update task"]);
 }
+
+$stmt->close();
+$conn->close();
+
 
 
         

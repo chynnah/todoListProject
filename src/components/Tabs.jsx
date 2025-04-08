@@ -14,7 +14,7 @@ const Tabs = ({ tasks = [], updateTaskStatus, deleteTask, setEditingTask = () =>
   console.log("Current tasks:", tasks); 
 
   return (
-    <div className="flex gap-2 m-auto justify-center mt-5 gap-3">
+    <div className="flex gap-2 m-auto justify-center mt-5 gap-3 bg-[#FDFDFD]">
       {tabs.map((tab, index) => {
         const filteredTasks =
           tab.filter === "all"
@@ -30,12 +30,14 @@ const Tabs = ({ tasks = [], updateTaskStatus, deleteTask, setEditingTask = () =>
           >
 
             {/* Tab Header */}
-            <div className="flex justify-between px-5">
+            <div className="flex justify-between items-center px-5 py-3 ">
               <div className="flex gap-2 items-center">
-                <span>{tab.icon}</span>
-                <span>{tab.name}</span>
+                <span className="text-[#3E3F5B]">{tab.icon}</span>
+                <span className="font-medium text-sm text-[#3E3F5B]">{tab.name}</span>
               </div>
-              <span className={`flex justify-center items-center text-white w-6 h-6 rounded-full text-sm ${tab.badgeColor}`}>
+              <span
+                className={`flex justify-center items-center text-white w-6 h-6 rounded-full text-xs font-semibold ${tab.badgeColor} shadow-sm transition-all duration-300 transform hover:scale-110`}
+              >
                 {filteredTasks.length}
               </span>
             </div>

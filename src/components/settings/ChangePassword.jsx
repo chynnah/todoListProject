@@ -5,10 +5,12 @@ const ChangePassword = ({ isOpen, onClose }) => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [messageColor, setMessageColor] = useState("text-red-500"); 
 
   const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
       setMessage("Passwords do not match.");
+      setMessageColor("text-red-500"); 
       return;
     }
 
@@ -26,54 +28,76 @@ const ChangePassword = ({ isOpen, onClose }) => {
     setMessage(result.message);
 
     if (result.status === "success") {
+      setMessageColor("text-green-500"); 
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
+
       setTimeout(onClose, 2000); 
+    } else {
+      setMessageColor("text-red-500"); 
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 className="text-xl font-semibold mb-4">Change Password</h2>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+      <div className="bg-[#FDFAF6] rounded-tl-[50px] rounded-tr-[8px] rounded-b-[8px] p-6 w-[500px] shadow-lg relative">
+        {/* Title */}
+        <div className="relative bg-[#3E3F5B] w-60 text-white pt-3 pb-3 rounded-tl-[50px] rounded-tr-[50px] rounded-br-[50px] rounded-bl-[8px] mb-8">
+          <h2 className="text-lg font-medium text-center">Change your password</h2>
+        </div>
 
-        {message && <p className="text-red-500">{message}</p>}
+        {/* Lock Icon */}
+        <div className="flex justify-center mb-5">
+          <span className="text-6xl">🔐</span>
+        </div>
 
-        <input
-          type="password"
-          placeholder="Current Password"
-          value={currentPassword}
-          onChange={(e) => setCurrentPassword(e.target.value)}
-          className="w-full p-2 border rounded mb-3"
-        />
-        <input
-          type="password"
-          placeholder="New Password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          className="w-full p-2 border rounded mb-3"
-        />
-        <input
-          type="password"
-          placeholder="Confirm New Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          className="w-full p-2 border rounded mb-3"
-        />
+        {/* Message */}
+        {message && <p className={`text-sm text-center mb-3 ${messageColor}`}>{message}</p>}
 
-        <button
-          className="w-full bg-blue-500 text-white p-2 rounded mt-3"
-          onClick={handleChangePassword}
-        >
-          Update Password
-        </button>
+        {/* Input Fields */}
+        <div className="space-y-3">
+          <input
+            type="password"
+            placeholder="Current Password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            className="w-full p-3 bg-[#EDEDED] text-sm font-medium rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
+          />
+          <input
+            type="password"
+            placeholder="New Password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            className="w-full p-3 bg-[#EDEDED] text-sm font-medium rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
+          />
+          <input
+            type="password"
+            placeholder="Confirm New Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="w-full p-3 bg-[#EDEDED] text-sm font-medium rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
+          />
+        </div>
 
-        <button className="mt-2 text-gray-500" onClick={onClose}>
-          Cancel
-        </button>
+        {/* Buttons */}
+        <div className="mt-6 flex justify-end space-x-3">
+          <button
+            className="bg-[#3E3F5B] text-white px-4 py-2 rounded-md cursor-pointer hover:bg-[#6B6DA6] transition"
+            onClick={handleChangePassword}
+          >
+            Update Password
+          </button>
+
+          <button 
+            className="px-4 py-2 rounded-md border border-[#DDD9D9] cursor-pointer" 
+            onClick={onClose}
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   );

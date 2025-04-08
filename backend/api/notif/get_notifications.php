@@ -1,25 +1,24 @@
 <?php
+date_default_timezone_set('Asia/Manila');
+
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Content-Type: application/json");
 header("Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
-header("Access-Control-Allow-Credentials: true"); 
+header("Access-Control-Allow-Credentials: true");
 
-session_start();
 require_once __DIR__ . "/../../config/db.php";
 
-// Check if the user is logged in by verifying the session
 if (!isset($_GET['user_id'])) {
     echo json_encode(["success" => false, "message" => "Unauthorized"]);
     exit;
 }
 
 $user_id = $_GET['user_id'];
-
 $notifications = [];
 
-// Fetch general notifications
-$query = "SELECT id, message, read_status FROM notifications WHERE user_id = ? ORDER BY created_at DESC";
+// General notifications
+$query = "SELECT id, message, read_status, created_at FROM notifications WHERE user_id = ? ORDER BY created_at DESC";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
@@ -29,11 +28,12 @@ while ($row = $result->fetch_assoc()) {
     $notifications[] = [
         'id' => $row['id'],
         'message' => $row['message'],
-        'read_status' => $row['read_status']
+        'read_status' => (int)$row['read_status'],
+        'created_at' => $row['created_at'],
     ];
 }
 
-// Fetch task-related notifications with deadline and category
+// Task deadline notifications
 $deadlineStmt = $conn->prepare("
     SELECT tasks.id AS task_id, tasks.task, tasks.deadline, categories.name AS category
     FROM tasks
@@ -47,12 +47,16 @@ $deadlineResult = $deadlineStmt->get_result();
 
 while ($row = $deadlineResult->fetch_assoc()) {
     $deadline = strtotime($row['deadline']);
-    $remaining = floor(($deadline - time()) / 3600); 
+    $remaining = floor(($deadline - time()) / 3600);
 
     $notifications[] = [
         'id' => 'task-' . $row['task_id'],
         'message' => "⏰ Deadline soon: '{$row['task']}' in category '{$row['category']}' is due in $remaining hour(s)!",
         'read_status' => 0,
+        'task_type' => 'deadline',
+        'category' => $row['category'],
+        'remaining_hours' => $remaining,
+        'created_at' => date("Y-m-d H:i:s"),
     ];
 }
 

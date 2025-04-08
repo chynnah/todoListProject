@@ -16,7 +16,7 @@ import {
   LineChart,
   Line,
 } from "recharts";
-import { Calendar, Star, CheckCircle } from "lucide-react";
+
 
 const COLORS = [
   "#0088FE", "#00C49F", "#FFBB28", "#FF8042", 
@@ -134,7 +134,7 @@ const Chart = () => {
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
-                data={categoryData}
+                data={categoryData}      
                 cx="50%"
                 cy="50%"
                 labelLine={false}

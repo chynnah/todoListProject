@@ -11,13 +11,17 @@ require_once __DIR__ . "/../../config/db.php";
 $data = json_decode(file_get_contents("php://input"));
 if (!empty($data->task_id)) {
     $task_id = $data->task_id;
-    $task = $data->task ?? null; 
+    $task = $data->task ?? null;
     $status = $data->status ?? null;
     $category_id = $data->category_id ?? null;
     $is_favorite = isset($data->is_favorite) ? $data->is_favorite : null;
+    $deadline = $data->deadline ?? null;  // Accept deadline
 
-
-    if ($category_id !== null) {
+    // Add deadline to update query
+    if ($category_id !== null && $deadline !== null) {
+        $stmt = $conn->prepare("UPDATE tasks SET task = ?, category_id = ?, status = ?, deadline = ?, updated_at = NOW() WHERE id = ?");
+        $stmt->bind_param("ssssi", $task, $category_id, $status, $deadline, $task_id);
+    } elseif ($category_id !== null) {
         $stmt = $conn->prepare("UPDATE tasks SET task = ?, category_id = ?, status = ?, updated_at = NOW() WHERE id = ?");
         $stmt->bind_param("sssi", $task, $category_id, $status, $task_id);
     } elseif ($is_favorite !== null) {

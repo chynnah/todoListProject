@@ -7,9 +7,14 @@ config/*.js
 src/backend/config/db.php
 src/backend/.env
 
+
+
 # Ignore build and dependency files
 package-lock.json
 yarn.lock
+pnpm-lock.yaml
+node_modules/
+
 
 # Ignore user-specific files
 *.log

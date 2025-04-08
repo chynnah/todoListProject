@@ -20,52 +20,52 @@ const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOp
     SelfCare: "💆",
     Maintenance: "🔧",
   };
-  
+
   const categoryName = task.category && task.category !== "null" ? task.category : "Uncategorized";
   const categoryEmoji = categoryEmojis[categoryName] || "📌";
 
-
   return (
-    <div className="p-4 rounded-lg border border-[#DDD9D9] flex flex-col mb-3 w-full max-w-[390px] bg-[#FDFAF6]">
-      {/* Category Badge with Emoji */}
-      <span className="px-2 py-1 text-xs font-semibold rounded-full mb-2 self-start flex items-center gap-1">
-        {categoryEmoji} {categoryName}
-      </span>
+    <div className="p-5 rounded-lg border border-[#DDD9D9] flex mb-5 w-full max-w-[390px] bg-[#FDFDFD] shadow-lg hover:shadow-xl transition-shadow duration-200">
+      {/* Main Content - Left Side */}
+      <div className="flex flex-col flex-grow pr-4">
+        {/* Category Badge with Emoji */}
+        <span className="px-3 py-1 text-xs font-semibold rounded-full mb-3 self-start flex items-center gap-2 bg-[#f3ffbd] text-[#3E3F5B]">
+          {categoryEmoji} {categoryName}
+        </span>
 
-      {/* Task Name */}
-      <h3
-        className={`text-lg font-medium ${task.status === "completed" ? "line-through text-gray-400" : "text-[#3E3F5B]"}`}
-        style={{
-          display: "-webkit-box",
-          WebkitLineClamp: 2,
-          WebkitBoxOrient: "vertical",
-          overflow: "hidden",
-          whiteSpace: "normal",
-        }}
-      >
-        {task.task}
-      </h3>
+        {/* Task Name */}
+        <h3
+          className={`text-lg font-semibold mb-2 ${task.status === "completed" ? "line-through text-gray-400" : "text-[#3E3F5B]"}`}
+          style={{
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            whiteSpace: "normal",
+          }}
+        >
+          {task.task}
+        </h3>
 
-      
-
-      {/* Display Date and Time */}
-      <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
-        <Calendar size={16} className="text-gray-500" />
-        {task.updated_at
-          ? `Updated: ${new Date(task.updated_at).toLocaleString()}`
-          : `Created: ${new Date(task.created_at || Date.now()).toLocaleString()}`}
-      </p>
-
-      {/* Deadline Display */}
-      {task.deadline && (
-        <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+        {/* Display Date and Time */}
+        <p className="text-sm text-gray-500 flex items-center gap-1 mb-2">
           <Calendar size={16} className="text-gray-500" />
-          Deadline: {new Date(task.deadline).toLocaleString()}
+          {task.updated_at
+            ? `Updated: ${new Date(task.updated_at).toLocaleString()}`
+            : `Created: ${new Date(task.created_at || Date.now()).toLocaleString()}`}
         </p>
-      )}
 
-      {/* Icons */}
-      <div className="flex gap-2 flex-shrink-0 mt-3">
+        {/* Deadline Display */}
+        {task.deadline && (
+          <p className="text-sm text-gray-500 flex items-center gap-1">
+            <Calendar size={16} className="text-gray-500" />
+            Deadline: {new Date(task.deadline).toLocaleString()}
+          </p>
+        )}
+      </div>
+
+      {/* Icons - Right Side */}
+      <div className="flex flex-col gap-4 mt-4 items-end">
         <Star
           size={18}
           className={`cursor-pointer ${task.is_favorite ? "text-yellow-500" : "text-gray-500"}`}
@@ -93,6 +93,5 @@ const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOp
     </div>
   );
 };
-
 
 export default Card;

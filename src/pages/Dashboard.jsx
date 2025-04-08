@@ -70,29 +70,29 @@ const Dashboard = () => {
     fetchTasks();
   }, []);
 
-  //add task
-  const addTask = (taskData) => {
+// Add Task
+const addTask = (taskData) => {
   if (!taskData.task) {
     alert("Please provide a task.");
     return;
   }
-
   const category = categories.find((c) => c.name === taskData.category);
   const categoryId = category ? category.id : null;
-  
+
   fetch("http://localhost:3000/backend/api/tasks/add_task.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
     body: JSON.stringify({
       task: taskData.task,
-      category_id: categoryId, 
+      category_id: categoryId,
+      deadline: taskData.deadline, // Pass deadline
     }),
   })
     .then((res) => res.json())
     .then((data) => {
       if (data.success) {
-        fetchTasks(); // Refresh tasks after adding
+        fetchTasks();
       } else {
         console.error("Error adding task:", data.message);
       }
@@ -139,51 +139,63 @@ const Dashboard = () => {
   };
 
   // edit task
-  const editTask = (taskId, newTaskText, newCategory) => {
-    const category = categories.find(c => c.name === newCategory);
-    const categoryId = category ? category.id : null;
+  const editTask = (taskId, newTaskText, newCategory, newDeadline) => {
+  const category = categories.find(c => c.name === newCategory);
+  const categoryId = category ? category.id : null;
 
-    fetch("http://localhost:3000/backend/api/tasks/edit_task.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
-        task_id: taskId,
-        task: newTaskText,
-        category_id: categoryId, 
-      }),
+  fetch("http://localhost:3000/backend/api/tasks/edit_task.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({
+      task_id: taskId,
+      task: newTaskText,
+      category_id: categoryId,
+      deadline: newDeadline, 
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.success) {
+        setTasks((prevTasks) => 
+          prevTasks.map((task) =>
+            task.id === taskId
+              ? { ...task, task: newTaskText, category: newCategory, deadline: newDeadline } 
+              : task
+          )
+        );
+      }
     })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setTasks((prevTasks) => 
-            prevTasks.map((task) =>
-              task.id === taskId
-                ? { ...task, task: newTaskText, category: newCategory }
-                : task
-            )
-          );
-        }
-      })
-      .catch((err) => console.error("Error editing task:", err));
-  };
-  
+    .catch((err) => console.error("Error editing task:", err));
+};
+
   
   
   return (
     <div>
       <Header />
-      <div className="flex mt-9 mr-10 justify-end">
-        <div className="bg-[#3E3F5B] h-10 w-70 rounded-tl-[50px] rounded-bl-[50px] rounded-tr-[50px] flex justify-center items-center">
-          <h1 className="text-[#FDFAF6] font-medium">Welcome back, {username}!</h1>
+      <div className="flex mt-[-20px] mr-10 justify-end">
+        <div className="bg-[#FF1654] px-[80px] py-[20px] rounded-tl-[50px] rounded-bl-[50px] rounded-tr-[50px] flex justify-center items-center">
+          <h1 className="text-[#FDFAF6] text-[27px] font-medium">Welcome back, {username}!</h1>
         </div>
       </div>
 
       <div className="ml-5">
-        <button className="h-10 w-50 flex justify-center items-center gap-2 cursor-pointer" onClick={() => setIsModalOpen(true)}>
-          <Plus color="#3E3F5B" size={16} className="mt-[-3px]" />
-          <h4 className="text-[#3E3F5B]">Add New Task</h4>
-        </button>
+      <button 
+        className="h-12 w-52 flex justify-center items-center gap-3 cursor-pointer rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 group ml-[10px]"
+        onClick={() => setIsModalOpen(true)}
+      >
+        <Plus
+          size={18}
+          className="stroke-[#3E3F5B] group-hover:stroke-[#FF1654] group-active:stroke-[#FF1654] transition-all duration-300"
+        />
+        <h4 className="text-[#3E3F5B] group-hover:text-[#FF1654] group-active:text-[#FF1654] font-semibold text-lg transition-all duration-300">
+          Add New Task
+        </h4>
+      </button>
+
+
+
       </div>
 
       <Tabs

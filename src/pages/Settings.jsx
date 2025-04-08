@@ -21,7 +21,7 @@ const Settings = () => {
               <h3 className="text-[#3E3F5B] font-medium text-lg">Manage Account</h3>
               <p className="text-gray-500 text-sm">Update your profile details and preferences.</p>
             </div>
-            <button className="px-5 py-2 bg-[#3E3F5B] text-white text-sm rounded-md cursor-pointer" onClick={() => setIsManageAccountOpen(true)}>Edit</button>
+            <button className="px-5 py-2 bg-[#3E3F5B] text-white text-sm rounded-md cursor-pointer hover:bg-[#6B6DA6] transition" onClick={() => setIsManageAccountOpen(true)}>Edit</button>
           </div>
 
           {/* Change Password */}
@@ -30,7 +30,7 @@ const Settings = () => {
               <h3 className="text-[#3E3F5B] font-medium text-lg">Change Password</h3>
               <p className="text-gray-500 text-sm">Update your login credentials.</p>
             </div>
-            <button className="px-5 py-2 bg-[#3E3F5B] text-white text-sm rounded-md cursor-pointer"  onClick={() => setIsChangePasswordOpen(true)}>Change</button>
+            <button className="px-5 py-2 bg-[#3E3F5B] text-white text-sm rounded-md cursor-pointer hover:bg-[#6B6DA6] transition"  onClick={() => setIsChangePasswordOpen(true)}>Change</button>
           </div>
 
           {/* Task Notifications */}

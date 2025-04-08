@@ -20,7 +20,7 @@ if (!empty($data->username) && !empty($data->password)) {
     $stmt->execute();
     $stmt->store_result();
 
-    if ($stmt->num_rows > 0) {
+    if ($stmt->num_rows > 0) { 
         $stmt->bind_result($id, $db_username, $db_email, $db_password, $profile_pic);
         $stmt->fetch();
 
@@ -28,13 +28,29 @@ if (!empty($data->username) && !empty($data->password)) {
             $_SESSION["user_id"] = $id;
             $_SESSION["username"] = $db_username;
 
+            // Fetch user notifications
+            $notificationStmt = $conn->prepare("SELECT id, message, read_status FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 10");
+            $notificationStmt->bind_param("i", $id);
+            $notificationStmt->execute();
+            $result = $notificationStmt->get_result();
+            $notifications = [];
+            
+            while ($row = $result->fetch_assoc()) {
+                $notifications[] = [
+                    'id' => $row['id'],
+                    'message' => $row['message'],
+                    'read' => $row['read_status'],
+                ];
+            }
+
             echo json_encode([
                 "success" => true,
                 "message" => "Login successful.",
                 "username" => $db_username,
                 "email" => $db_email, 
                 "user_id" => $id,  
-                "profile_pic" => $profile_pic ?? "/default-profile.png"
+                "profile_pic" => $profile_pic ?? "/default-profile.png",
+                "notifications" => $notifications, // Include notifications
             ]);
             exit;
         } else {

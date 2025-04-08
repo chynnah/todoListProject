@@ -5,24 +5,30 @@ import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import Settings from './pages/Settings';
 import Chart from './pages/Chart';
+import Landing from './pages/Landing';
 
 const ProtectedRoute = ({ element }) => {
   const isAuthenticated = localStorage.getItem('username'); 
   return isAuthenticated ? element : <Navigate to="/login" replace />;
 };
 
+const PublicRoute = ({ element }) => {
+  const isAuthenticated = localStorage.getItem('username'); 
+  return isAuthenticated ? <Navigate to="/dashboard" replace /> : element;
+};
+
 const RoutesComponent = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Default route redirects to Login */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        
-        {/* Login and Signup Routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route path="/" element={<Navigate to="/landing" replace />} />
 
-        {/* Protected Routes for Logged-in Users */}
+        {/* Public Routes */}
+        <Route path="/landing" element={<PublicRoute element={<Landing />} />} />
+        <Route path="/login" element={<PublicRoute element={<Login />} />} />
+        <Route path="/signup" element={<PublicRoute element={<Signup />} />} />
+
+        {/* Protected Routes */}
         <Route element={<ProtectedRoute element={<Layout />} />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/settings" element={<Settings />} />
