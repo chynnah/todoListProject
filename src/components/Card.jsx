@@ -1,5 +1,7 @@
 import React from "react";
-import { Star, CheckCircle, Edit, Trash, Calendar } from "lucide-react";
+import { PencilAltIcon, StarIcon, CheckCircleIcon, TrashIcon } from "@heroicons/react/outline"; // Heroicons
+
+import { Calendar } from "lucide-react"; // Calendar icon (from lucide-react)
 
 const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOpen }) => {
   const categoryEmojis = {
@@ -25,23 +27,27 @@ const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOp
   const categoryEmoji = categoryEmojis[categoryName] || "📌";
 
   return (
-    <div className="p-5 rounded-lg border border-[#DDD9D9] flex mb-5 w-full max-w-[390px] bg-[#FDFDFD] shadow-lg hover:shadow-xl transition-shadow duration-200">
+    <div className="p-6 rounded-xl border border-[#E0E0E0] flex mb-6 w-full max-w-[390px] bg-[#FFFFFF] shadow-lg hover:shadow-xl transition-shadow duration-200">
       {/* Main Content - Left Side */}
-      <div className="flex flex-col flex-grow pr-4">
+      <div className="flex flex-col flex-grow pr-4 overflow-hidden">
         {/* Category Badge with Emoji */}
-        <span className="px-3 py-1 text-xs font-semibold rounded-full mb-3 self-start flex items-center gap-2 bg-[#f3ffbd] text-[#3E3F5B]">
+        <span className="text-xs font-semibold mb-3 self-start flex items-center gap-2 text-[#3E3F5B]">
           {categoryEmoji} {categoryName}
         </span>
 
         {/* Task Name */}
         <h3
-          className={`text-lg font-semibold mb-2 ${task.status === "completed" ? "line-through text-gray-400" : "text-[#3E3F5B]"}`}
+          className={`text-lg font-semibold mb-3 ${task.status === "completed" ? "line-through text-gray-400" : "text-[#3E3F5B]"}`}
           style={{
             display: "-webkit-box",
             WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical",
             overflow: "hidden",
+            textOverflow: "ellipsis",
             whiteSpace: "normal",
+            position: "relative",
+            background: "linear-gradient(to bottom, transparent, white 50%)",
+            paddingBottom: "1rem",
           }}
         >
           {task.task}
@@ -65,28 +71,24 @@ const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOp
       </div>
 
       {/* Icons - Right Side */}
-      <div className="flex flex-col gap-4 mt-4 items-end">
-        <Star
-          size={18}
-          className={`cursor-pointer ${task.is_favorite ? "text-yellow-500" : "text-gray-500"}`}
+      <div className="flex flex-col gap-3 mt-4 items-end">
+        <StarIcon
+          className={`w-5 h-5 cursor-pointer transition-all duration-300 transform ${task.is_favorite ? "text-yellow-500" : "text-gray-500 hover:text-yellow-400"}`}
           onClick={() => updateTaskStatus(task.id, null, task.is_favorite ? 0 : 1)}
         />
-        <CheckCircle
-          size={18}
-          className={`cursor-pointer ${task.status === "completed" ? "text-green-500" : "text-gray-500"}`}
+        <CheckCircleIcon
+          className={`w-5 h-5 cursor-pointer transition-all duration-300 transform ${task.status === "completed" ? "text-green-500" : "text-gray-500 hover:text-green-400"}`}
           onClick={() => updateTaskStatus(task.id, task.status === "completed" ? "pending" : "completed")}
         />
-        <Edit
-          size={18}
-          className="text-blue-500 cursor-pointer"
+        <PencilAltIcon
+          className="w-5 h-5 text-blue-500 cursor-pointer hover:text-blue-400 transition-colors duration-200"
           onClick={() => {
             setEditingTask(task);
             setIsModalOpen(true);
           }}
         />
-        <Trash
-          size={18}
-          className="text-red-500 cursor-pointer"
+        <TrashIcon
+          className="w-5 h-5 text-red-500 cursor-pointer hover:text-red-400 transition-colors duration-200"
           onClick={() => deleteTask(task.id)}
         />
       </div>

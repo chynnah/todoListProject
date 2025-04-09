@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"; 
 
 const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories }) => {
   const [task, setTask] = useState("");
@@ -40,13 +40,13 @@ const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-2xl p-6 w-[450px] shadow-lg">
+      <div className="bg-white rounded-2xl p-8 w-[450px] shadow-xl transform transition-all duration-300 ease-in-out scale-95 hover:scale-100">
         {/* Title */}
-        <div className="flex justify-between items-center mb-3">
-          <h2 className="text-lg font-semibold">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-[#283D3B] text-2xl font-semibold tracking-tight">
             {editingTask ? "Edit Task" : "New Task"}
           </h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+          <button onClick={onClose} className="text-[#FF1654] hover:text-[#FF1654] text-xl">
             ✏️
           </button>
         </div>
@@ -55,14 +55,14 @@ const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories
         <input
           type="text"
           placeholder="Enter task..."
-          className="w-full p-2 mb-4 rounded-lg outline-none resize-none overflow-auto h-20 "
+          className="w-full p-4 mb-5 rounded-lg text-[#283D3B] placeholder-[#9E9E9E] focus:outline-none focus:ring-2 focus:ring-[#FF1654] focus:ring-opacity-60 transition-all duration-300 ease-in-out"
           value={task}
           onChange={(e) => setTask(e.target.value)}
         />
 
         {/* Category Selection */}
         <select
-          className="border border-[#DDD9D9] rounded p-2 w-full max-h-20 overflow-y-auto"
+          className="w-full p-4 mb-5 rounded-lg text-[#283D3B] bg-[#F9FAFB] border border-[#DDD9D9] focus:outline-none focus:ring-2 focus:ring-[#FF1654] transition-all duration-300 ease-in-out"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
         >
@@ -79,22 +79,22 @@ const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories
           type="datetime-local"
           value={deadline}
           onChange={(e) => setDeadline(e.target.value)}
-          className="w-full p-2 mt-4 border rounded-lg"
+          className="w-full p-4 mb-5 rounded-lg text-[#283D3B] bg-[#F9FAFB] border border-[#DDD9D9] focus:outline-none focus:ring-2 focus:ring-[#FF1654] transition-all duration-300 ease-in-out"
         />
 
         {/* Date and Time */}
-        <div className="text-gray-500 text-sm mb-4 mt-5">{dateTime}</div>
+        <div className="text-[#6B6B6B] text-sm mb-5">{dateTime}</div>
 
         {/* Buttons */}
-        <div className="flex justify-end space-x-2">
+        <div className="flex justify-between space-x-2">
           <button
-            className="px-4 py-2 text-gray-600 bg-gray-200 rounded-lg hover:bg-gray-300"
+            className="px-6 py-3 text-[#283D3B] bg-[#F1F3F5] rounded-lg hover:bg-[#FF1654] hover:text-white transition-all duration-300 ease-in-out"
             onClick={onClose}
           >
             Cancel
           </button>
           <button
-            className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900"
+            className="px-6 py-3 bg-[#FF1654] text-white rounded-lg hover:bg-[#FF0038] transition-all duration-300 ease-in-out"
             onClick={() => {
               if (task.trim() !== "" && category.trim() !== "") {
                 if (editingTask) {
@@ -124,6 +124,5 @@ const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories
     </div>
   );
 };
-
 
 export default Input;

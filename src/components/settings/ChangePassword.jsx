@@ -45,7 +45,7 @@ const ChangePassword = ({ isOpen, onClose }) => {
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
       <div className="bg-[#FDFAF6] rounded-tl-[50px] rounded-tr-[8px] rounded-b-[8px] p-6 w-[500px] shadow-lg relative">
         {/* Title */}
-        <div className="relative bg-[#3E3F5B] w-60 text-white pt-3 pb-3 rounded-tl-[50px] rounded-tr-[50px] rounded-br-[50px] rounded-bl-[8px] mb-8">
+        <div className="relative bg-[#FF1654] w-60 text-white pt-3 pb-3 rounded-tl-[50px] rounded-tr-[50px] rounded-br-[50px] rounded-bl-[8px] mb-8">
           <h2 className="text-lg font-medium text-center">Change your password</h2>
         </div>
 
@@ -85,7 +85,7 @@ const ChangePassword = ({ isOpen, onClose }) => {
         {/* Buttons */}
         <div className="mt-6 flex justify-end space-x-3">
           <button
-            className="bg-[#3E3F5B] text-white px-4 py-2 rounded-md cursor-pointer hover:bg-[#6B6DA6] transition"
+            className="bg-[#FF1654] text-white px-4 py-2 rounded-md cursor-pointer hover:bg-[#6B6DA6] transition"
             onClick={handleChangePassword}
           >
             Update Password

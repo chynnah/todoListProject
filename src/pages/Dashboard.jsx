@@ -65,7 +65,6 @@ const Dashboard = () => {
       .catch((err) => console.error("Error fetching tasks:", err));
   };
   
-  
   useEffect(() => {
     fetchTasks();
   }, []);
@@ -174,13 +173,13 @@ const addTask = (taskData) => {
   return (
     <div>
       <Header />
-      <div className="flex mt-[-20px] mr-10 justify-end">
+      <div className="flex mt-[10px] mr-[68px] justify-end">
         <div className="bg-[#FF1654] px-[80px] py-[20px] rounded-tl-[50px] rounded-bl-[50px] rounded-tr-[50px] flex justify-center items-center">
           <h1 className="text-[#FDFAF6] text-[27px] font-medium">Welcome back, {username}!</h1>
         </div>
       </div>
 
-      <div className="ml-5">
+      <div className="ml-[40px]">
       <button 
         className="h-12 w-52 flex justify-center items-center gap-3 cursor-pointer rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 group ml-[10px]"
         onClick={() => setIsModalOpen(true)}

@@ -6,6 +6,8 @@ import Dashboard from './pages/Dashboard';
 import Settings from './pages/Settings';
 import Chart from './pages/Chart';
 import Landing from './pages/Landing';
+import Archive from './pages/Archive';
+import Entertainment from './pages/Entertainment';
 
 const ProtectedRoute = ({ element }) => {
   const isAuthenticated = localStorage.getItem('username'); 
@@ -33,6 +35,8 @@ const RoutesComponent = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/settings" element={<Settings />} />
           <Route path="/dashboard/chart" element={<Chart />} />
+          <Route path="/dashboard/archive" element={<Archive />} />
+          <Route path="/dashboard/entertainment" element={<Entertainment/>} />
         </Route>
       </Routes>
     </BrowserRouter>

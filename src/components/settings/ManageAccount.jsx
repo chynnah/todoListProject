@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-
 const ManageAccount = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
@@ -9,7 +8,6 @@ const ManageAccount = ({ isOpen, onClose }) => {
   const [profilePic, setProfilePic] = useState(
     localStorage.getItem("profile_pic") || "/default-profile.png"
   );
-  
   
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -78,7 +76,7 @@ const ManageAccount = ({ isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
       <div className="bg-[#FDFAF6] rounded-tl-[50px] rounded-tr-[8px] rounded-b-[8px] p-6 w-[500px] shadow-lg relative">
-        <div className="relative bg-[#3E3F5B] w-60 text-white pt-3 pb-3 rounded-tl-[50px] rounded-tr-[50px] rounded-br-[50px] rounded-bl-[8px]">
+        <div className="relative bg-[#FF1654] w-60 text-white pt-3 pb-3 rounded-tl-[50px] rounded-tr-[50px] rounded-br-[50px] rounded-bl-[8px]">
           <h2 className="text-lg font-medium text-center">Manage your account</h2>
         </div>
 
@@ -93,17 +91,17 @@ const ManageAccount = ({ isOpen, onClose }) => {
         </div>
 
         <div className="mt-4">
-          <label className="text-sm font-medium text-gray-600">Current Username:</label>
-          <input type="text" name="username" value={username} onChange={handleInputChange} className="w-full mt-1 p-3 rounded-[8px] bg-[#EDEDED] text-gray-600" />
+          <label className="text-sm font-medium text-[#283D3B]">Current Username:</label>
+          <input type="text" name="username" value={username} onChange={handleInputChange} className="w-full mt-1 p-3 rounded-[8px] bg-[#EDEDED] text-[#283D3B]" />
         </div>
 
         <div className="mt-4">
-          <label className="text-sm font-medium text-gray-600">Current Email:</label>
-          <input type="text" name="email" value={email} onChange={handleInputChange} className="w-full mt-1 p-3 rounded-[8px] bg-[#EDEDED] text-gray-600" />
+          <label className="text-sm font-medium text-[#283D3B]">Current Email:</label>
+          <input type="text" name="email" value={email} onChange={handleInputChange} className="w-full mt-1 p-3 rounded-[8px] bg-[#EDEDED] text-[#283D3B]" />
         </div>
 
         <div className="mt-6 flex justify-end space-x-3">
-          <button className="bg-[#3E3F5B] text-white px-4 py-2 rounded-md cursor-pointer hover:bg-[#6B6DA6] transition" onClick={handleSaveChanges}>
+          <button className="bg-[#FF1654] text-white px-4 py-2 rounded-md cursor-pointer hover:bg-[#FF1654] transition" onClick={handleSaveChanges}>
             Save Changes
           </button>
           <button className="px-4 py-2 rounded-md border border-[#DDD9D9] cursor-pointer" onClick={onClose}>

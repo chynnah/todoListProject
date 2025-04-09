@@ -17,7 +17,6 @@ if (!isset($_GET['user_id'])) {
 $user_id = $_GET['user_id'];
 $notifications = [];
 
-// General notifications
 $query = "SELECT id, message, read_status, created_at FROM notifications WHERE user_id = ? ORDER BY created_at DESC";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $user_id);
@@ -30,10 +29,10 @@ while ($row = $result->fetch_assoc()) {
         'message' => $row['message'],
         'read_status' => (int)$row['read_status'],
         'created_at' => $row['created_at'],
+        'task_type' => 'general',  
     ];
 }
 
-// Task deadline notifications
 $deadlineStmt = $conn->prepare("
     SELECT tasks.id AS task_id, tasks.task, tasks.deadline, categories.name AS category
     FROM tasks
@@ -51,9 +50,9 @@ while ($row = $deadlineResult->fetch_assoc()) {
 
     $notifications[] = [
         'id' => 'task-' . $row['task_id'],
-        'message' => "⏰ Deadline soon: '{$row['task']}' in category '{$row['category']}' is due in $remaining hour(s)!",
+        'message' => "Deadline soon: '{$row['task']}' in category '{$row['category']}' is due in $remaining hour(s)!",
         'read_status' => 0,
-        'task_type' => 'deadline',
+        'task_type' => 'deadline',  
         'category' => $row['category'],
         'remaining_hours' => $remaining,
         'created_at' => date("Y-m-d H:i:s"),
@@ -61,3 +60,4 @@ while ($row = $deadlineResult->fetch_assoc()) {
 }
 
 echo json_encode(['success' => true, 'notifications' => $notifications]);
+?>

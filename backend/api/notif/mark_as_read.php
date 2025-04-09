@@ -19,3 +19,4 @@ if ($user_id && $notification_id) {
 } else {
     echo json_encode(['success' => false, 'message' => 'Missing parameters']);
 }
+?>

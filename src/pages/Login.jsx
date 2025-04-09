@@ -49,22 +49,20 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="flex justify-evenly h-[500px] w-full max-w-4xl border border-[#DDD9D9] shadow-[0px_4px_8px_rgba(0,0,0,0.1)] rounded-[25px]">
+    <div className="flex flex-col items-center justify-center min-h-screen p-5 sm:p-10">
+      <div className="flex flex-col md:flex-row justify-evenly w-full max-w-4xl h-[500px] border border-[#DDD9D9] shadow-[0px_4px_8px_rgba(0,0,0,0.1)] rounded-[25px]">
         {/* Left Section */}
-        <div className="bg-[#FF1654] rounded-tr-[50px] rounded-br-[50px] flex flex-col justify-center items-center px-20 py-12 relative">
+        <div className="bg-[#FF1654] rounded-tr-[50px] rounded-br-[50px] flex flex-col justify-center items-center px-5 py-12 sm:px-20 sm:py-20">
           <div className="text-[#FDFAF6] flex flex-col justify-center items-center">
-            <h1 className="text-[50px] font-thin leading-none">Hello,</h1>
-            <h1 className="text-[50px] font-bold leading-none">Welcome!</h1>
-            <p className="mt-4 text-lg">Manage your tasks efficiently.</p>
+            <h1 className="text-3xl sm:text-5xl font-thin leading-none">Hello,</h1>
+            <h1 className="text-3xl sm:text-5xl font-bold leading-none">Welcome!</h1>
+            <p className="mt-4 text-base sm:text-lg">Manage your tasks efficiently.</p>
           </div>
         </div>
 
         {/* Right Section (Login Form) */}
-        <div className="flex flex-1 justify-center items-center h-[500px] w-full max-w-4xl">
-          <form className="flex flex-col gap-5 w-[350px]" onSubmit={handleLogin}>
-            
-
+        <div className="flex flex-1 justify-center items-center p-5 sm:p-10">
+          <form className="flex flex-col gap-5 w-full sm:w-[350px]" onSubmit={handleLogin}>
             {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
             {/* Username */}
@@ -128,6 +126,7 @@ const Login = () => {
         </div>
       </div>
     </div>
+
   );
 };
 
