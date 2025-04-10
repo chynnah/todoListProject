@@ -4,16 +4,13 @@ const Search = ({ onSearch }) => {
   const [query, setQuery] = useState('');
 
   const handleSearchChange = (event) => {
-    setQuery(event.target.value);
-  };
-
-  const handleSearchSubmit = (event) => {
-    event.preventDefault();
-    onSearch(query);
+    const value = event.target.value;
+    setQuery(value);
+    onSearch(value); 
   };
 
   return (
-    <form onSubmit={handleSearchSubmit} className="relative">
+    <div className="relative">
       <input
         type="text"
         value={query}
@@ -21,10 +18,10 @@ const Search = ({ onSearch }) => {
         placeholder="Search..."
         className="px-4 py-2 w-[300px] rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF1654] placeholder-gray-500"
       />
-      <button type="submit" className="absolute right-2 top-1/2 transform -translate-y-1/2 text-[#FF1654]">
+      <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-[#FF1654]">
         🔍
-      </button>
-    </form>
+      </div>
+    </div>
   );
 };
 

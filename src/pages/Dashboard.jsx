@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Tabs from "../components/Tabs";
 import Input from "../components/Input";
 import { Plus } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
   const [categories, setCategories] = useState([]);  
   const [tasks, setTasks] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const username = localStorage.getItem("username");
   const navigate = useNavigate();
-
 
   useEffect(() => {
     if (!localStorage.getItem("user_id")) {
@@ -69,39 +69,37 @@ const Dashboard = () => {
     fetchTasks();
   }, []);
 
-// Add Task
-const addTask = (taskData) => {
-  if (!taskData.task) {
-    alert("Please provide a task.");
-    return;
-  }
-  const category = categories.find((c) => c.name === taskData.category);
-  const categoryId = category ? category.id : null;
+  // Add Task
+  const addTask = (taskData) => {
+    if (!taskData.task) {
+      alert("Please provide a task.");
+      return;
+    }
+    const category = categories.find((c) => c.name === taskData.category);
+    const categoryId = category ? category.id : null;
 
-  fetch("http://localhost:3000/backend/api/tasks/add_task.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify({
-      task: taskData.task,
-      category_id: categoryId,
-      deadline: taskData.deadline, // Pass deadline
-    }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.success) {
-        fetchTasks();
-      } else {
-        console.error("Error adding task:", data.message);
-      }
+    fetch("http://localhost:3000/backend/api/tasks/add_task.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        task: taskData.task,
+        category_id: categoryId,
+        deadline: taskData.deadline,
+      }),
     })
-    .catch((err) => console.error("Request failed:", err));
-};
-
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          fetchTasks();
+        } else {
+          console.error("Error adding task:", data.message);
+        }
+      })
+      .catch((err) => console.error("Request failed:", err));
+  };
   
-  
-  //update task
+  // Update task
   const updateTaskStatus = (taskId, newStatus, isFavorite = null) => {
     fetch("http://localhost:3000/backend/api/tasks/update_task.php", {
       method: "POST",
@@ -120,7 +118,7 @@ const addTask = (taskData) => {
       });
   };
 
-  //delete task
+  // Delete task
   const deleteTask = (taskId) => {
     fetch("http://localhost:3000/backend/api/tasks/delete_task.php", {
       method: "POST",
@@ -137,42 +135,40 @@ const addTask = (taskData) => {
       .catch((err) => console.error("Error deleting task:", err));
   };
 
-  // edit task
+  // Edit task
   const editTask = (taskId, newTaskText, newCategory, newDeadline) => {
-  const category = categories.find(c => c.name === newCategory);
-  const categoryId = category ? category.id : null;
+    const category = categories.find(c => c.name === newCategory);
+    const categoryId = category ? category.id : null;
 
-  fetch("http://localhost:3000/backend/api/tasks/edit_task.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify({
-      task_id: taskId,
-      task: newTaskText,
-      category_id: categoryId,
-      deadline: newDeadline, 
-    }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.success) {
-        setTasks((prevTasks) => 
-          prevTasks.map((task) =>
-            task.id === taskId
-              ? { ...task, task: newTaskText, category: newCategory, deadline: newDeadline } 
-              : task
-          )
-        );
-      }
+    fetch("http://localhost:3000/backend/api/tasks/edit_task.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        task_id: taskId,
+        task: newTaskText,
+        category_id: categoryId,
+        deadline: newDeadline, 
+      }),
     })
-    .catch((err) => console.error("Error editing task:", err));
-};
-
-  
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setTasks((prevTasks) => 
+            prevTasks.map((task) =>
+              task.id === taskId
+                ? { ...task, task: newTaskText, category: newCategory, deadline: newDeadline } 
+                : task
+            )
+          );
+        }
+      })
+      .catch((err) => console.error("Error editing task:", err));
+  };
   
   return (
     <div>
-      <Header />
+      <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <div className="flex mt-[10px] mr-[68px] justify-end">
         <div className="bg-[#FF1654] px-[80px] py-[20px] rounded-tl-[50px] rounded-bl-[50px] rounded-tr-[50px] flex justify-center items-center">
           <h1 className="text-[#FDFAF6] text-[27px] font-medium">Welcome back, {username}!</h1>
@@ -180,21 +176,18 @@ const addTask = (taskData) => {
       </div>
 
       <div className="ml-[40px]">
-      <button 
-        className="h-12 w-52 flex justify-center items-center gap-3 cursor-pointer rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 group ml-[10px]"
-        onClick={() => setIsModalOpen(true)}
-      >
-        <Plus
-          size={18}
-          className="stroke-[#3E3F5B] group-hover:stroke-[#FF1654] group-active:stroke-[#FF1654] transition-all duration-300"
-        />
-        <h4 className="text-[#3E3F5B] group-hover:text-[#FF1654] group-active:text-[#FF1654] font-semibold text-lg transition-all duration-300">
-          Add New Task
-        </h4>
-      </button>
-
-
-
+        <button 
+          className="h-12 w-52 flex justify-center items-center gap-3 cursor-pointer rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 group ml-[10px]"
+          onClick={() => setIsModalOpen(true)}
+        >
+          <Plus
+            size={18}
+            className="stroke-[#3E3F5B] group-hover:stroke-[#FF1654] group-active:stroke-[#FF1654] transition-all duration-300"
+          />
+          <h4 className="text-[#3E3F5B] group-hover:text-[#FF1654] group-active:text-[#FF1654] font-semibold text-lg transition-all duration-300">
+            Add New Task
+          </h4>
+        </button>
       </div>
 
       <Tabs
@@ -204,6 +197,7 @@ const addTask = (taskData) => {
         editTask={editTask}
         setEditingTask={setEditingTask}
         setIsModalOpen={setIsModalOpen}
+        searchQuery={searchQuery}
       />
 
       <Input
@@ -215,7 +209,7 @@ const addTask = (taskData) => {
         onAddTask={addTask}
         onEditTask={editTask}
         editingTask={editingTask}
-        categories={categories}  // Pass fetched categories here
+        categories={categories}
       />
     </div>
   );

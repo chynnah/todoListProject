@@ -1,8 +1,14 @@
-import React from "react";
 import Card from "./Card";
 import { ListChecks, Hourglass, CheckCircle, Star } from "lucide-react";
 
-const Tabs = ({ tasks = [], updateTaskStatus, deleteTask, setEditingTask = () => {}, setIsModalOpen = () => {} }) => {
+const Tabs = ({ 
+  tasks = [], 
+  updateTaskStatus, 
+  deleteTask, 
+  setEditingTask = () => {}, 
+  setIsModalOpen = () => {},
+  searchQuery = '' 
+}) => {
   const tabs = [
     { name: "All Tasks", icon: <ListChecks size={18} />, filter: "all", badgeColor: "bg-gray-400" },
     { name: "Pending", icon: <Hourglass size={18} />, filter: "pending", badgeColor: "bg-yellow-400" },
@@ -10,17 +16,30 @@ const Tabs = ({ tasks = [], updateTaskStatus, deleteTask, setEditingTask = () =>
     { name: "Favorites", icon: <Star size={18} />, filter: "favorites", badgeColor: "bg-cyan-400" },
   ];
 
-  console.log("Current tasks:", tasks);
+  const filterTasks = (tasksToFilter, filterType) => {
+    let filtered = tasksToFilter;
+    
+    if (filterType === "favorites") {
+      filtered = filtered.filter((task) => task.is_favorite);
+    } else if (filterType !== "all") {
+      filtered = filtered.filter((task) => task.status === filterType);
+    }
+    
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(task => 
+        task.task.toLowerCase().includes(query) || 
+        (task.category && task.category.toLowerCase().includes(query))
+      );
+    }
+    
+    return filtered;
+  };
 
   return (
     <div className="flex gap-5 justify-center mt-5">
       {tabs.map((tab, index) => {
-        const filteredTasks =
-          tab.filter === "all"
-            ? tasks
-            : tab.filter === "favorites"
-            ? tasks.filter((task) => task.is_favorite)
-            : tasks.filter((task) => task.status === tab.filter);
+        const filteredTasks = filterTasks(tasks, tab.filter);
 
         return (
           <div
@@ -51,10 +70,13 @@ const Tabs = ({ tasks = [], updateTaskStatus, deleteTask, setEditingTask = () =>
                     deleteTask={deleteTask}
                     setEditingTask={setEditingTask}
                     setIsModalOpen={setIsModalOpen}
+                    searchQuery={searchQuery}
                   />
                 ))
               ) : (
-                <p className="text-gray-500 text-center mt-4">No tasks here.</p>
+                <p className="text-gray-500 text-center mt-4">
+                  {searchQuery ? "No matching tasks found" : "No tasks here"}
+                </p>
               )}
             </div>
           </div>

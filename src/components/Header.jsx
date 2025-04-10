@@ -3,7 +3,7 @@ import { Bell, Moon, X } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import Search from './Search';
 
-const Header = () => {
+const Header = ({ searchQuery, setSearchQuery }) => {
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -106,7 +106,9 @@ const Header = () => {
       <div className='mr-[40px]'>
         <div className="flex items-center space-x-6 relative">
           {/*  Search */}
-          <Search onSearch={(query) => console.log("Searching for:", query)} />
+          <Search onSearch={(query) => {
+            setSearchQuery(query);
+          }} />
           
           {/* Moon */}
           <Moon className="text-gray-800 hover:text-[#FF1654] cursor-pointer transition-transform duration-200 hover:scale-110 drop-shadow w-6 h-6" />
