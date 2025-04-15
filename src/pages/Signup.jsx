@@ -1,160 +1,232 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, ChevronLeft } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
+import { motion } from "framer-motion";
+import { useTheme } from "../lib/theme";
 
 const Signup = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [rePassword, setRePassword] = useState("");
-  const [error, setError] = useState("");
+  const { theme } = useTheme();
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    rePassword: ""
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [showRePassword, setShowRePassword] = useState(false);
+  const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    setError(""); 
-  
-    if (password !== rePassword) {
+    setError("");
+    setIsLoading(true);
+
+    if (formData.password !== formData.rePassword) {
       setError("Passwords do not match!");
+      setIsLoading(false);
       return;
     }
-  
+
     try {
       const response = await fetch('http://localhost:3000/backend/api/auth/signup.php', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          username,
-          email,
-          password,
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
         }),
       });
-  
+
       const data = await response.json();
-  
+
       if (data.status === "success") {
         setSuccess("Account created successfully! Redirecting to login...");
         setTimeout(() => {
           navigate("/login");
-        }, 2000); 
+        }, 2000);
       } else {
-        setError(data.message);
+        setError(data.message || "Signup failed. Please try again.");
       }
     } catch (error) {
-      setError("Signup failed. Please try again.");
+      setError("Connection error. Please try again.");
+      console.error("Signup error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
-  
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-5 sm:p-10">
-      <div className="flex flex-col md:flex-row justify-evenly w-full max-w-4xl border border-[#DDD9D9D9] shadow-[0px_4px_8px_rgba(0,0,0,0.1)] rounded-[25px]">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="flex flex-col items-center justify-center min-h-screen p-5 sm:p-10 bg-white dark:bg-gray-900 transition-colors duration-300"
+    >
+      <div className="flex flex-col md:flex-row justify-evenly w-full max-w-4xl border border-[#A9BFA8] dark:border-gray-700 shadow-[0px_4px_8px_rgba(0,0,0,0.1)] dark:shadow-[0px_4px_16px_rgba(0,0,0,0.4)] rounded-[25px] bg-white dark:bg-gray-800 overflow-hidden transition-colors duration-300">
         {/* Left Section */}
-        <div className="bg-[#FF1654] rounded-tr-[50px] rounded-br-[50px] flex flex-col justify-center items-center px-5 py-12 sm:px-20 sm:py-20">
-          <div className="text-[#FDFAF6] flex flex-col justify-center items-center">
+        <motion.div
+          initial={{ x: -50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          className="bg-[#A31621] dark:bg-gray-900 rounded-tr-[50px] rounded-br-[50px] flex flex-col justify-center items-center px-5 py-12 sm:px-20 sm:py-20 w-full md:w-1/2 transition-colors duration-300"
+        >
+          <div className="text-white dark:text-gray-200 flex flex-col justify-center items-center text-center">
             <h1 className="text-3xl sm:text-5xl font-thin leading-none">Hello,</h1>
             <h1 className="text-3xl sm:text-5xl font-bold leading-none">Join Us!</h1>
-            <p className="mt-4 text-base sm:text-lg text-center">Create an account to manage tasks better.</p>
+            <p className="mt-4 text-base sm:text-lg">Create an account to manage tasks better.</p>
           </div>
-        </div>
+        </motion.div>
 
         {/* Right Section (Sign Up Form) */}
-        <div className="flex flex-1 justify-center items-center p-5 sm:p-10">
+        <motion.div
+          initial={{ x: 50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+          className="flex flex-1 justify-center items-center p-5 sm:p-10 w-full md:w-1/2"
+        >
           <form className="flex flex-col gap-5 w-full sm:w-[350px]" onSubmit={handleSignup}>
-            {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-            {success && <p className="text-green-500 text-sm text-center">{success}</p>}
+
+            {/* Status Messages */}
+            {error && (
+              <motion.p
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="text-red-500 text-sm text-center p-2 bg-red-50 dark:bg-red-900/30 rounded border border-red-200 dark:border-red-800"
+              >
+                {error}
+              </motion.p>
+            )}
+            {success && (
+              <motion.p
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="text-[#A9BFA8] dark:text-green-400 text-sm text-center p-2 bg-[#FAFFC5] dark:bg-green-900/30 rounded border border-[#A9BFA8] dark:border-green-800"
+              >
+                {success}
+              </motion.p>
+            )}
 
             {/* Username */}
-            <div className="flex flex-col">
-              <label htmlFor="username" className="text-[#3E3F5B]">Username:</label>
-              <input 
+            <div className="flex flex-col gap-1">
+              <label htmlFor="username" className="text-[#053C5E] dark:text-gray-300 text-sm font-medium">
+                Username
+              </label>
+              <input
                 type="text"
                 id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="rounded-[8px] bg-[#F4F4F4] h-10 px-3 w-full"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                className="rounded-lg bg-[#F8FAFC] dark:bg-gray-700 h-10 px-4 w-full border border-[#A9BFA8] dark:border-gray-600 focus:border-[#3A3960] dark:focus:border-gray-500 focus:outline-none transition-all dark:text-white"
                 required
               />
             </div>
 
             {/* Email */}
-            <div className="flex flex-col">
-              <label htmlFor="email" className="text-[#3E3F5B]">Email:</label>
-              <input 
+            <div className="flex flex-col gap-1">
+              <label htmlFor="email" className="text-[#053C5E] dark:text-gray-300 text-sm font-medium">
+                Email
+              </label>
+              <input
                 type="email"
                 id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="rounded-[8px] bg-[#F4F4F4] h-10 px-3 w-full"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="rounded-lg bg-[#F8FAFC] dark:bg-gray-700 h-10 px-4 w-full border border-[#A9BFA8] dark:border-gray-600 focus:border-[#3A3960] dark:focus:border-gray-500 focus:outline-none transition-all dark:text-white"
                 required
               />
             </div>
 
-            {/* Password with Eye Icon */}
-            <div className="flex flex-col relative">
-              <label htmlFor="password" className="text-[#3E3F5B]">Password:</label>
+            {/* Password */}
+            <div className="flex flex-col gap-1 relative">
+              <label htmlFor="password" className="text-[#053C5E] dark:text-gray-300 text-sm font-medium">
+                Password
+              </label>
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="rounded-[8px] bg-[#F4F4F4] h-10 px-3 w-full pr-10"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="rounded-lg bg-[#F8FAFC] dark:bg-gray-700 h-10 px-4 w-full pr-10 border border-[#A9BFA8] dark:border-gray-600 focus:border-[#3A3960] dark:focus:border-gray-500 focus:outline-none transition-all dark:text-white"
                 required
               />
               <button
                 type="button"
-                className="absolute right-3 top-11 transform -translate-y-1/2 text-[#3E3F5B]"
+                className="absolute right-3 top-9 text-[#053C5E] dark:text-gray-400 hover:text-[#3A3960] dark:hover:text-gray-200 transition-colors"
                 onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
 
-            {/* Re-enter Password with Eye Icon */}
-            <div className="flex flex-col relative">
-              <label htmlFor="rePassword" className="text-[#3E3F5B]">Re-enter Password:</label>
+            {/* Confirm Password */}
+            <div className="flex flex-col gap-1 relative">
+              <label htmlFor="rePassword" className="text-[#053C5E] dark:text-gray-300 text-sm font-medium">
+                Confirm Password
+              </label>
               <input
                 type={showRePassword ? "text" : "password"}
                 id="rePassword"
-                value={rePassword}
-                onChange={(e) => setRePassword(e.target.value)}
-                className="rounded-[8px] bg-[#F4F4F4] h-10 px-3 w-full pr-10"
+                name="rePassword"
+                value={formData.rePassword}
+                onChange={handleChange}
+                className="rounded-lg bg-[#F8FAFC] dark:bg-gray-700 h-10 px-4 w-full pr-10 border border-[#A9BFA8] dark:border-gray-600 focus:border-[#3A3960] dark:focus:border-gray-500 focus:outline-none transition-all dark:text-white"
                 required
               />
               <button
                 type="button"
-                className="absolute right-3 top-11 transform -translate-y-1/2 text-[#3E3F5B]"
+                className="absolute right-3 top-9 text-[#053C5E] dark:text-gray-400 hover:text-[#3A3960] dark:hover:text-gray-200 transition-colors"
                 onClick={() => setShowRePassword(!showRePassword)}
+                aria-label={showRePassword ? "Hide password" : "Show password"}
               >
                 {showRePassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
 
             {/* Sign Up Button */}
-            <button type="submit" className="bg-[#FF1654] text-[#FDFAF6] h-10 rounded-[50px] w-full">
-              Sign Up
-            </button>
+            <motion.button
+              type="submit"
+              className="bg-[#A31621] dark:bg-[#FF4757]  text-white dark:text-white h-10 rounded-[50px] w-full font-medium relative overflow-hidden transition-colors duration-300"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <span className="inline-block h-4 w-4 border-2 border-[#FAFFC5] dark:border-white border-t-transparent rounded-full animate-spin"></span>
+              ) : (
+                "Sign Up"
+              )}
+            </motion.button>
 
             {/* Login Link */}
-            <p className="text-center text-[#3E3F5B]">
+            <p className="text-center text-[#053C5E] dark:text-gray-300 text-sm">
               Already have an account?{" "}
-              <span 
-                className="font-bold hover:underline cursor-pointer" 
-                onClick={() => navigate("/login")} 
+              <span
+                className="font-bold text-[#A31621] dark:text-[#FF4757]  hover:underline cursor-pointer transition-colors"
+                onClick={() => navigate("/login")}
               >
                 Login
               </span>
             </p>
           </form>
-        </div>
+        </motion.div>
       </div>
-    </div>
-
+    </motion.div>
   );
 };
 

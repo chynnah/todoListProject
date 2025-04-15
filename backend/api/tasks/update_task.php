@@ -15,7 +15,7 @@ if (!empty($data->task_id)) {
     $status = $data->status ?? null;
     $category_id = $data->category_id ?? null;
     $is_favorite = isset($data->is_favorite) ? $data->is_favorite : null;
-    $deadline = $data->deadline ?? null;  // Accept deadline
+    $deadline = $data->deadline ?? null;  
 
     // Add deadline to update query
     if ($category_id !== null && $deadline !== null) {

@@ -11,7 +11,7 @@ const Layout = () => {
     <div className="bg-[#FDFDFD] min-h-screen flex">
       {/* Sidebar */}
       <Sidebar isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
-      
+
       {/* Main content wrapper */}
       <div 
         className={`flex-1 transition-all duration-300 ${isExpanded ? "ml-60" : "ml-16"}`}

@@ -9,6 +9,7 @@ import Landing from './pages/Landing';
 import Archive from './pages/Archive';
 import Entertainment from './pages/Entertainment';
 
+
 const ProtectedRoute = ({ element }) => {
   const isAuthenticated = localStorage.getItem('username'); 
   return isAuthenticated ? element : <Navigate to="/login" replace />;
@@ -21,25 +22,26 @@ const PublicRoute = ({ element }) => {
 
 const RoutesComponent = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Navigate to="/landing" replace />} />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Navigate to="/landing" replace />} />
 
-        {/* Public Routes */}
-        <Route path="/landing" element={<PublicRoute element={<Landing />} />} />
-        <Route path="/login" element={<PublicRoute element={<Login />} />} />
-        <Route path="/signup" element={<PublicRoute element={<Signup />} />} />
+          {/* Public Routes */}
+          <Route path="/landing" element={<PublicRoute element={<Landing />} />} />
+          <Route path="/login" element={<PublicRoute element={<Login />} />} />
+          <Route path="/signup" element={<PublicRoute element={<Signup />} />} />
 
-        {/* Protected Routes */}
-        <Route element={<ProtectedRoute element={<Layout />} />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/settings" element={<Settings />} />
-          <Route path="/dashboard/chart" element={<Chart />} />
-          <Route path="/dashboard/archive" element={<Archive />} />
-          <Route path="/dashboard/entertainment" element={<Entertainment/>} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoute element={<Layout />} />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard/settings" element={<Settings />} />
+            <Route path="/dashboard/chart" element={<Chart />} />
+            <Route path="/dashboard/archive" element={<Archive />} />
+            <Route path="/dashboard/entertainment" element={<Entertainment/>} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+
   );
 };
 

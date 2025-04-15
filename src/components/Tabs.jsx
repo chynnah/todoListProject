@@ -10,10 +10,10 @@ const Tabs = ({
   searchQuery = '' 
 }) => {
   const tabs = [
-    { name: "All Tasks", icon: <ListChecks size={18} />, filter: "all", badgeColor: "bg-gray-400" },
-    { name: "Pending", icon: <Hourglass size={18} />, filter: "pending", badgeColor: "bg-yellow-400" },
-    { name: "Completed", icon: <CheckCircle size={18} />, filter: "completed", badgeColor: "bg-green-400" },
-    { name: "Favorites", icon: <Star size={18} />, filter: "favorites", badgeColor: "bg-cyan-400" },
+    { name: "All Tasks", icon: <ListChecks size={18} />, filter: "all", badgeColor: "bg-gray-400 dark:bg-gray-600" },
+    { name: "Pending", icon: <Hourglass size={18} />, filter: "pending", badgeColor: "bg-yellow-400 dark:bg-yellow-600" },
+    { name: "Completed", icon: <CheckCircle size={18} />, filter: "completed", badgeColor: "bg-green-400 dark:bg-green-600" },
+    { name: "Favorites", icon: <Star size={18} />, filter: "favorites", badgeColor: "bg-cyan-400 dark:bg-cyan-600" },
   ];
 
   const filterTasks = (tasksToFilter, filterType) => {
@@ -44,13 +44,13 @@ const Tabs = ({
         return (
           <div
             key={index}
-            className="border border-[#DDD9D9] min-h-[70vh] w-[22%] flex flex-col rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+            className="border border-[#DDD9D9] dark:border-gray-700 min-h-[70vh] w-[22%] flex flex-col rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800"
           >
             {/* Tab Header */}
-            <div className="flex justify-between items-center px-6 py-4 bg-[#F9F9F9] rounded-t-lg">
+            <div className="flex justify-between items-center px-6 py-4 bg-white dark:bg-gray-800 text-[#053C5E] dark:text-gray-200 font-sans transition-colors duration-200 rounded-t-lg border-b border-[#DDD9D9] dark:border-gray-700">
               <div className="flex gap-3 items-center">
-                <span className="text-[#FF1654]">{tab.icon}</span>
-                <span className="font-semibold text-lg text-[#3E3F5B]">{tab.name}</span>
+                <span className="text-[#FF1654] dark:text-[#FF6B8B]">{tab.icon}</span>
+                <span className="font-semibold text-lg text-[#3E3F5B] dark:text-gray-200">{tab.name}</span>
               </div>
               <span
                 className={`flex justify-center items-center text-white w-8 h-8 rounded-full text-xs font-semibold ${tab.badgeColor} shadow-md transition-all duration-300 transform hover:scale-110`}
@@ -60,7 +60,7 @@ const Tabs = ({
             </div>
 
             {/* Task Cards */}
-            <div className="mt-6 px-6 pb-6">
+            <div className="mt-6 px-6 pb-6 overflow-y-auto flex-1">
               {filteredTasks.length > 0 ? (
                 filteredTasks.map((taskData) => (
                   <Card
@@ -74,7 +74,7 @@ const Tabs = ({
                   />
                 ))
               ) : (
-                <p className="text-gray-500 text-center mt-4">
+                <p className="text-gray-500 dark:text-gray-400 text-center mt-4">
                   {searchQuery ? "No matching tasks found" : "No tasks here"}
                 </p>
               )}

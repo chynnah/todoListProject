@@ -21,11 +21,11 @@ if (!isset($_SESSION["user_id"])) {
 
 $user_id = $_SESSION["user_id"];
 
-// Get all non-archived tasks for the user
+// Get all archived tasks for the user
 $sql = "SELECT t.*, c.name as category FROM tasks t 
         LEFT JOIN categories c ON t.category_id = c.id 
-        WHERE t.user_id = ? AND (t.is_archived = 0 OR t.is_archived IS NULL) 
-        ORDER BY t.created_at DESC";
+        WHERE t.user_id = ? AND t.is_archived = 1 
+        ORDER BY t.archived_at DESC";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
@@ -42,4 +42,3 @@ if ($result->num_rows > 0) {
 } else {
     echo json_encode(["success" => true, "tasks" => []]);
 }
-?>

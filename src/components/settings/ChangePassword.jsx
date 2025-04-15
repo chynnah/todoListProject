@@ -1,102 +1,182 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import { X, Lock, CheckCircle, AlertCircle, Save } from "lucide-react"; // Added Save to imports
 
 const ChangePassword = ({ isOpen, onClose }) => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
-  const [messageColor, setMessageColor] = useState("text-red-500"); 
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const userId = localStorage.getItem("user_id");
 
   const handleChangePassword = async () => {
-    if (newPassword !== confirmPassword) {
-      setMessage("Passwords do not match.");
-      setMessageColor("text-red-500"); 
+    setIsLoading(true);
+    setMessage("");
+
+    // Validation
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setMessage("Please fill in all fields");
+      setIsLoading(false);
       return;
     }
 
-    const response = await fetch("http://localhost:3000/backend/api/users/change_password.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        user_id: 1, 
-        current_password: currentPassword,
-        new_password: newPassword,
-      }),
-    });
+    if (newPassword !== confirmPassword) {
+      setMessage("Passwords do not match");
+      setIsLoading(false);
+      return;
+    }
 
-    const result = await response.json();
-    setMessage(result.message);
+    if (newPassword.length < 8) {
+      setMessage("Password must be at least 8 characters");
+      setIsLoading(false);
+      return;
+    }
 
-    if (result.status === "success") {
-      setMessageColor("text-green-500"); 
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
+    try {
+      const response = await fetch("http://localhost:3000/backend/api/users/change_password.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: userId,
+          current_password: currentPassword,
+          new_password: newPassword,
+        }),
+      });
 
-      setTimeout(onClose, 2000); 
-    } else {
-      setMessageColor("text-red-500"); 
+      const result = await response.json();
+
+      if (result.success) {
+        setMessage("Password changed successfully!");
+        setIsSuccess(true);
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        setTimeout(onClose, 2000);
+      } else {
+        setMessage(result.message || "Failed to change password");
+        setIsSuccess(false);
+      }
+    } catch (error) {
+      setMessage("An error occurred. Please try again.");
+      setIsSuccess(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-      <div className="bg-[#FDFAF6] rounded-tl-[50px] rounded-tr-[8px] rounded-b-[8px] p-6 w-[500px] shadow-lg relative">
-        {/* Title */}
-        <div className="relative bg-[#FF1654] w-60 text-white pt-3 pb-3 rounded-tl-[50px] rounded-tr-[50px] rounded-br-[50px] rounded-bl-[8px] mb-8">
-          <h2 className="text-lg font-medium text-center">Change your password</h2>
-        </div>
-
-        {/* Lock Icon */}
-        <div className="flex justify-center mb-5">
-          <span className="text-6xl">🔐</span>
-        </div>
-
-        {/* Message */}
-        {message && <p className={`text-sm text-center mb-3 ${messageColor}`}>{message}</p>}
-
-        {/* Input Fields */}
-        <div className="space-y-3">
-          <input
-            type="password"
-            placeholder="Current Password"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            className="w-full p-3 bg-[#EDEDED] text-sm font-medium rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
-          />
-          <input
-            type="password"
-            placeholder="New Password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            className="w-full p-3 bg-[#EDEDED] text-sm font-medium rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
-          />
-          <input
-            type="password"
-            placeholder="Confirm New Password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-full p-3 bg-[#EDEDED] text-sm font-medium rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
-          />
-        </div>
-
-        {/* Buttons */}
-        <div className="mt-6 flex justify-end space-x-3">
+    <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg w-full max-w-md relative border border-gray-200 dark:border-gray-700 transition-all duration-300">
+        {/* Header with close button */}
+        <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-semibold text-[#053C5E] dark:text-gray-200">
+            Change Password
+          </h2>
           <button
-            className="bg-[#FF1654] text-white px-4 py-2 rounded-md cursor-pointer hover:bg-[#6B6DA6] transition"
-            onClick={handleChangePassword}
-          >
-            Update Password
-          </button>
-
-          <button 
-            className="px-4 py-2 rounded-md border border-[#DDD9D9] cursor-pointer" 
             onClick={onClose}
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+            disabled={isLoading}
           >
-            Cancel
+            <X size={20} />
           </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6">
+          {/* Icon */}
+          <div className="flex justify-center mb-5">
+            <div className="p-3 bg-[#A31621]/10 dark:bg-[#FF4757]/20 rounded-full">
+              <Lock className="text-[#A31621] dark:text-[#FF4757]" size={32} />
+            </div>
+          </div>
+
+          {/* Message */}
+          {message && (
+            <div
+              className={`flex items-center gap-2 mb-4 p-3 rounded-lg ${
+                isSuccess
+                  ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
+                  : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
+              }`}
+            >
+              {isSuccess ? (
+                <CheckCircle size={18} />
+              ) : (
+                <AlertCircle size={18} />
+              )}
+              <span className="text-sm">{message}</span>
+            </div>
+          )}
+
+          {/* Input Fields */}
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-[#053C5E] dark:text-gray-300 mb-1">
+                Current Password
+              </label>
+              <input
+                type="password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-lg border border-[#A9BFA8] dark:border-gray-600 bg-white dark:bg-gray-700 text-[#053C5E] dark:text-gray-200 focus:ring-2 focus:ring-[#A9BFA8] focus:border-transparent transition-all duration-200 disabled:opacity-70"
+                disabled={isLoading}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[#053C5E] dark:text-gray-300 mb-1">
+                New Password
+              </label>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-lg border border-[#A9BFA8] dark:border-gray-600 bg-white dark:bg-gray-700 text-[#053C5E] dark:text-gray-200 focus:ring-2 focus:ring-[#A9BFA8] focus:border-transparent transition-all duration-200 disabled:opacity-70"
+                disabled={isLoading}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[#053C5E] dark:text-gray-300 mb-1">
+                Confirm New Password
+              </label>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-lg border border-[#A9BFA8] dark:border-gray-600 bg-white dark:bg-gray-700 text-[#053C5E] dark:text-gray-200 focus:ring-2 focus:ring-[#A9BFA8] focus:border-transparent transition-all duration-200 disabled:opacity-70"
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="mt-8 flex justify-end gap-3">
+            <button
+              className="flex items-center gap-1.5 px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-[#053C5E] dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 font-medium disabled:opacity-70"
+              onClick={onClose}
+              disabled={isLoading}
+            >
+              Cancel
+            </button>
+            <button
+              className="flex items-center gap-1.5 px-4 py-2.5 bg-[#A31621] dark:bg-[#FF4757] text-white rounded-lg hover:bg-[#8A1320] dark:hover:bg-[#E03E4E] transition-colors duration-200 font-medium disabled:opacity-70"
+              onClick={handleChangePassword}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <span className="inline-block h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+              ) : (
+                <>
+                  <Save size={16} />
+                  Update Password
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>

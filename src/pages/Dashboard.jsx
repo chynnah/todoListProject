@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Tabs from "../components/Tabs";
 import Input from "../components/Input";
-import { Plus } from "lucide-react";
+import { Plus, Filter, ChevronDown } from "lucide-react";
+import TaskLegend from "../components/TaskLegend";
+import { useTheme } from "../lib/theme";
 
 const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -11,6 +13,8 @@ const Dashboard = () => {
   const [categories, setCategories] = useState([]);  
   const [tasks, setTasks] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const username = localStorage.getItem("username");
   const navigate = useNavigate();
 
@@ -92,11 +96,14 @@ const Dashboard = () => {
       .then((data) => {
         if (data.success) {
           fetchTasks();
-        } else {
-          console.error("Error adding task:", data.message);
-        }
-      })
-      .catch((err) => console.error("Request failed:", err));
+        setIsModalOpen(false);
+        setEditingTask(null);
+        setSelectedCategory('All');
+      } else {
+        console.error("Error adding task:", data.message);
+      }
+    })
+    .catch((err) => console.error("Request failed:", err));
   };
   
   // Update task
@@ -118,9 +125,9 @@ const Dashboard = () => {
       });
   };
 
-  // Delete task
-  const deleteTask = (taskId) => {
-    fetch("http://localhost:3000/backend/api/tasks/delete_task.php", {
+  // Archive task (instead of delete)
+  const archiveTask = (taskId) => {
+    fetch("http://localhost:3000/backend/api/tasks/archive_task.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -130,9 +137,11 @@ const Dashboard = () => {
       .then((data) => {
         if (data.success) {
           fetchTasks();
+        } else {
+          console.error("Error archiving task:", data.message);
         }
       })
-      .catch((err) => console.error("Error deleting task:", err));
+      .catch((err) => console.error("Error archiving task:", err));
   };
 
   // Edit task
@@ -161,39 +170,103 @@ const Dashboard = () => {
                 : task
             )
           );
+          setIsModalOpen(false);
+          setEditingTask(null);
         }
       })
       .catch((err) => console.error("Error editing task:", err));
   };
   
+  // Filter tasks by category
+  const filteredTasks = tasks.filter(task => 
+    selectedCategory === 'All' || task.category === selectedCategory
+  );
+  
+  // Get unique categories from tasks
+  const uniqueCategories = ['All', ...new Set(tasks.map(task => task.category).filter(Boolean))];
+  
+  // Toggle dropdown
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+  
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isDropdownOpen && !event.target.closest('.dropdown-container')) {
+        setIsDropdownOpen(false);
+      }
+    };
+    
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
+  
   return (
-    <div>
+    <div className="bg-white dark:bg-gray-900 text-[#053C5E] dark:text-gray-200 font-sans transition-colors min-h-screen">
       <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-      <div className="flex mt-[10px] mr-[68px] justify-end">
-        <div className="bg-[#FF1654] px-[80px] py-[20px] rounded-tl-[50px] rounded-bl-[50px] rounded-tr-[50px] flex justify-center items-center">
-          <h1 className="text-[#FDFAF6] text-[27px] font-medium">Welcome back, {username}!</h1>
+      <div className="flex mt-[10px] mr-[80px] justify-end">
+        <div className="bg-[#A31621] px-[60px] py-[15px] rounded-tl-[50px] rounded-bl-[50px] rounded-tr-[50px] flex justify-center items-center dark:bg-[#FF4757]">
+          <h1 className="text-white text-[20px] font-medium">Welcome back, {username}!</h1>
         </div>
       </div>
+      <TaskLegend />
 
-      <div className="ml-[40px]">
+      <div className="ml-[40px] flex justify-between items-center pr-10 mt-4">
         <button 
           className="h-12 w-52 flex justify-center items-center gap-3 cursor-pointer rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 group ml-[10px]"
           onClick={() => setIsModalOpen(true)}
         >
           <Plus
             size={18}
-            className="stroke-[#3E3F5B] group-hover:stroke-[#FF1654] group-active:stroke-[#FF1654] transition-all duration-300"
+            className="stroke-[#053C5E]/70 group-hover:stroke-[#3A3960] group-active:stroke-[#3A3960] transition-all duration-300 dark:stroke-white"
           />
-          <h4 className="text-[#3E3F5B] group-hover:text-[#FF1654] group-active:text-[#FF1654] font-semibold text-lg transition-all duration-300">
+          <h4 className="text-[#053C5E]/70 group-hover:text-[#3A3960] group-active:text-[#3A3960] font-semibold text-lg transition-all duration-300 dark:text-white">
             Add New Task
           </h4>
         </button>
+        
+        <div className="dropdown-container relative">
+        <button 
+          className="h-10 px-5 bg-white hover:bg-[#A9BFA8]/30 text-[#053C5E]/70 font-medium text-sm rounded-lg transition-all duration-300 flex items-center gap-2 mr-[40px] border border-[#A9BFA8] dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700 max-w-xs"
+          onClick={toggleDropdown}
+        >
+          <Filter size={16} className="dark:text-gray-300 flex-shrink-0" />
+          <span className="truncate">Category: {selectedCategory}</span>
+          <ChevronDown size={16} className={`transition-transform duration-300 ${isDropdownOpen ? "rotate-180" : ""} dark:text-gray-300 flex-shrink-0`} />
+        </button>
+          
+          {isDropdownOpen && (
+            <div className="absolute right-0 mt-2 w-full min-w-[200px] bg-white rounded-lg shadow-lg border border-[#A9BFA8] z-50 dark:bg-gray-800 dark:border-gray-600">
+              <ul className="py-2">
+                {uniqueCategories.map((category, index) => (
+                  <li 
+                    key={index}
+                    className={`px-4 py-2 hover:bg-[#FAFFC5] cursor-pointer transition-colors duration-200 dark:hover:bg-gray-700 ${
+                      selectedCategory === category 
+                        ? 'bg-[#A9BFA8]/20 text-[#3A3960] font-medium dark:bg-gray-600 dark:text-white' 
+                        : 'dark:text-gray-300'
+                    }`}
+                    onClick={() => {
+                      setSelectedCategory(category);
+                      setIsDropdownOpen(false);
+                    }}
+                  >
+                    {category}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
 
       <Tabs
-        tasks={tasks}
+        tasks={filteredTasks}
         updateTaskStatus={updateTaskStatus}
-        deleteTask={deleteTask}
+        deleteTask={archiveTask}
         editTask={editTask}
         setEditingTask={setEditingTask}
         setIsModalOpen={setIsModalOpen}
