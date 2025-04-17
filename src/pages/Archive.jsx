@@ -150,6 +150,11 @@ const Archive = () => {
     );
   };
 
+  // Handle search change
+  const handleSearchChange = (value) => {
+    setSearchQuery(value);
+  };
+
   // Filter tasks based on search query and category
   const filteredTasks = archivedTasks.filter(task => {
     const matchesSearch = 
@@ -169,26 +174,26 @@ const Archive = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-900 text-[#053C5E] dark:text-gray-200 font-sans transition-colors min-h-screen p-6">
+    <div className="bg-white dark:bg-gray-900 text-[#053C5E] dark:text-gray-200 font-sans transition-colors min-h-screen p-6 ">
       {/* Search and Filter Section - Right aligned */}
-      <div className="flex justify-end mb-6">
+      <div className="flex justify-end mb-6 ">
         <div className="flex items-center gap-4">
-          {/* Search Input */}
-          <div className="relative ">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#053C5E]/70 dark:text-gray-400">
-              <Search className="h-5 w-5" />
-            </div>
+          {/* Updated Search Input to match Search.jsx design */}
+          <div className="border border-[#DDD9D9] relative dark:bg-gray-900 dark:bg-gray-700 dark:border-gray-700 rounded-lg">
             <input
               type="text"
-              className="w-64 pl-10 pr-3 py-2.5 border border-[#A9BFA8] rounded-lg bg-white dark:bg-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A9BFA8] focus:border-transparent text-[#053C5E] dark:text-gray-200 placeholder-[#053C5E]/70 dark:placeholder-gray-400 transition-all duration-200"
-              placeholder="Search archived tasks..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              placeholder="Search for task..."
+              className="px-3 py-1.5 md:px-4 md:py-2 w-full md:w-[250px] lg:w-[300px] rounded-lg focus:outline-none focus:ring-1 md:focus:ring-2 focus:ring-[#FF1654] placeholder-gray-500 text-sm md:text-base dark:bg-gray-800 dark:text-white"
             />
+            <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-[#FF1654] text-sm md:text-base">
+              🔍
+            </div>
           </div>
 
           {/* Category Dropdown */}
-          <div className="dropdown-container relative">
+          <div className="dropdown-container relative mr-[85px]">
             <button 
               className="h-10 px-5 bg-white hover:bg-[#A9BFA8]/30 text-[#053C5E]/70 font-medium text-sm rounded-lg transition-all duration-300 flex items-center justify-between gap-2 border border-[#A9BFA8] dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700"
               onClick={toggleDropdown}
@@ -224,7 +229,7 @@ const Archive = () => {
       </div>
 
       {/* Content Section */}
-      <div>
+      <div className='mx-[60px]'>
         {loading ? (
           <div className="flex justify-center items-center h-64">
             <div className="animate-pulse flex flex-col items-center">
@@ -241,7 +246,7 @@ const Archive = () => {
             <p className="mb-6 text-[#053C5E]/70 dark:text-gray-400">No tasks match your search criteria</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mx-6">
             {filteredTasks.map((task) => {
               const categoryName = task.category && task.category !== "null" ? task.category : "Uncategorized";
               const categoryEmoji = categoryEmojis[categoryName] || "📌";

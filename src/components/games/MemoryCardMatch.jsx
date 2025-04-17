@@ -1,333 +1,195 @@
-import React, { useState, useEffect } from 'react';
-import { Trophy, Clock, Zap, Loader2 } from 'lucide-react';
-
-// Emoji cards organized by difficulty level
-const cardSets = {
-  easy: [
-    { value: '🐶', name: 'dog' },
-    { value: '🐱', name: 'cat' },
-    { value: '🐰', name: 'rabbit' },
-    { value: '🐼', name: 'panda' },
-    { value: '🦊', name: 'fox' },
-    { value: '🦁', name: 'lion' },
-  ],
-  medium: [
-    { value: '🍎', name: 'apple' },
-    { value: '🍌', name: 'banana' },
-    { value: '🍓', name: 'strawberry' },
-    { value: '🍇', name: 'grapes' },
-    { value: '🍉', name: 'watermelon' },
-    { value: '🍒', name: 'cherries' },
-    { value: '🥑', name: 'avocado' },
-    { value: '🍍', name: 'pineapple' },
-  ],
-  hard: [
-    { value: '🚗', name: 'car' },
-    { value: '🚲', name: 'bicycle' },
-    { value: '✈️', name: 'airplane' },
-    { value: '⛵', name: 'sailboat' },
-    { value: '🚀', name: 'rocket' },
-    { value: '🚂', name: 'train' },
-    { value: '🚁', name: 'helicopter' },
-    { value: '🛵', name: 'scooter' },
-    { value: '🚢', name: 'ship' },
-    { value: '🏍️', name: 'motorcycle' },
-  ]
-};
+import React, { useState, useEffect } from "react";
+import { RotateCcw, Clock } from "lucide-react";
 
 const MemoryCardMatch = () => {
-  const [difficulty, setDifficulty] = useState('easy');
   const [cards, setCards] = useState([]);
   const [flipped, setFlipped] = useState([]);
-  const [matched, setMatched] = useState([]);
+  const [solved, setSolved] = useState([]);
+  const [disabled, setDisabled] = useState(false);
   const [moves, setMoves] = useState(0);
   const [gameStarted, setGameStarted] = useState(false);
   const [gameCompleted, setGameCompleted] = useState(false);
   const [timer, setTimer] = useState(0);
   const [timerInterval, setTimerInterval] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [bestScores, setBestScores] = useState({
-    easy: localStorage.getItem('memoryGameBestEasy') || '—',
-    medium: localStorage.getItem('memoryGameBestMedium') || '—',
-    hard: localStorage.getItem('memoryGameBestHard') || '—',
-  });
 
-  // Initialize cards based on difficulty
+  // Card emojis with their corresponding ids
+  const cardEmojis = [
+    { id: 1, emoji: "🐶" },
+    { id: 2, emoji: "🐱" },
+    { id: 3, emoji: "🐭" },
+    { id: 4, emoji: "🐹" },
+    { id: 5, emoji: "🐰" },
+    { id: 6, emoji: "🦊" },
+    { id: 7, emoji: "🐻" },
+    { id: 8, emoji: "🐼" },
+  ];
+
+  // Initialize/reset game
   const initializeGame = () => {
-    setIsLoading(true);
+    // Create a duplicate set of cards and assign unique keys
+    const duplicatedCards = [...cardEmojis, ...cardEmojis].map((card, index) => ({
+      ...card,
+      key: `${card.id}-${index}`,
+      flipped: false,
+      solved: false,
+    }));
+
+    // Shuffle the cards
+    const shuffledCards = duplicatedCards.sort(() => Math.random() - 0.5);
+    
+    // Reset game state
+    setCards(shuffledCards);
     setFlipped([]);
-    setMatched([]);
+    setSolved([]);
+    setDisabled(false);
     setMoves(0);
-    setTimer(0);
     setGameCompleted(false);
+    setTimer(0);
     
     if (timerInterval) {
       clearInterval(timerInterval);
       setTimerInterval(null);
     }
-
-    // Create a pair of each card for the selected difficulty
-    let selectedCards = cardSets[difficulty];
     
-    // For beginner, use fewer cards
-    if (difficulty === 'easy') {
-      selectedCards = selectedCards.slice(0, 4);
-    } else if (difficulty === 'medium') {
-      selectedCards = selectedCards.slice(0, 6);
-    }
-    
-    // Create pairs and shuffle
-    const cardPairs = [...selectedCards, ...selectedCards].map((card, index) => ({
-      id: index,
-      value: card.value,
-      name: card.name,
-      isMatched: false,
-      isFlipped: false
-    }));
-    
-    // Fisher-Yates shuffle
-    for (let i = cardPairs.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [cardPairs[i], cardPairs[j]] = [cardPairs[j], cardPairs[i]];
-    }
-    
-    setTimeout(() => {
-      setCards(cardPairs);
-      setIsLoading(false);
-    }, 500);
+    setGameStarted(false);
   };
 
-  // Start game and timer
-  const startGame = () => {
-    setGameStarted(true);
-    initializeGame();
+  // Start the game timer
+  const startTimer = () => {
+    if (timerInterval) return;
     
-    // Start the timer
     const interval = setInterval(() => {
-      setTimer(prevTimer => prevTimer + 1);
+      setTimer(prev => prev + 1);
     }, 1000);
     
     setTimerInterval(interval);
   };
 
-  const flipCard = (index) => {
-    // Prevent flipping if already 2 cards are flipped, or this card is already flipped/matched
-    if (flipped.length === 2) return;
-    if (flipped.includes(index)) return;
-    if (matched.includes(index)) return;
+  // Handle card click
+  const handleCardClick = (clickedIndex) => {
+    // Prevent clicking if game is disabled or card is already flipped/solved
+    if (
+      disabled || 
+      flipped.includes(clickedIndex) || 
+      solved.includes(clickedIndex)
+    ) return;
     
-    setFlipped([...flipped, index]);
+    // Start game and timer on first click
+    if (!gameStarted) {
+      setGameStarted(true);
+      startTimer();
+    }
     
-    // Check for match when 2 cards are flipped
-    if (flipped.length === 1) {
-      setMoves(prevMoves => prevMoves + 1);
+    // Flip the card
+    const newFlipped = [...flipped, clickedIndex];
+    setFlipped(newFlipped);
+    
+    // If this is the second card flipped
+    if (newFlipped.length === 2) {
+      setDisabled(true);
+      setMoves(prev => prev + 1);
       
-      const firstCardIndex = flipped[0];
-      const secondCardIndex = index;
+      const [firstIndex, secondIndex] = newFlipped;
+      const firstCard = cards[firstIndex];
+      const secondCard = cards[secondIndex];
       
-      if (cards[firstCardIndex].value === cards[secondCardIndex].value) {
-        setMatched([...matched, firstCardIndex, secondCardIndex]);
+      // Check if cards match
+      if (firstCard.id === secondCard.id) {
+        setSolved(prev => [...prev, firstIndex, secondIndex]);
         setFlipped([]);
+        setDisabled(false);
       } else {
-        // Flip back after a delay if no match
+        // If cards don't match, flip them back after a delay
         setTimeout(() => {
           setFlipped([]);
-        }, 800);
+          setDisabled(false);
+        }, 1000);
       }
     }
   };
-  
-  // Check for game completion
+
+  // Check if game is completed
   useEffect(() => {
-    if (gameStarted && matched.length > 0 && matched.length === cards.length) {
+    if (solved.length === cards.length && cards.length > 0) {
       setGameCompleted(true);
-      clearInterval(timerInterval);
-      
-      // Update best score if faster
-      const currentScore = `${moves} moves in ${formatTime(timer)}`;
-      const currentKey = `memoryGameBest${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`;
-      
-      // Save best score if it's the first one or better than previous
-      if (bestScores[difficulty] === '—' || timer < parseInt(localStorage.getItem(`memoryGameTime${difficulty}`))) {
-        localStorage.setItem(currentKey, currentScore);
-        localStorage.setItem(`memoryGameTime${difficulty}`, timer.toString());
-        
-        setBestScores({
-          ...bestScores,
-          [difficulty]: currentScore
-        });
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        setTimerInterval(null);
       }
     }
-  }, [matched, cards, gameStarted, timerInterval, moves, timer, difficulty, bestScores]);
-  
-  // Format timer as MM:SS
+  }, [solved, cards, timerInterval]);
+
+  // Initialize game on component mount
+  useEffect(() => {
+    initializeGame();
+    return () => {
+      if (timerInterval) clearInterval(timerInterval);
+    };
+  }, []);
+
+  // Format timer display
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
-  
+
   return (
-    <div className="flex flex-col h-full">
-      {!gameStarted ? (
-        <div className="flex flex-col items-center justify-center h-full space-y-6">
-          <h1 className="text-2xl font-bold text-[#FF1654]">Memory Card Match</h1>
-          
-          <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-md">
-            <h2 className="text-lg font-semibold text-[#283D3B] mb-4">Select Difficulty</h2>
-            
-            <div className="grid grid-cols-3 gap-3 mb-6">
-              {['easy', 'medium', 'hard'].map((level) => (
-                <button
-                  key={level}
-                  onClick={() => setDifficulty(level)}
-                  className={`px-4 py-2 rounded-lg transition-all font-medium ${
-                    difficulty === level 
-                      ? 'bg-[#FF1654] text-white' 
-                      : 'bg-gray-100 text-[#283D3B] hover:bg-gray-200'
-                  }`}
-                >
-                  {level.charAt(0).toUpperCase() + level.slice(1)}
-                </button>
-              ))}
-            </div>
-            
-            <div className="bg-gray-50 p-4 rounded-lg mb-6">
-              <h3 className="text-sm font-semibold text-[#283D3B] mb-2 flex items-center">
-                <Trophy size={16} className="mr-1 text-[#FF1654]" /> Best Scores
-              </h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span>Easy:</span>
-                  <span className="font-medium">{bestScores.easy}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Medium:</span>
-                  <span className="font-medium">{bestScores.medium}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Hard:</span>
-                  <span className="font-medium">{bestScores.hard}</span>
-                </div>
-              </div>
-            </div>
-            
-            <button
-              onClick={startGame}
-              className="w-full bg-[#FF1654] text-white rounded-lg py-2.5 px-4 hover:bg-opacity-90 transition duration-300 flex items-center justify-center gap-2 font-medium shadow-sm"
-            >
-              <Zap size={16} /> Start Game
-            </button>
+    <div className="w-full">
+      {/* Game stats */}
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1 bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400 py-1 px-2 rounded-md text-sm">
+            <Clock size={14} /> {formatTime(timer)}
+          </div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            Moves: <span className="font-semibold">{moves}</span>
           </div>
         </div>
-      ) : (
-        <div className="flex flex-col h-full">
-          {/* Game header */}
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold text-[#FF1654]">Memory Match</h2>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1 text-[#283D3B] bg-gray-100 px-3 py-1 rounded-lg">
-                <Clock size={16} className="text-[#FF1654]" />
-                <span className="font-medium">{formatTime(timer)}</span>
-              </div>
-              <div className="flex items-center gap-1 text-[#283D3B] bg-gray-100 px-3 py-1 rounded-lg">
-                <Zap size={16} className="text-[#FF1654]" />
-                <span className="font-medium">{moves} Moves</span>
-              </div>
-            </div>
-          </div>
-          
-          {isLoading ? (
-            <div className="flex-1 flex items-center justify-center">
-              <Loader2 size={48} className="animate-spin text-[#FF1654]" />
-            </div>
-          ) : gameCompleted ? (
-            <div className="flex-1 flex flex-col items-center justify-center space-y-6 bg-gray-50 rounded-xl p-8">
-              <div className="text-4xl">🎉</div>
-              <h2 className="text-2xl font-bold text-[#FF1654]">Congratulations!</h2>
-              <div className="text-center">
-                <p className="text-lg text-[#283D3B] mb-2">You completed the {difficulty} level</p>
-                <p className="text-[#283D3B] font-medium">
-                  {moves} moves in {formatTime(timer)}
-                </p>
-              </div>
-              
-              <div className="flex gap-3 mt-4">
-                <button
-                  onClick={() => {
-                    setGameStarted(false);
-                    setTimerInterval(null);
-                  }}
-                  className="px-4 py-2 bg-gray-200 text-[#283D3B] rounded-lg hover:bg-gray-300 transition"
-                >
-                  Change Level
-                </button>
-                <button
-                  onClick={() => startGame()}
-                  className="px-4 py-2 bg-[#FF1654] text-white rounded-lg hover:bg-opacity-90 transition flex items-center gap-2"
-                >
-                  <Zap size={16} /> Play Again
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="flex-1 flex items-center justify-center">
-              <div className={`grid gap-3 ${
-                difficulty === 'easy' ? 'grid-cols-4' : 
-                difficulty === 'medium' ? 'grid-cols-4 md:grid-cols-5' : 
-                'grid-cols-4 md:grid-cols-5 lg:grid-cols-6'
-              }`}>
-                {cards.map((card, index) => (
-                  <button
-                    key={index}
-                    onClick={() => flipCard(index)}
-                    disabled={flipped.includes(index) || matched.includes(index)}
-                    className={`card w-16 h-16 sm:w-20 sm:h-20 ${
-                      flipped.includes(index) || matched.includes(index) 
-                        ? 'bg-white' : 'bg-[#FF1654]'
-                    } ${
-                      matched.includes(index) ? 'bg-green-100' : ''
-                    } rounded-lg flex items-center justify-center text-3xl font-bold transition-all duration-300 shadow-md hover:shadow-lg transform ${
-                      flipped.includes(index) || matched.includes(index) ? 'rotate-0' : ''
-                    } ${
-                      flipped.includes(index) && !matched.includes(index) ? 'ring-2 ring-[#FF1654]' : ''
-                    }`}
-                  >
-                    {flipped.includes(index) || matched.includes(index) ? (
-                      <span className="transition-all duration-300 transform scale-100">
-                        {card.value}
-                      </span>
-                    ) : (
-                      <span className="text-white">?</span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-          
-          {/* Game footer (only show when game is active and not completed) */}
-          {gameStarted && !gameCompleted && !isLoading && (
-            <div className="mt-6 flex justify-between">
-              <button
-                onClick={() => {
-                  setGameStarted(false);
-                  clearInterval(timerInterval);
-                }}
-                className="text-[#283D3B] hover:text-[#FF1654] transition"
-              >
-                Exit Game
-              </button>
-              <button
-                onClick={initializeGame}
-                className="text-[#FF1654] font-medium hover:underline transition"
-              >
-                Restart
-              </button>
-            </div>
-          )}
+        
+        <button
+          onClick={initializeGame}
+          className="flex items-center gap-1 text-sm bg-green-100 text-green-600 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-900/40 py-1.5 px-3 rounded-lg transition-colors"
+        >
+          <RotateCcw size={14} /> New Game
+        </button>
+      </div>
+
+      {/* Game completed message */}
+      {gameCompleted && (
+        <div className="mb-4 p-3 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-lg text-center">
+          <p className="font-medium">Congratulations! You completed the game!</p>
+          <p className="text-sm">Time: {formatTime(timer)} | Moves: {moves}</p>
         </div>
       )}
+
+      {/* Game board */}
+      <div className="grid grid-cols-4 gap-2">
+        {cards.map((card, index) => (
+          <button
+            key={card.key}
+            onClick={() => handleCardClick(index)}
+            className={`aspect-square rounded-lg transition-all transform ${
+              flipped.includes(index) || solved.includes(index)
+                ? "bg-green-100 dark:bg-green-900/30 shadow-md rotate-y-180"
+                : "bg-gradient-to-br from-emerald-500 to-green-600 dark:from-emerald-600 dark:to-green-700"
+            } ${
+              solved.includes(index)
+                ? "ring-2 ring-green-500 dark:ring-green-400"
+                : ""
+            }`}
+            disabled={disabled || solved.includes(index)}
+          >
+            <div className="h-full w-full flex items-center justify-center">
+              {(flipped.includes(index) || solved.includes(index)) ? (
+                <span className="text-2xl">{card.emoji}</span>
+              ) : (
+                <span className="text-white text-2xl">?</span>
+              )}
+            </div>
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

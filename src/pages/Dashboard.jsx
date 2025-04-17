@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Tabs from "../components/Tabs";
 import Input from "../components/Input";
-import { Plus, Filter, ChevronDown } from "lucide-react";
+import { Plus, Filter, ChevronDown, Sparkles } from "lucide-react";
 import TaskLegend from "../components/TaskLegend";
 import { useTheme } from "../lib/theme";
 
@@ -17,6 +17,14 @@ const Dashboard = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const username = localStorage.getItem("username");
   const navigate = useNavigate();
+
+  // Get greeting emoji based on time of day
+  const getGreetingEmoji = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "🌅"; // morning
+    if (hour < 18) return "☀️"; // afternoon
+    return "🌙"; // evening
+  };
 
   useEffect(() => {
     if (!localStorage.getItem("user_id")) {
@@ -207,16 +215,25 @@ const Dashboard = () => {
   return (
     <div className="bg-white dark:bg-gray-900 text-[#053C5E] dark:text-gray-200 font-sans transition-colors min-h-screen">
       <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+      
+      {/* Compact Welcome Banner */}
       <div className="flex mt-[10px] mr-[80px] justify-end">
-        <div className="bg-[#A31621] px-[60px] py-[15px] rounded-tl-[50px] rounded-bl-[50px] rounded-tr-[50px] flex justify-center items-center dark:bg-[#FF4757]">
-          <h1 className="text-white text-[20px] font-medium">Welcome back, {username}!</h1>
+        <div className="bg-gradient-to-r from-[#A31621] to-[#D64045] dark:from-[#FF4757] dark:to-[#FF6B6B] 
+                       px-[30px] py-[15px] rounded-tl-[25px] rounded-bl-[25px] rounded-tr-[25px] 
+                       flex items-center gap-2 shadow-md">
+          <span className="text-lg">{getGreetingEmoji()}</span>
+          <h1 className="text-white text-[20px] font-medium flex items-center gap-2">
+            Welcome back, {username}! 
+            <Sparkles size={16} className="text-yellow-300" />
+          </h1>
         </div>
       </div>
+      
       <TaskLegend />
 
       <div className="ml-[40px] flex justify-between items-center pr-10 mt-4">
         <button 
-          className="h-12 w-52 flex justify-center items-center gap-3 cursor-pointer rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 group ml-[10px]"
+          className="h-12 w-52 flex justify-center items-center gap-3 cursor-pointer rounded-lg transition-all transform hover:scale-105 active:scale-95 group ml-[10px]"
           onClick={() => setIsModalOpen(true)}
         >
           <Plus

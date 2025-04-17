@@ -8,6 +8,7 @@ import Chart from './pages/Chart';
 import Landing from './pages/Landing';
 import Archive from './pages/Archive';
 import Entertainment from './pages/Entertainment';
+import ResetPassword from './components/auth/ResetPassword';
 
 
 const ProtectedRoute = ({ element }) => {
@@ -38,6 +39,7 @@ const RoutesComponent = () => {
             <Route path="/dashboard/chart" element={<Chart />} />
             <Route path="/dashboard/archive" element={<Archive />} />
             <Route path="/dashboard/entertainment" element={<Entertainment/>} />
+            <Route path="/reset-password" element={<ResetPassword />} />
           </Route>
         </Routes>
       </BrowserRouter>

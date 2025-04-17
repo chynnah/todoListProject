@@ -9,6 +9,10 @@
 body {
   font-family: 'Istok Web', sans-serif !important;
 }
+html {
+  scroll-behavior: smooth;
+}
+
 
 
 :root {

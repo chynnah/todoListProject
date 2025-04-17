@@ -1,10 +1,12 @@
 import { useState } from "react";
 import ManageAccount from "../components/settings/ManageAccount";
 import ChangePassword from "../components/settings/ChangePassword";
+import DeleteAccount from "../components/settings/DeleteAccount";
 
 const Settings = () => {
   const [isManageAccountOpen, setIsManageAccountOpen] = useState(false);
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const [isDeleteAccountOpen, setIsDeleteAccountOpen] = useState(false);
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
@@ -49,7 +51,10 @@ const Settings = () => {
               <h3 className="text-gray-800 dark:text-gray-200 font-semibold text-lg">Delete Account</h3>
               <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">Permanently remove your account and all data.</p>
             </div>
-            <button className="px-5 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 font-medium rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 dark:focus:ring-gray-500">
+            <button 
+              className="px-5 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 font-medium rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 dark:focus:ring-gray-500"
+              onClick={() => setIsDeleteAccountOpen(true)}
+            >
               Delete
             </button>
           </div>
@@ -59,6 +64,7 @@ const Settings = () => {
       {/* Modals */}
       <ManageAccount isOpen={isManageAccountOpen} onClose={() => setIsManageAccountOpen(false)} />
       <ChangePassword isOpen={isChangePasswordOpen} onClose={() => setIsChangePasswordOpen(false)} />
+      <DeleteAccount isOpen={isDeleteAccountOpen} onClose={() => setIsDeleteAccountOpen(false)} />
     </div>
   );
 };

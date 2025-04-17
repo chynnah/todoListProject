@@ -1,4 +1,4 @@
-<?php 
+<?php  
 
 header("Access-Control-Allow-Origin: http://localhost:5173"); 
 header("Content-Type: application/json");
@@ -8,6 +8,11 @@ header("Access-Control-Allow-Credentials: true");
 
 session_start();
 require_once __DIR__ . "/../../config/db.php";
+
+if (!$conn) {
+    echo json_encode(["success" => false, "message" => "Database connection failed."]);
+    exit;
+}
 
 $data = json_decode(file_get_contents("php://input"));
 
@@ -28,29 +33,14 @@ if (!empty($data->username) && !empty($data->password)) {
             $_SESSION["user_id"] = $id;
             $_SESSION["username"] = $db_username;
 
-            // Fetch user notifications
-            $notificationStmt = $conn->prepare("SELECT id, message, read_status FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 10");
-            $notificationStmt->bind_param("i", $id);
-            $notificationStmt->execute();
-            $result = $notificationStmt->get_result();
-            $notifications = [];
-            
-            while ($row = $result->fetch_assoc()) {
-                $notifications[] = [
-                    'id' => $row['id'],
-                    'message' => $row['message'],
-                    'read' => $row['read_status'],
-                ];
-            }
-
+            // Optional: Remove notifications if not needed
             echo json_encode([
                 "success" => true,
                 "message" => "Login successful.",
                 "username" => $db_username,
-                "email" => $db_email, 
-                "user_id" => $id,  
+                "email" => $db_email,
+                "user_id" => $id,
                 "profile_pic" => $profile_pic ?? "/default-profile.png",
-                "notifications" => $notifications, // Include notifications
             ]);
             exit;
         } else {

@@ -171,45 +171,34 @@ const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOp
   
   return (
     <div 
-      className={`relative rounded-lg border shadow-sm hover:shadow-md transition-all duration-300 mb-3
+      className={`relative rounded-lg border shadow-sm hover:shadow-md transition-all duration-300 mb-2 md:mb-3
         ${task.status === "completed" ? "bg-gray-50 dark:bg-gray-800/50" : deadlineStyles.bgColor || "bg-white dark:bg-gray-800"}
         ${searchQuery && (task.task.toLowerCase().includes(searchQuery.toLowerCase()) || 
           (task.category && task.category.toLowerCase().includes(searchQuery.toLowerCase()))) 
-          ? 'ring-2 ring-yellow-300 dark:ring-yellow-500' : 'ring-0'}
+          ? 'ring-1 md:ring-2 ring-yellow-300 dark:ring-yellow-500' : 'ring-0'}
         ${deadlineStyles.cardBorder}
         ${deadlineStyles.cardGlow}
-        ${task.is_favorite ? 'border-l-4 border-l-yellow-400 dark:border-l-yellow-500' : ''}
+        ${task.is_favorite ? 'border-l-2 md:border-l-4 border-l-yellow-400 dark:border-l-yellow-500' : ''}
       `}
     >
-      {/* Deadline indicator - subtle right border gradient */}
-      {deadlineStatus !== "none" && deadlineStatus !== "normal" && task.status !== "completed" && (
-        <div className={`absolute inset-y-0 right-0 w-1 rounded-r-lg ${
-          deadlineStatus === "overdue" 
-            ? "bg-gradient-to-b from-rose-300 to-rose-500 dark:from-rose-600 dark:to-rose-800" 
-            : deadlineStatus === "verySoon"
-            ? "bg-gradient-to-b from-orange-300 to-orange-500 dark:from-orange-500 dark:to-orange-700"
-            : "bg-gradient-to-b from-amber-300 to-amber-500 dark:from-amber-500 dark:to-amber-700"
-        }`}></div>
-      )}
-      
-      {/* Header with category and status */}
-      <div className="flex justify-between items-center px-4 py-3 border-b border-gray-100 dark:border-gray-700">
-        <div className="flex items-center gap-2">
-          <span className="text-base">{categoryEmoji}</span>
-          <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+      {/* Header with category and status - Responsive */}
+      <div className="flex justify-between items-center px-3 md:px-4 py-2 md:py-3 border-b border-gray-100 dark:border-gray-700">
+        <div className="flex items-center gap-1 md:gap-2">
+          <span className="text-sm md:text-base">{categoryEmoji}</span>
+          <span className="text-xs md:text-sm font-medium text-gray-600 dark:text-gray-300">
             {highlightText(categoryName)}
           </span>
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 md:gap-2">
           {task.is_favorite && (
-            <span className="flex items-center gap-1 text-xs font-medium text-yellow-600 dark:text-yellow-400">
-              <StarIcon size={14} className="fill-yellow-400 dark:fill-yellow-500" />
+            <span className="flex items-center gap-1 text-[10px] md:text-xs font-medium text-yellow-600 dark:text-yellow-400">
+              <StarIcon size={12} md:size={14} className="fill-yellow-400 dark:fill-yellow-500" />
               Favorite
             </span>
           )}
           
-          <span className={`text-xs font-medium py-1 px-2.5 rounded-full ${deadlineStyles.badgeColors}`}>
+          <span className={`text-[10px] md:text-xs font-medium py-0.5 px-2 md:py-1 md:px-2.5 rounded-full ${deadlineStyles.badgeColors}`}>
             {task.status === "completed" 
               ? "Completed" 
               : deadlineStatus === "overdue" 
@@ -221,11 +210,11 @@ const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOp
         </div>
       </div>
       
-      {/* Main content */}
-      <div className="p-4">
+      {/* Main content - Responsive */}
+      <div className="p-3 md:p-4">
         {/* Task title */}
         <h3
-          className={`text-base font-medium mb-2 ${
+          className={`text-sm md:text-base font-medium mb-1 md:mb-2 ${
             task.status === "completed" 
               ? "line-through text-gray-400 dark:text-gray-500" 
               : "text-gray-800 dark:text-gray-200"
@@ -234,18 +223,18 @@ const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOp
           {highlightText(task.task)}
         </h3>
         
-        {/* Metadata */}
-        <div className="space-y-2 mb-4">
-          <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
-            <Clock size={12} className="text-gray-400 dark:text-gray-500" />
+        {/* Metadata - Responsive */}
+        <div className="space-y-1 md:space-y-2 mb-2 md:mb-4">
+          <p className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 md:gap-1.5">
+            <Clock size={10} md:size={12} className="text-gray-400 dark:text-gray-500" />
             {task.updated_at
               ? `Updated: ${getRelativeTime(task.updated_at)}`
               : `Created: ${getRelativeTime(task.created_at || Date.now())}`}
           </p>
           
           {task.deadline && (
-            <div className={`flex items-center gap-2 ${deadlineStyles.pulseAnimation}`}>
-              <div className={`px-2.5 py-1 rounded-md text-xs font-medium flex items-center gap-1.5 
+            <div className={`flex flex-col md:flex-row md:items-center gap-1 md:gap-2 ${deadlineStyles.pulseAnimation}`}>
+              <div className={`px-2 py-0.5 md:px-2.5 md:py-1 rounded-md text-[10px] md:text-xs font-medium flex items-center gap-1 md:gap-1.5 
                 ${task.status === "completed" ? "bg-gray-100 dark:bg-gray-800" : 
                 deadlineStatus === "overdue" ? "bg-rose-100/70 dark:bg-rose-900/20" :
                 deadlineStatus === "verySoon" ? "bg-orange-100/70 dark:bg-orange-900/20" :
@@ -253,17 +242,17 @@ const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOp
                 "bg-gray-100 dark:bg-gray-800"}`}
               >
                 {deadlineStatus === "overdue" && task.status !== "completed" ? (
-                  <ClockIcon size={12} className={deadlineStyles.deadlineIcon} />
+                  <ClockIcon size={10} md:size={12} className={deadlineStyles.deadlineIcon} />
                 ) : deadlineStatus === "verySoon" && task.status !== "completed" ? (
-                  <AlertCircleIcon size={12} className={deadlineStyles.deadlineIcon} />
+                  <AlertCircleIcon size={10} md:size={12} className={deadlineStyles.deadlineIcon} />
                 ) : (
-                  <Calendar size={12} className={deadlineStyles.deadlineIcon} />
+                  <Calendar size={10} md:size={12} className={deadlineStyles.deadlineIcon} />
                 )}
                 <span className={deadlineStyles.deadlineText}>
                   {getTimeUntilDeadline()}
                 </span>
               </div>
-              <span className="text-xs text-gray-500 dark:text-gray-400">
+              <span className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400">
                 {new Date(task.deadline).toLocaleDateString()} {new Date(task.deadline).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
               </span>
             </div>
@@ -271,10 +260,10 @@ const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOp
         </div>
       </div>
       
-      {/* Action buttons */}
-      <div className="flex justify-between items-center bg-gray-50/80 dark:bg-gray-800/50 px-4 py-3 border-t border-gray-100 dark:border-gray-700 rounded-b-lg">
+      {/* Action buttons - Responsive */}
+      <div className="flex justify-between items-center bg-gray-50/80 dark:bg-gray-800/50 px-3 md:px-4 py-2 md:py-3 border-t border-gray-100 dark:border-gray-700 rounded-b-lg">
         <button
-          className={`text-xs flex items-center gap-1.5 font-medium py-1.5 px-3 rounded-md transition-colors ${
+          className={`text-[10px] md:text-xs flex items-center gap-1 md:gap-1.5 font-medium py-1 md:py-1.5 px-2 md:px-3 rounded-md transition-colors ${
             task.status === "completed"
               ? "text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700"
               : deadlineStatus === "overdue"
@@ -285,32 +274,32 @@ const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOp
           }`}
           onClick={() => updateTaskStatus(task.id, task.status === "completed" ? "pending" : "completed")}
         >
-          <CheckCircleIcon size={14} />
+          <CheckCircleIcon size={12} md:size={14} />
           {task.status === "completed" ? "Mark pending" : "Complete"}
         </button>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 md:gap-2">
           <button
-            className="text-gray-500 hover:text-yellow-500 dark:text-gray-400 dark:hover:text-yellow-400 p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="text-gray-500 hover:text-yellow-500 dark:text-gray-400 dark:hover:text-yellow-400 p-1 md:p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             onClick={() => updateTaskStatus(task.id, null, task.is_favorite ? 0 : 1)}
             title={task.is_favorite ? "Remove from favorites" : "Add to favorites"}
           >
-            <StarIcon size={16} className={task.is_favorite ? "fill-yellow-400" : ""} />
+            <StarIcon size={14} md:size={16} className={task.is_favorite ? "fill-yellow-400" : ""} />
           </button>
           
           <button
-            className="text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 p-1 md:p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             onClick={() => {
               setEditingTask(task);
               setIsModalOpen(true);
             }}
             title="Edit task"
           >
-            <PencilIcon size={16} />
+            <PencilIcon size={14} md:size={16} />
           </button>
           
           <button
-            className="text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 p-1 md:p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             onClick={() => {
               if (window.confirm("Archive this task?")) {
                 deleteTask(task.id);
@@ -318,7 +307,7 @@ const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOp
             }}
             title="Archive task"
           >
-            <Archive size={16} />
+            <Archive size={14} md:size={16} />
           </button>
         </div>
       </div>

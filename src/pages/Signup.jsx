@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
@@ -18,6 +18,31 @@ const Signup = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Background animation elements
+  const [floatingElements, setFloatingElements] = useState([]);
+  
+  useEffect(() => {
+    // Generate floating background elements
+    const elements = [];
+    const shapes = ["circle", "square", "triangle"];
+    const colors = ["#FFC0CB", "#A31621", "#053C5E", "#A9BFA8", "#3A3960"];
+    
+    for (let i = 0; i < 15; i++) {
+      elements.push({
+        id: i,
+        shape: shapes[Math.floor(Math.random() * shapes.length)],
+        color: colors[Math.floor(Math.random() * colors.length)],
+        size: Math.random() * 60 + 20,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        duration: Math.random() * 20 + 15,
+        delay: Math.random() * 5
+      });
+    }
+    
+    setFloatingElements(elements);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -66,26 +91,183 @@ const Signup = () => {
       setIsLoading(false);
     }
   };
+  
+  const renderShape = (element) => {
+    switch (element.shape) {
+      case "circle":
+        return (
+          <motion.div
+            key={element.id}
+            className="absolute rounded-full opacity-20 dark:opacity-10"
+            style={{ 
+              width: element.size, 
+              height: element.size, 
+              backgroundColor: element.color,
+              left: `${element.x}%`,
+              top: `${element.y}%`,
+            }}
+            animate={{
+              x: [0, Math.random() * 100 - 50, 0],
+              y: [0, Math.random() * 100 - 50, 0],
+              rotate: [0, Math.random() * 360, 0],
+            }}
+            transition={{
+              duration: element.duration,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: element.delay,
+            }}
+          />
+        );
+      case "square":
+        return (
+          <motion.div
+            key={element.id}
+            className="absolute opacity-20 dark:opacity-10"
+            style={{ 
+              width: element.size, 
+              height: element.size, 
+              backgroundColor: element.color,
+              left: `${element.x}%`,
+              top: `${element.y}%`,
+            }}
+            animate={{
+              x: [0, Math.random() * 100 - 50, 0],
+              y: [0, Math.random() * 100 - 50, 0],
+              rotate: [0, Math.random() * 360, 0],
+              borderRadius: ["0%", "20%", "0%"],
+            }}
+            transition={{
+              duration: element.duration,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: element.delay,
+            }}
+          />
+        );
+      case "triangle":
+        return (
+          <motion.div
+            key={element.id}
+            className="absolute opacity-20 dark:opacity-10"
+            style={{ 
+              width: 0,
+              height: 0,
+              borderLeft: `${element.size/2}px solid transparent`,
+              borderRight: `${element.size/2}px solid transparent`,
+              borderBottom: `${element.size}px solid ${element.color}`,
+              left: `${element.x}%`,
+              top: `${element.y}%`,
+            }}
+            animate={{
+              x: [0, Math.random() * 100 - 50, 0],
+              y: [0, Math.random() * 100 - 50, 0],
+              rotate: [0, Math.random() * 360, 0],
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              duration: element.duration,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: element.delay,
+            }}
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="flex flex-col items-center justify-center min-h-screen p-5 sm:p-10 bg-white dark:bg-gray-900 transition-colors duration-300"
+      className="flex flex-col items-center justify-center min-h-screen p-5 sm:p-10 bg-white dark:bg-gray-900 transition-colors duration-300 overflow-hidden relative"
     >
-      <div className="flex flex-col md:flex-row justify-evenly w-full max-w-4xl border border-[#A9BFA8] dark:border-gray-700 shadow-[0px_4px_8px_rgba(0,0,0,0.1)] dark:shadow-[0px_4px_16px_rgba(0,0,0,0.4)] rounded-[25px] bg-white dark:bg-gray-800 overflow-hidden transition-colors duration-300">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        {floatingElements.map(element => renderShape(element))}
+      </div>
+      
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-white/80 to-white/90 dark:from-gray-900/80 dark:to-gray-900/90"></div>
+      
+      <div className="flex flex-col md:flex-row justify-evenly w-full max-w-4xl border border-[#A9BFA8] dark:border-gray-700 shadow-[0px_4px_16px_rgba(0,0,0,0.15)] dark:shadow-[0px_4px_24px_rgba(0,0,0,0.5)] rounded-[25px] bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm overflow-hidden transition-colors duration-300 z-10">
         {/* Left Section */}
         <motion.div
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          className="bg-[#A31621] dark:bg-gray-900 rounded-tr-[50px] rounded-br-[50px] flex flex-col justify-center items-center px-5 py-12 sm:px-20 sm:py-20 w-full md:w-1/2 transition-colors duration-300"
+          className="bg-[#A31621] dark:bg-gray-900 rounded-tr-[50px] rounded-br-[50px] relative flex flex-col justify-center items-center px-5 py-12 sm:px-20 sm:py-20 w-full md:w-1/2 transition-colors duration-300 overflow-hidden"
         >
-          <div className="text-white dark:text-gray-200 flex flex-col justify-center items-center text-center">
-            <h1 className="text-3xl sm:text-5xl font-thin leading-none">Hello,</h1>
-            <h1 className="text-3xl sm:text-5xl font-bold leading-none">Join Us!</h1>
-            <p className="mt-4 text-base sm:text-lg">Create an account to manage tasks better.</p>
+          {/* Left Panel Background Effect */}
+          <div className="absolute inset-0">
+            <motion.div 
+              className="absolute w-64 h-64 rounded-full bg-[#FF4757]/30 blur-xl"
+              animate={{
+                x: [0, 30, 0],
+                y: [0, 50, 0],
+              }}
+              transition={{
+                duration: 8,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              style={{ left: '-20%', top: '10%' }}
+            />
+            <motion.div 
+              className="absolute w-72 h-72 rounded-full bg-[#053C5E]/30 blur-xl"
+              animate={{
+                x: [0, -40, 0],
+                y: [0, -30, 0],
+              }}
+              transition={{
+                duration: 10,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              style={{ right: '-30%', bottom: '5%' }}
+            />
+          </div>
+          
+          <div className="text-white dark:text-gray-200 flex flex-col justify-center items-center text-center relative z-10">
+            <motion.h1 
+              className="text-3xl sm:text-5xl font-thin leading-none"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+            >
+              Hello,
+            </motion.h1>
+            <motion.h1 
+              className="text-3xl sm:text-5xl font-bold leading-none"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+            >
+              Join Us!
+            </motion.h1>
+            <motion.p 
+              className="mt-4 text-base sm:text-lg"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.8, duration: 0.5 }}
+            >
+              Create an account to manage tasks better.
+            </motion.p>
+            
+            {/* Decorative elements */}
+            <motion.div 
+              className="absolute w-24 h-24 border-4 border-white/20 rounded-full -bottom-12 -left-12"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            />
+            <motion.div 
+              className="absolute w-16 h-16 border-2 border-white/20 rounded-full top-12 right-2"
+              animate={{ rotate: -360 }}
+              transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+            />
           </div>
         </motion.div>
 
@@ -94,10 +276,9 @@ const Signup = () => {
           initial={{ x: 50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.4, duration: 0.5 }}
-          className="flex flex-1 justify-center items-center p-5 sm:p-10 w-full md:w-1/2"
+          className="flex flex-1 justify-center items-center p-5 sm:p-10 w-full md:w-1/2 relative"
         >
-          <form className="flex flex-col gap-5 w-full sm:w-[350px]" onSubmit={handleSignup}>
-
+          <form className="flex flex-col gap-5 w-full sm:w-[350px] relative z-10" onSubmit={handleSignup}>
             {/* Status Messages */}
             {error && (
               <motion.p
@@ -112,14 +293,19 @@ const Signup = () => {
               <motion.p
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="text-[#A9BFA8] dark:text-green-400 text-sm text-center p-2 bg-[#FAFFC5] dark:bg-green-900/30 rounded border border-[#A9BFA8] dark:border-green-800"
+                className="text-green-600 dark:text-green-400 text-sm text-center p-2 bg-green-50 dark:bg-green-900/30 rounded border border-green-200 dark:border-green-800"
               >
                 {success}
               </motion.p>
             )}
 
             {/* Username */}
-            <div className="flex flex-col gap-1">
+            <motion.div 
+              className="flex flex-col gap-1"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.5, duration: 0.4 }}
+            >
               <label htmlFor="username" className="text-[#053C5E] dark:text-gray-300 text-sm font-medium">
                 Username
               </label>
@@ -129,13 +315,18 @@ const Signup = () => {
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
-                className="rounded-lg bg-[#F8FAFC] dark:bg-gray-700 h-10 px-4 w-full border border-[#A9BFA8] dark:border-gray-600 focus:border-[#3A3960] dark:focus:border-gray-500 focus:outline-none transition-all dark:text-white"
+                className="rounded-lg bg-[#F8FAFC]/80 dark:bg-gray-700/80 h-10 px-4 w-full border border-[#A9BFA8] dark:border-gray-600 focus:border-[#3A3960] dark:focus:border-gray-500 focus:outline-none focus:ring-2 focus:ring-[#3A3960]/20 dark:focus:ring-blue-500/30 transition-all dark:text-white backdrop-blur-sm"
                 required
               />
-            </div>
+            </motion.div>
 
             {/* Email */}
-            <div className="flex flex-col gap-1">
+            <motion.div 
+              className="flex flex-col gap-1"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.4 }}
+            >
               <label htmlFor="email" className="text-[#053C5E] dark:text-gray-300 text-sm font-medium">
                 Email
               </label>
@@ -145,13 +336,18 @@ const Signup = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="rounded-lg bg-[#F8FAFC] dark:bg-gray-700 h-10 px-4 w-full border border-[#A9BFA8] dark:border-gray-600 focus:border-[#3A3960] dark:focus:border-gray-500 focus:outline-none transition-all dark:text-white"
+                className="rounded-lg bg-[#F8FAFC]/80 dark:bg-gray-700/80 h-10 px-4 w-full border border-[#A9BFA8] dark:border-gray-600 focus:border-[#3A3960] dark:focus:border-gray-500 focus:outline-none focus:ring-2 focus:ring-[#3A3960]/20 dark:focus:ring-blue-500/30 transition-all dark:text-white backdrop-blur-sm"
                 required
               />
-            </div>
+            </motion.div>
 
             {/* Password */}
-            <div className="flex flex-col gap-1 relative">
+            <motion.div 
+              className="flex flex-col gap-1 relative"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.7, duration: 0.4 }}
+            >
               <label htmlFor="password" className="text-[#053C5E] dark:text-gray-300 text-sm font-medium">
                 Password
               </label>
@@ -161,7 +357,7 @@ const Signup = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="rounded-lg bg-[#F8FAFC] dark:bg-gray-700 h-10 px-4 w-full pr-10 border border-[#A9BFA8] dark:border-gray-600 focus:border-[#3A3960] dark:focus:border-gray-500 focus:outline-none transition-all dark:text-white"
+                className="rounded-lg bg-[#F8FAFC]/80 dark:bg-gray-700/80 h-10 px-4 w-full pr-10 border border-[#A9BFA8] dark:border-gray-600 focus:border-[#3A3960] dark:focus:border-gray-500 focus:outline-none focus:ring-2 focus:ring-[#3A3960]/20 dark:focus:ring-blue-500/30 transition-all dark:text-white backdrop-blur-sm"
                 required
               />
               <button
@@ -172,10 +368,15 @@ const Signup = () => {
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
-            </div>
+            </motion.div>
 
             {/* Confirm Password */}
-            <div className="flex flex-col gap-1 relative">
+            <motion.div 
+              className="flex flex-col gap-1 relative"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.8, duration: 0.4 }}
+            >
               <label htmlFor="rePassword" className="text-[#053C5E] dark:text-gray-300 text-sm font-medium">
                 Confirm Password
               </label>
@@ -185,7 +386,7 @@ const Signup = () => {
                 name="rePassword"
                 value={formData.rePassword}
                 onChange={handleChange}
-                className="rounded-lg bg-[#F8FAFC] dark:bg-gray-700 h-10 px-4 w-full pr-10 border border-[#A9BFA8] dark:border-gray-600 focus:border-[#3A3960] dark:focus:border-gray-500 focus:outline-none transition-all dark:text-white"
+                className="rounded-lg bg-[#F8FAFC]/80 dark:bg-gray-700/80 h-10 px-4 w-full pr-10 border border-[#A9BFA8] dark:border-gray-600 focus:border-[#3A3960] dark:focus:border-gray-500 focus:outline-none focus:ring-2 focus:ring-[#3A3960]/20 dark:focus:ring-blue-500/30 transition-all dark:text-white backdrop-blur-sm"
                 required
               />
               <button
@@ -196,34 +397,75 @@ const Signup = () => {
               >
                 {showRePassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
-            </div>
+            </motion.div>
 
             {/* Sign Up Button */}
             <motion.button
               type="submit"
-              className="bg-[#A31621] dark:bg-[#FF4757]  text-white dark:text-white h-10 rounded-[50px] w-full font-medium relative overflow-hidden transition-colors duration-300"
-              whileHover={{ scale: 1.02 }}
+              className="bg-[#A31621] dark:bg-[#FF4757] text-white dark:text-white h-12 rounded-[50px] w-full font-medium relative overflow-hidden transition-colors duration-300 shadow-lg hover:shadow-xl dark:shadow-[#FF4757]/20"
+              whileHover={{ scale: 1.02, boxShadow: "0 10px 25px -5px rgba(163, 22, 33, 0.5)" }}
               whileTap={{ scale: 0.98 }}
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.9, duration: 0.4 }}
               disabled={isLoading}
             >
               {isLoading ? (
-                <span className="inline-block h-4 w-4 border-2 border-[#FAFFC5] dark:border-white border-t-transparent rounded-full animate-spin"></span>
+                <span className="inline-block h-5 w-5 border-2 border-[#FAFFC5] dark:border-white border-t-transparent rounded-full animate-spin"></span>
               ) : (
                 "Sign Up"
               )}
+              
+              {/* Button effect */}
+              <motion.span 
+                className="absolute inset-0 bg-white/20 dark:bg-white/10 rounded-[50px]"
+                animate={{ 
+                  x: ["100%", "-100%"],
+                }} 
+                transition={{ 
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  repeatType: "mirror",
+                }}
+              />
             </motion.button>
 
             {/* Login Link */}
-            <p className="text-center text-[#053C5E] dark:text-gray-300 text-sm">
+            <motion.p 
+              className="text-center text-[#053C5E] dark:text-gray-300 text-sm"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 1, duration: 0.4 }}
+            >
               Already have an account?{" "}
               <span
-                className="font-bold text-[#A31621] dark:text-[#FF4757]  hover:underline cursor-pointer transition-colors"
+                className="font-bold text-[#A31621] dark:text-[#FF4757] hover:underline cursor-pointer transition-colors"
                 onClick={() => navigate("/login")}
               >
                 Login
               </span>
-            </p>
+            </motion.p>
           </form>
+          
+          {/* Right side decorative elements */}
+          <motion.div 
+            className="absolute top-10 right-10 w-8 h-8 rounded-full bg-[#A31621]/20 dark:bg-[#FF4757]/20"
+            animate={{ 
+              y: [0, -15, 0],
+              opacity: [0.2, 0.5, 0.2],
+            }}
+            transition={{ duration: 3, repeat: Infinity }}
+          />
+          <motion.div 
+            className="absolute bottom-20 right-24 w-4 h-4 rounded-sm bg-[#3A3960]/20 dark:bg-blue-500/20"
+            animate={{ 
+              y: [0, 10, 0],
+              rotate: [0, 45, 0],
+              opacity: [0.2, 0.6, 0.2],
+            }}
+            transition={{ duration: 4, repeat: Infinity, delay: 1 }}
+          />
         </motion.div>
       </div>
     </motion.div>
