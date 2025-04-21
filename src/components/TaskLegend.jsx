@@ -4,7 +4,7 @@ const TaskLegend = () => {
   const legendItems = [
     {
       color: "bg-green-500",
-      text: "Completed",
+      text: "Done",
       border: "border-green-500"
     },
     {
@@ -32,22 +32,21 @@ const TaskLegend = () => {
   return (
     <div className="bg-white dark:bg-gray-900 dark:border-gray-700 px-2 py-1 md:px-4 md:py-2">
       <div className="flex flex-wrap items-center justify-center gap-2 md:gap-4 lg:gap-6">
-        {/* Status Legend Only - Responsive */}
+        {/* Mobile/Tablet Legend - Compact and Responsive */}
         <div className="flex flex-wrap items-center justify-center gap-1 md:gap-2 lg:gap-4">
-          <span className="text-xs md:text-sm font-medium text-gray-600 dark:text-gray-300">
-            Task Status:
-          </span>
-          {legendItems.map((item, index) => (
-            <div key={index} className="flex items-center gap-1">
-              <span className={`w-2 h-2 md:w-3 md:h-3 rounded-full ${item.color}`}></span>
-              <span className="text-[10px] md:text-xs text-gray-600 dark:text-gray-300">
-                {item.text}
-              </span>
-            </div>
-          ))}
+          <div className="flex flex-wrap justify-center gap-2 md:gap-3">
+            {legendItems.map((item, index) => (
+              <div key={index} className="flex items-center gap-1">
+                <span className={`w-2 h-2 md:w-3 md:h-3 rounded-full ${item.color}`}></span>
+                <span className="text-[10px] md:text-xs text-gray-600 dark:text-gray-300">
+                  {item.text}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-</div>
+    </div>
   );
 };
 

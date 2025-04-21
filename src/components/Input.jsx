@@ -59,11 +59,11 @@ const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg w-[450px] transition-all ">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg w-full sm:w-4/5 md:w-3/4 lg:w-[450px] max-w-[450px] transition-all">
         {/* Header */}
-        <div className="flex justify-between items-center px-4 py-3 border-b border-gray-100 dark:border-gray-700">
-          <h2 className="text-lg font-medium text-gray-800 dark:text-gray-200">
+        <div className="flex justify-between items-center px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-100 dark:border-gray-700">
+          <h2 className="text-base sm:text-lg font-medium text-gray-800 dark:text-gray-200">
             {editingTask ? "Edit Task" : "New Task"}
           </h2>
           <button 
@@ -76,10 +76,10 @@ const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories
         </div>
 
         {/* Main content */}
-        <div className="p-4 space-y-4">
+        <div className="p-3 sm:p-4 space-y-3 sm:space-y-4">
           {/* Task Input */}
-          <div className="space-y-2">
-            <label htmlFor="task" className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+          <div className="space-y-1 sm:space-y-2">
+            <label htmlFor="task" className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
               <CheckCircle size={14} />
               Task
             </label>
@@ -87,7 +87,7 @@ const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories
               id="task"
               type="text"
               placeholder="What needs to be done?"
-              className="w-full p-3 rounded-md text-gray-800 dark:text-gray-200 
+              className="w-full p-2 sm:p-3 rounded-md text-gray-800 dark:text-gray-200 
                         placeholder-gray-400 dark:placeholder-gray-500 
                         focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
                         bg-white dark:bg-gray-700 
@@ -98,14 +98,14 @@ const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories
           </div>
 
           {/* Category Selection */}
-          <div className="space-y-2">
-            <label htmlFor="category" className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+          <div className="space-y-1 sm:space-y-2">
+            <label htmlFor="category" className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
               <Tag size={14} />
               Category
             </label>
             <select
               id="category"
-              className="w-full p-3 rounded-md text-gray-800 dark:text-gray-200 
+              className="w-full p-2 sm:p-3 rounded-md text-gray-800 dark:text-gray-200 
                         bg-white dark:bg-gray-700 
                         border border-gray-200 dark:border-gray-600 
                         focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
@@ -122,8 +122,8 @@ const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories
           </div>
 
           {/* Deadline Input */}
-          <div className="space-y-2">
-            <label htmlFor="deadline" className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+          <div className="space-y-1 sm:space-y-2">
+            <label htmlFor="deadline" className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
               <Calendar size={14} />
               Deadline
             </label>
@@ -132,7 +132,7 @@ const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories
               type="datetime-local"
               value={deadline}
               onChange={(e) => setDeadline(e.target.value)}
-              className="w-full p-3 rounded-md text-gray-800 dark:text-gray-200 
+              className="w-full p-2 sm:p-3 rounded-md text-gray-800 dark:text-gray-200 
                         bg-white dark:bg-gray-700 
                         border border-gray-200 dark:border-gray-600 
                         focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
@@ -147,15 +147,15 @@ const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories
         </div>
 
         {/* Action buttons */}
-        <div className="flex justify-end gap-2 bg-gray-50/80 dark:bg-gray-800/50 px-4 py-3 border-t border-gray-100 dark:border-gray-700 rounded-b-lg">
+        <div className="flex justify-end gap-2 bg-gray-50/80 dark:bg-gray-800/50 px-3 sm:px-4 py-2 sm:py-3 border-t border-gray-100 dark:border-gray-700 rounded-b-lg">
           <button
-            className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-medium text-sm"
+            className="px-3 sm:px-4 py-1.5 sm:py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-medium text-xs sm:text-sm"
             onClick={onClose}
           >
             Cancel
           </button>
           <button
-            className="px-4 py-2 text-white font-medium text-sm rounded-md transition-colors 
+            className="px-3 sm:px-4 py-1.5 sm:py-2 text-white font-medium text-xs sm:text-sm rounded-md transition-colors 
                        bg-[#A31621] hover:bg-[#8C131C] dark:bg-[#FF4757] dark:hover:bg-[#FF2A3A] "
             onClick={() => {
               if (task.trim() !== "" && category.trim() !== "") {

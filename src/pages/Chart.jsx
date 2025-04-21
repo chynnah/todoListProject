@@ -20,7 +20,6 @@ import {
   AreaChart
 } from "recharts";
 
-// Enhanced color palette with better contrast and visual appeal
 const COLORS = [
   "#2563eb", "#16a34a", "#ea580c", "#9333ea", 
   "#0891b2", "#be123c", "#84cc16", "#6366f1",
@@ -104,7 +103,7 @@ const Chart = () => {
       const newCategory = {
         category_name: stat.category_name,
         [stat.status]: stat.task_count,
-        total: stat.task_count
+        total: Number(stat.task_count) 
       };
       acc.push(newCategory);
     }
@@ -157,7 +156,7 @@ const Chart = () => {
   const inProgressTasks = statusData.find(s => s.status === "in-progress")?.value || 0;
   const completionPercentage = Math.round((completedTasks / (totalTasks || 1)) * 100);
 
-  // Data for category progress tab with more detailed information
+  // Data for category progress tab 
   const categoryProgressData = categoryData.map(category => {
     const completed = category.completed || 0;
     const pending = category.pending || 0;
@@ -208,7 +207,7 @@ const Chart = () => {
     </div>
   );
 
-  // Status badge component with appropriate colors
+  // Status badge component 
   const StatusBadge = ({ status, count }) => {
     const getStatusColor = (status) => {
       switch(status) {
@@ -227,22 +226,22 @@ const Chart = () => {
   };
 
   return (
-    <div className="grid gap-6 p-4 md:grid-cols-2 lg:grid-cols-3 bg-white dark:bg-gray-900 text-[#053C5E] dark:text-gray-200 font-sans transition-colors ">
-      {/* Overview Cards */}
-      <Card className="lg:col-span-3 bg-gradient-to-br from-white to-blue-50 dark:from-gray-900 dark:to-gray-800 transition-colors">
-        <CardHeader>
-          <CardTitle className="text-gray-800 dark:text-white flex items-center justify-between">
-            <span className="text-xl font-bold">Task Dashboard</span>
-            <div className="flex space-x-2">
-              <Badge variant="outline" className="bg-white dark:bg-gray-800 dark:text-white border-gray-200 dark:border-gray-700">
-                Total: {totalTasks}
-              </Badge>
-              <StatusBadge status="completed" count={completedTasks} />
-              <StatusBadge status="pending" count={pendingTasks} />
-              <StatusBadge status="in-progress" count={inProgressTasks} />
-            </div>
-          </CardTitle>
-        </CardHeader>
+    <div className="grid gap-4 p-4 text-[10px] lg:text-[15px] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 bg-white dark:bg-gray-900 text-[#053C5E] dark:text-gray-200 font-sans transition-colors">
+    {/* Overview Cards */}
+    <Card className="col-span-full bg-gradient-to-br from-white to-blue-50 dark:from-gray-900 dark:to-gray-900">
+      <CardHeader>
+        <CardTitle className="text-gray-800 dark:text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+          <span className="text-xl font-bold">Task Dashboard</span>
+          <div className="flex flex-wrap gap-2">
+            <Badge variant="outline" className="bg-white dark:bg-gray-800 dark:text-white border-gray-200 dark:border-gray-700">
+              Total: {totalTasks}
+            </Badge>
+            <StatusBadge status="completed" count={completedTasks} />
+            <StatusBadge status="pending" count={pendingTasks} />
+            <StatusBadge status="in-progress" count={inProgressTasks} />
+          </div>
+        </CardTitle>
+      </CardHeader>
 
         <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="flex flex-col items-center justify-center bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm transition-colors">
@@ -300,25 +299,23 @@ const Chart = () => {
           </div>
         </CardHeader>
 
-        <CardContent className="h-[350px] p-0">
+        <CardContent className="h-[300px] sm:h-[350px] p-0">
           <div className="flex h-full items-center">
             <div className="flex-1 h-full">
               <ResponsiveContainer width="100%" height="100%">
                 {chartType === "pie" ? (
                   <PieChart>
                     <Pie
-                      data={categoryData}
+                      data={categoryData.filter(item => item.total > 0)}
                       cx="50%"
                       cy="50%"
                       outerRadius="70%"
                       innerRadius="40%"
-                      fill="#8884d8"
                       dataKey="total"
                       nameKey="category_name"
-                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`} // Fixed here
                       paddingAngle={2}
                       animationDuration={1000}
-                      animationEasing="ease-out"
                     >
                       {categoryData.map((entry, index) => (
                         <Cell
@@ -329,17 +326,23 @@ const Chart = () => {
                         />
                       ))}
                     </Pie>
-                    <Tooltip content={<CustomTooltip />} />
+                                        <Tooltip content={<CustomTooltip />} />
                   </PieChart>
                 ) : (
                   <BarChart
                     data={categoryData}
                     layout="vertical"
-                    margin={{ top: 5, right: 30, left: 80, bottom: 5 }}
+                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
                     <XAxis type="number" stroke="currentColor" />
-                    <YAxis dataKey="category_name" type="category" stroke="currentColor" />
+                    <YAxis 
+                      dataKey="category_name" 
+                      type="category" 
+                      stroke="currentColor" 
+                      width={80}
+                      tick={{ fontSize: 12 }}
+                    />
                     <Tooltip content={<CustomTooltip />} />
                     <Legend />
                     <Bar
@@ -354,17 +357,23 @@ const Chart = () => {
               </ResponsiveContainer>
             </div>
 
+            {/* Legend responsive handling */}
             {chartType === "pie" && (
-              <div className="w-[140px] sm:w-[160px] pr-4">
-                <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Legend</div>
+              <div className="hidden sm:block w-[140px] sm:w-[160px] pr-2 sm:pr-4">
+                <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Legend
+                </div>
                 <ul className="space-y-2">
                   {categoryData.map((entry, index) => (
-                    <li key={index} className="flex items-center space-x-2 text-xs md:text-sm">
+                    <li 
+                      key={index} 
+                      className="flex items-center space-x-2 text-xs md:text-sm"
+                    >
                       <span
-                        className="w-3 h-3 rounded-full"
+                        className="w-3 h-3 rounded-full flex-shrink-0"
                         style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                      ></span>
-                      <span className="truncate text-gray-600 dark:text-gray-400">
+                      />
+                      <span className="truncate text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                         {entry.category_name}
                       </span>
                     </li>
@@ -377,110 +386,98 @@ const Chart = () => {
       </Card>
 
 
-      {/* Status Distribution */}
-      <Card className="overflow-hidden transition-all duration-300 hover:shadow-md bg-white dark:bg-[#1f2937]">
-        <CardHeader>
-          <CardTitle className="text-gray-800 dark:text-white text-lg font-bold">Status Distribution</CardTitle>
-        </CardHeader>
-        <CardContent className="h-[350px] p-0">
-          <div className="flex flex-col h-full">
-            <div className="flex-1">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={statusData}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius="70%"
-                    innerRadius="50%"
-                    dataKey="value"
-                    nameKey="status"
-                    paddingAngle={5}
-                    animationDuration={1000}
-                    animationEasing="ease-out"
-                  >
-                    {statusData.map((entry, index) => {
-                      let color;
-                      switch(entry.status) {
-                        case "completed": color = "#16a34a"; break;
-                        case "pending": color = "#f59e0b"; break;
-                        case "in-progress": color = "#3b82f6"; break;
-                        default: color = COLORS[index % COLORS.length];
-                      }
-                      return (
-                        <Cell 
-                          key={`cell-status-${index}`} 
-                          fill={color}
-                          stroke="#fff"
-                          strokeWidth={1}
-                        />
-                      );
-                    })}
-                  </Pie>
-                  <Tooltip content={<CustomTooltip />} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="flex justify-around pt-2 px-4">
-              {statusData.map((status, index) => {
-                let color, bgColorLight, bgColorDark;
-                switch(status.status) {
-                  case "completed": 
-                    color = "#16a34a"; 
-                    bgColorLight = "#dcfce7"; 
-                    bgColorDark = "#14532d"; 
-                    break;
-                  case "pending": 
-                    color = "#f59e0b"; 
-                    bgColorLight = "#fef3c7"; 
-                    bgColorDark = "#78350f"; 
-                    break;
-                  case "in-progress": 
-                    color = "#3b82f6"; 
-                    bgColorLight = "#dbeafe"; 
-                    bgColorDark = "#1e3a8a"; 
-                    break;
-                  default: 
-                    color = COLORS[index % COLORS.length]; 
-                    bgColorLight = "#f3f4f6"; 
-                    bgColorDark = "#374151";
-                }
-                return (
-                  <div 
-                    key={index} 
-                    className="flex flex-col items-center justify-center p-2 rounded-lg"
-                    style={{
-                      backgroundColor: `var(--bg-${status.status})`,
-                      background: `linear-gradient(to bottom, ${bgColorLight}, ${bgColorLight})`,
-                      color: color
-                    }}
-                  >
-                    <div className="text-lg font-bold" style={{ color }}>
-                      {status.value}
-                    </div>
-                    <div className="text-xs text-gray-600 dark:text-gray-300 capitalize">
-                      {status.status}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+    {/* Status Distribution */}
+    <Card className="col-span-full sm:col-span-1 lg:col-span-1 overflow-hidden dark:bg-gray-900">
+      <CardHeader>
+        <CardTitle className="text-lg font-bold text-gray-800 dark:text-white">
+          Status Distribution
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="h-[300px] sm:h-[350px] p-0">
+        <div className="flex flex-col h-full">
+          <div className="flex-1">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={statusData}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius="70%"
+                  innerRadius="50%"
+                  dataKey="value"
+                  nameKey="status"
+                  paddingAngle={5}
+                  animationDuration={1000}
+                  animationEasing="ease-out"
+                >
+                  {statusData.map((entry, index) => {
+                    let color;
+                    switch(entry.status) {
+                      case "completed": color = "#16a34a"; break;
+                      case "pending": color = "#f59e0b"; break;
+                      case "in-progress": color = "#3b82f6"; break;
+                      default: color = COLORS[index % COLORS.length];
+                    }
+                    return (
+                      <Cell 
+                        key={`cell-status-${index}`} 
+                        fill={color}
+                        stroke="#fff"
+                        strokeWidth={1}
+                      />
+                    );
+                  })}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
-        </CardContent>
-      </Card>
+          <div className="flex justify-around pt-2 px-4">
+            {statusData.map((status, index) => {
+              let color;
+              switch(status.status) {
+                case "completed": color = "#16a34a"; break;
+                case "pending": color = "#f59e0b"; break;
+                case "in-progress": color = "#3b82f6"; break;
+                default: color = COLORS[index % COLORS.length];
+              }
+              return (
+                <div 
+                  key={index} 
+                  className={`flex flex-col items-center justify-center p-2 rounded-lg
+                    ${status.status === "completed" ? "bg-green-100 dark:bg-green-900" : ""}
+                    ${status.status === "pending" ? "bg-amber-100 dark:bg-amber-900" : ""}
+                    ${status.status === "in-progress" ? "bg-blue-100 dark:bg-blue-900" : ""}
+                  `}
+                >
+                  <div className="text-lg font-bold" style={{ color }}>
+                    {status.value}
+                  </div>
+                  <div className="text-xs capitalize font-medium text-gray-700 dark:text-gray-200">
+                    {status.status}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
 
       {/* Time Series Chart */}
-      <Card className="lg:col-span-3 overflow-hidden transition-all duration-300 hover:shadow-md bg-white dark:bg-[#1f2937]">
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-gray-800 dark:text-white text-lg font-bold">Task Completion Trends</CardTitle>
-          <Tabs value={timeRange} onValueChange={setTimeRange} className="w-auto">
-            <TabsList className="grid grid-cols-2 w-[180px]">
+      <Card className="col-span-full overflow-hidden dark:bg-gray-900">
+        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-2 gap-2">
+          <CardTitle className="text-lg font-bold text-gray-800 dark:text-white">
+            Task Completion Trends
+          </CardTitle>
+          <Tabs value={timeRange} onValueChange={setTimeRange} className="w-full sm:w-auto">
+            <TabsList className="grid grid-cols-2 w-full sm:w-[180px]">
               <TabsTrigger value="week">Week</TabsTrigger>
               <TabsTrigger value="month">Month</TabsTrigger>
             </TabsList>
           </Tabs>
         </CardHeader>
-        <CardContent className="h-[350px] p-0">
+        <CardContent className="h-[300px] sm:h-[350px] p-0">
           <div className="flex h-full items-center">
             <div className="flex-1 h-full">
               <ResponsiveContainer width="100%" height="100%">
@@ -529,9 +526,9 @@ const Chart = () => {
 
 
       {/* Metrics Tabs */}
-      <Card className="lg:col-span-3 overflow-hidden transition-all duration-300 hover:shadow-md dark:bg-gray-800">
+      <Card className="col-span-full md:col-span-2 lg:col-span-3 md:col-span-2 lg:col-span-3 overflow-hidden transition-all duration-300 hover:shadow-md dark:bg-gray-900">
         <CardHeader>
-          <CardTitle className="text-gray-800 dark:text-white text-lg font-bold flex items-center gap-2">
+          <CardTitle className="text-gray-000 dark:text-white text-lg font-bold flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
@@ -540,10 +537,10 @@ const Chart = () => {
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid grid-cols-3">
-              <TabsTrigger value="overview" className="text-gray-800 dark:text-white">Performance</TabsTrigger>
-              <TabsTrigger value="category-progress" className="text-gray-800 dark:text-white">Category Progress</TabsTrigger>
-              <TabsTrigger value="task-distribution" className="text-gray-800 dark:text-white">Task Distribution</TabsTrigger>
+            <TabsList className="grid grid-cols-3 ">
+              <TabsTrigger value="overview" className="text-gray-800 dark:text-white text-[10px] lg:text-[13px]">Performance</TabsTrigger>
+              <TabsTrigger value="category-progress" className="text-gray-800 dark:text-white text-[10px] lg:text-[13px]">Category Progress</TabsTrigger>
+              <TabsTrigger value="task-distribution" className="text-gray-800 dark:text-white text-[10px] lg:text-[13px]">Task Distribution</TabsTrigger>
             </TabsList>
 
             {/* Overview Tab */}
@@ -624,7 +621,7 @@ const Chart = () => {
 
             {/* Category Progress Tab */}
             <TabsContent value="category-progress" className="h-[350px] mt-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full overflow-y-auto pr-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full overflow-y-auto pr-2">
                 {categoryProgressData.map((category, index) => (
                   <div 
                     key={index} 
@@ -653,17 +650,9 @@ const Chart = () => {
                         </div>
                         <ProgressBar percentage={category.pendingPercentage} color="#f59e0b" />
                       </div>
-
-                      <div>
-                        <div className="flex justify-between mb-1">
-                          <span className="text-xs font-medium text-blue-700 dark:text-blue-400">In Progress</span>
-                          <span className="text-xs font-medium text-gray-500 dark:text-white">{category.inProgressPercentage}%</span>
-                        </div>
-                        <ProgressBar percentage={category.inProgressPercentage} color="#3b82f6" />
-                      </div>
                     </div>
 
-                    <div className="flex justify-between mt-4 pt-2 border-t border-gray-100 dark:border-gray-600">
+                    <div className="flex flex-wrap gap-2 mt-4 pt-2 border-t border-gray-100 dark:border-gray-600">
                       <StatusBadge status="completed" count={category.completed || 0} />
                       <StatusBadge status="pending" count={category.pending || 0} />
                       <StatusBadge status="in-progress" count={category["in-progress"] || 0} />
@@ -673,10 +662,10 @@ const Chart = () => {
               </div>
             </TabsContent>
 
-            {/* Task Distribution Tab */}
+            {/* Task Distribution Tab  */}
             <TabsContent value="task-distribution" className="h-[350px] mt-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
-                <div className="h-full">
+                <div className="h-[300px] md:h-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart 
                       data={categoryData} 
@@ -720,8 +709,8 @@ const Chart = () => {
                     <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-md">
                       <p className="text-sm text-gray-600 dark:text-white">
                         {categoryData.length} categories with a total of {totalTasks} tasks.
-                        The highest concentration of tasks is in the 
-                        <span className="font-medium"> {
+                        The highest concentration of tasks is in the {" "}
+                        <span className="font-medium">{
                           categoryData.reduce((max, category) => 
                             category.total > max.total ? category : max, 
                             { total: 0, category_name: "" }
@@ -732,38 +721,40 @@ const Chart = () => {
                   </div>
 
                   <div className="flex-1 overflow-auto pr-2">
-                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
-                      <thead className="bg-gray-50 dark:bg-gray-700">
-                        <tr>
-                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
-                            Category
-                          </th>
-                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
-                            Total
-                          </th>
-                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
-                            Completed
-                          </th>
-                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
-                            Pending
-                          </th>
-                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
-                            In Progress
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-700 dark:divide-gray-600">
-                        {categoryData.map((category, index) => (
-                          <tr key={index}>
-                            <td className="px-3 py-2 text-sm text-gray-900 dark:text-white">{category.category_name}</td>
-                            <td className="px-3 py-2 text-sm text-gray-900 dark:text-white">{category.total}</td>
-                            <td className="px-3 py-2 text-sm text-gray-900 dark:text-white">{category.completed}</td>
-                            <td className="px-3 py-2 text-sm text-gray-900 dark:text-white">{category.pending}</td>
-                            <td className="px-3 py-2 text-sm text-gray-900 dark:text-white">{category["in-progress"]}</td>
+                    <div className="min-w-[600px]">
+                      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
+                        <thead className="bg-gray-50 dark:bg-gray-700">
+                          <tr>
+                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
+                              Category
+                            </th>
+                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
+                              Total
+                            </th>
+                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
+                              Completed
+                            </th>
+                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
+                              Pending
+                            </th>
+                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-white uppercase tracking-wider">
+                              In Progress
+                            </th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-700 dark:divide-gray-600">
+                          {categoryData.map((category, index) => (
+                            <tr key={index}>
+                              <td className="px-3 py-2 text-sm text-gray-900 dark:text-white">{category.category_name}</td>
+                              <td className="px-3 py-2 text-sm text-gray-900 dark:text-white">{category.total}</td>
+                              <td className="px-3 py-2 text-sm text-gray-900 dark:text-white">{category.completed}</td>
+                              <td className="px-3 py-2 text-sm text-gray-900 dark:text-white">{category.pending}</td>
+                              <td className="px-3 py-2 text-sm text-gray-900 dark:text-white">{category["in-progress"]}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -775,13 +766,15 @@ const Chart = () => {
 
 
       {/* Category Details */}
-      <Card className="lg:col-span-3 overflow-hidden transition-all duration-300 hover:shadow-md bg-white dark:bg-gray-800">
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-gray-800 dark:text-white text-lg font-bold">Detailed Task View</CardTitle>
-          <div className="flex space-x-2">
+      <Card className="md:col-span-2 lg:col-span-3 overflow-hidden transition-all duration-300 hover:shadow-md bg-white dark:bg-gray-900">
+        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-2 gap-2">
+          <CardTitle className="text-lg font-bold text-gray-800 dark:text-white">
+            Detailed Task View
+          </CardTitle>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <select 
-              className="px-2 py-1 text-sm border border-gray-300 rounded-md bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              value={selectedCategory ? selectedCategory : "all"}
+              className="w-full sm:w-48 px-2 py-1 text-sm border border-gray-300 rounded-md bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              value={selectedCategory || "all"}
               onChange={(e) => setSelectedCategory(e.target.value === "all" ? null : e.target.value)}
             >
               <option value="all">All Categories</option>
@@ -791,10 +784,14 @@ const Chart = () => {
                 </option>
               ))}
             </select>
-            <div className="flex space-x-1">
+            <div className="flex justify-end sm:justify-start gap-1">
               <button 
                 onClick={() => setChartView("default")}
-                className={`p-1 rounded ${chartView === "default" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-white"}`}
+                className={`p-1 rounded transition-colors ${
+                  chartView === "default" 
+                    ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200"
+                    : "bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400"
+                }`}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
@@ -802,7 +799,11 @@ const Chart = () => {
               </button>
               <button 
                 onClick={() => setChartView("chart")}
-                className={`p-1 rounded ${chartView === "chart" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-white"}`}
+                className={`p-1 rounded transition-colors ${
+                  chartView === "chart" 
+                    ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200"
+                    : "bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400"
+                }`}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -811,6 +812,7 @@ const Chart = () => {
             </div>
           </div>
         </CardHeader>
+        
         <CardContent className="h-[400px] overflow-y-auto">
           {chartView === "default" ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -821,7 +823,7 @@ const Chart = () => {
                   return (
                     <div 
                       key={index} 
-                      className="bg-white border-l-4 rounded-md shadow-sm overflow-hidden dark:bg-gray-800 dark:border-gray-600"
+                      className="bg-white border-l-4 rounded-md shadow-sm overflow-hidden dark:bg-gray-700 dark:border-gray-600"
                       style={{ borderLeftColor: categoryColor }}
                     >
                       <div className="p-4">
@@ -889,7 +891,6 @@ const Chart = () => {
           )}
         </CardContent>
       </Card>
-
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { AlignJustify, LayoutDashboard, ChartColumn, Archive, Smile, Settings,  LogOut } from "lucide-react";
+import { AlignJustify, LayoutDashboard, ChartColumn, Archive, Smile, Settings, LogOut } from "lucide-react";
 import { useTheme } from "../lib/theme";
 
 const Sidebar = ({ isExpanded, setIsExpanded }) => {
@@ -21,10 +21,8 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
       }
     };
     
-    // Initial check
     checkScreenSize();
     
-    // Add event listener for resize
     window.addEventListener("resize", checkScreenSize);
     
     // Cleanup
@@ -83,22 +81,23 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
       )}
     
       <div
-        className={`h-screen ${isExpanded ? "w-60" : "w-16"} 
-        fixed left-0 top-0 bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 
+        className={`h-screen fixed left-0 top-0 bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 
         border-r border-[#A9BFA8]/50 dark:border-gray-700 z-30
-        ${isMobile && !isExpanded ? "w-14" : isMobile ? "w-64" : ""}`}
+        ${isMobile 
+          ? isExpanded ? "w-52" : "w-13" 
+          : isExpanded ? "w-60" : "w-14"}`}
       >
-        <div className="flex items-center justify-between p-4 cursor-pointer" onClick={toggleSidebar}>
-          <AlignJustify size={30} className="text-[#3A3960] dark:text-gray-200" />
+        <div className="flex items-center justify-between p-3 cursor-pointer " onClick={toggleSidebar}>
+           <AlignJustify size={isMobile ? 24 : 30} className="hidden md:block text-[#3A3960] dark:text-gray-200" />
         </div>
-        <hr className="w-[80%] border-t border-[#A9BFA8] border-opacity-50 dark:border-gray-700 mx-auto my-2" />
+        <hr className="w-4/5 border-t border-[#A9BFA8] border-opacity-50 dark:border-gray-700 mx-auto my-2 hidden md:block " />
 
-        <ul className="flex flex-col gap-5 px-2 mt-5">
+        <ul className="flex justify-between flex-col gap-6 px-2 mt-[10px] md:mt-[40px] overflow-y-auto">
           <NavLink
             to="/dashboard"
-            end
+            end 
             className={({ isActive }) =>
-              `flex items-center gap-3 p-3 rounded-md transition ${
+              `flex items-center gap-2 p-2 rounded-md transition ${
                 isActive 
                   ? "bg-[#A31621] dark:bg-[#FF4757] text-white" 
                   : "text-[#5E686D] dark:text-gray-300 hover:bg-[#A9BFA8]/30 dark:hover:bg-gray-700"
@@ -108,8 +107,8 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
           >
             {({ isActive }) => (
               <>
-                <LayoutDashboard size={20} className={isActive ? "text-white" : "text-[#5E686D] dark:text-gray-300"} />
-                {isExpanded && <span>Dashboard</span>}
+                <LayoutDashboard size={isMobile ? 18 : 20} className={isActive ? "text-white" : "text-[#5E686D] dark:text-gray-300"} />
+                {isExpanded && <span className={isMobile ? "text-sm" : ""}>Dashboard</span>}
               </>
             )}
           </NavLink>
@@ -117,7 +116,7 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
           <NavLink
             to="/dashboard/chart"
             className={({ isActive }) =>
-              `flex items-center gap-3 p-3 rounded-md transition ${
+              `flex items-center gap-2 p-2 rounded-md transition ${
                 isActive 
                   ? "bg-[#A31621] dark:bg-[#FF4757] text-white" 
                   : "text-[#5E686D] dark:text-gray-300 hover:bg-[#A9BFA8]/30 dark:hover:bg-gray-700"
@@ -127,8 +126,8 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
           >
             {({ isActive }) => (
               <>
-                <ChartColumn size={20} className={isActive ? "text-white" : "text-[#5E686D] dark:text-gray-300"} />
-                {isExpanded && <span>Chart</span>}
+                <ChartColumn size={isMobile ? 18 : 20} className={isActive ? "text-white" : "text-[#5E686D] dark:text-gray-300"} />
+                {isExpanded && <span className={isMobile ? "text-sm" : ""}>Chart</span>}
               </>
             )}
           </NavLink>
@@ -136,7 +135,7 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
           <NavLink
             to="/dashboard/entertainment"
             className={({ isActive }) =>
-              `flex items-center gap-3 p-3 rounded-md transition ${
+              `flex items-center gap-2 p-2 rounded-md transition ${
                 isActive 
                   ? "bg-[#A31621] dark:bg-[#FF4757] text-white" 
                   : "text-[#5E686D] dark:text-gray-300 hover:bg-[#A9BFA8]/30 dark:hover:bg-gray-700"
@@ -146,8 +145,8 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
           >
             {({ isActive }) => (
               <>
-                <Smile size={20} className={isActive ? "text-white" : "text-[#5E686D] dark:text-gray-300"} />
-                {isExpanded && <span>Entertainment</span>}
+                <Smile size={isMobile ? 18 : 20} className={isActive ? "text-white" : "text-[#5E686D] dark:text-gray-300"} />
+                {isExpanded && <span className={isMobile ? "text-sm" : ""}>Entertainment</span>}
               </>
             )}
           </NavLink>
@@ -155,7 +154,7 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
           <NavLink
             to="/dashboard/archive"
             className={({ isActive }) =>
-              `flex items-center gap-3 p-3 rounded-md transition ${
+              `flex items-center gap-2 p-2 rounded-md transition ${
                 isActive 
                   ? "bg-[#A31621] dark:bg-[#FF4757] text-white" 
                   : "text-[#5E686D] dark:text-gray-300 hover:bg-[#A9BFA8]/30 dark:hover:bg-gray-700"
@@ -165,8 +164,8 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
           >
             {({ isActive }) => (
               <>
-                <Archive size={20} className={isActive ? "text-white" : "text-[#5E686D] dark:text-gray-300"} />
-                {isExpanded && <span>Archive</span>}
+                <Archive size={isMobile ? 18 : 20} className={isActive ? "text-white" : "text-[#5E686D] dark:text-gray-300"} />
+                {isExpanded && <span className={isMobile ? "text-sm" : ""}>Archive</span>}
               </>
             )}
           </NavLink>
@@ -174,7 +173,7 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
           <NavLink
             to="/dashboard/settings"
             className={({ isActive }) =>
-              `flex items-center gap-3 p-3 rounded-md transition ${
+              `flex items-center gap-2 p-2 rounded-md transition ${
                 isActive 
                   ? "bg-[#A31621] dark:bg-[#FF4757] text-white" 
                   : "text-[#5E686D] dark:text-gray-300 hover:bg-[#A9BFA8]/30 dark:hover:bg-gray-700"
@@ -184,27 +183,27 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
           >
             {({ isActive }) => (
               <>
-                <Settings size={20} className={isActive ? "text-white" : "text-[#5E686D] dark:text-gray-300"} />
-                {isExpanded && <span>Settings</span>}
+                <Settings size={isMobile ? 18 : 20} className={isActive ? "text-white" : "text-[#5E686D] dark:text-gray-300"} />
+                {isExpanded && <span className={isMobile ? "text-sm" : ""}>Settings</span>}
               </>
             )}
           </NavLink>
         </ul>
 
         {/* Profile Section */}
-        <div className="absolute bottom-4 left-0 w-full p-4 flex justify-center items-center hover:bg-[#A9BFA8]/30 dark:hover:bg-gray-700 transition rounded-md">
-          <div className="relative flex items-center gap-3">
+        <div className="absolute bottom-4 left-0 w-full p-3 flex justify-center items-center hover:bg-[#A9BFA8]/30 dark:hover:bg-gray-700 transition rounded-md">
+          <div className="relative flex items-center gap-2">
             {isExpanded ? (
               <>
-                <div className="h-10 w-10 rounded-full overflow-hidden cursor-pointer border border-[#A9BFA8] dark:border-gray-600" onClick={() => setShowModal(!showModal)}>
+                <div className={`${isMobile ? "h-8 w-8" : "h-10 w-10"} rounded-full overflow-hidden cursor-pointer border border-[#A9BFA8] dark:border-gray-600`} onClick={() => setShowModal(!showModal)}>
                   <img src={profilePic} alt="Profile" className="w-full h-full object-cover" />
                 </div>
-                <span className="cursor-pointer text-[#5E686D] dark:text-gray-300 hover:text-[#3A3960] dark:hover:text-gray-100 truncate max-w-32" onClick={() => setShowModal(!showModal)}>
+                <span className={`cursor-pointer text-[#5E686D] dark:text-gray-300 hover:text-[#3A3960] dark:hover:text-gray-100 truncate ${isMobile ? "max-w-24 text-xs" : "max-w-32"}`} onClick={() => setShowModal(!showModal)}>
                   {userEmail}
                 </span>
               </>
             ) : (
-              <div className="h-10 w-10 rounded-full overflow-hidden cursor-pointer border border-[#A9BFA8] dark:border-gray-600" onClick={() => setShowModal(!showModal)}>
+              <div className={`${isMobile ? "h-8 w-8" : "h-10 w-10"} rounded-full overflow-hidden cursor-pointer border border-[#A9BFA8] dark:border-gray-600`} onClick={() => setShowModal(!showModal)}>
                 <img src={profilePic} alt="Profile" className="w-full h-full object-cover" />
               </div>
             )}
@@ -214,16 +213,16 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
 
       {/* Profile Modal */}
       {showModal && (
-        <div className="fixed bottom-20 left-9 bg-white dark:bg-gray-700 shadow-lg rounded-tl-[50px] rounded-tr-[50px] rounded-br-[50px] rounded-bl-[5px] ml-[20px] p-3 w-56 z-50 border border-[#A9BFA8] dark:border-gray-600">
+        <div className={`fixed bottom-20 bg-white dark:bg-gray-700 shadow-lg rounded-tl-[50px] rounded-tr-[50px] rounded-br-[50px] rounded-bl-[5px] p-3 z-50 border border-[#A9BFA8] dark:border-gray-600 ${isMobile ? "left-8 w-48" : "left-9 ml-5 w-56"}`}>
          <button
             onClick={() => {
               setShowConfirmLogout(true);
               setShowModal(false);
             }}
-            className="w-full flex items-center justify-center gap-2 py-2 px-4  text-[#A31621] dark:text-[#FF4757] hover:bg-[#A31621]/10 dark:hover:bg-[#FF4757]/10 rounded-lg  group"
+            className="w-full flex items-center justify-center gap-2 py-2 px-4 text-[#A31621] dark:text-[#FF4757] hover:bg-[#A31621]/10 dark:hover:bg-[#FF4757]/10 rounded-lg group"
           >
             <span className="group-hover:scale-110 transition-transform duration-200">👋</span>
-            <span className="font-medium">Wanna log out?</span>
+            <span className={`font-medium ${isMobile ? "text-sm" : ""}`}>Wanna log out?</span>
           </button>
         </div>
       )}

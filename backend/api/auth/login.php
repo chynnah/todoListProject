@@ -33,7 +33,6 @@ if (!empty($data->username) && !empty($data->password)) {
             $_SESSION["user_id"] = $id;
             $_SESSION["username"] = $db_username;
 
-            // Optional: Remove notifications if not needed
             echo json_encode([
                 "success" => true,
                 "message" => "Login successful.",

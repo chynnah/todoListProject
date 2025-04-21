@@ -25,7 +25,6 @@ const Login = () => {
       navigate("/dashboard", { replace: true });
     }
     
-    // Generate floating background elements
     const elements = [];
     const shapes = ["circle", "square", "triangle"];
     const colors = ["#FFC0CB", "#A31621", "#053C5E", "#A9BFA8", "#3A3960"];

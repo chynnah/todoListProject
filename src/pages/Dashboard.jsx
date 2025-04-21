@@ -190,7 +190,7 @@ const Dashboard = () => {
     selectedCategory === 'All' || task.category === selectedCategory
   );
   
-  // Get unique categories from tasks
+  // Get categories from tasks
   const uniqueCategories = ['All', ...new Set(tasks.map(task => task.category).filter(Boolean))];
   
   // Toggle dropdown
@@ -213,57 +213,63 @@ const Dashboard = () => {
   }, [isDropdownOpen]);
   
   return (
-    <div className="bg-white dark:bg-gray-900 text-[#053C5E] dark:text-gray-200 font-sans transition-colors min-h-screen">
+    <div className="bg-white dark:bg-gray-900 text-[#053C5E] dark:text-gray-200 font-sans transition-colors min-h-screen max-w-full">
       <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       
-      {/* Compact Welcome Banner */}
-      <div className="flex mt-[10px] mr-[80px] justify-end">
-        <div className="bg-gradient-to-r from-[#A31621] to-[#D64045] dark:from-[#FF4757] dark:to-[#FF6B6B] 
-                       px-[30px] py-[15px] rounded-tl-[25px] rounded-bl-[25px] rounded-tr-[25px] 
-                       flex items-center gap-2 shadow-md">
-          <span className="text-lg">{getGreetingEmoji()}</span>
-          <h1 className="text-white text-[20px] font-medium flex items-center gap-2">
-            Welcome back, {username}! 
-            <Sparkles size={16} className="text-yellow-300" />
+      {/* Welcome Banner */}
+      <div className="mt-2 md:mt-3 lg:mt-4 mx-4 md:mx-5 lg:mx-6 flex justify-end">
+        <div className={`bg-gradient-to-r from-[#A31621] to-[#D64045] dark:from-[#FF4757] dark:to-[#FF6B6B] 
+                        px-4 py-2 md:px-5 lg:px-6 md:py-2.5 lg:py-3 
+                        rounded-t-[30px] rounded-bl-[30px] 
+                        flex items-center gap-2 shadow-md 
+                        w-fit md:w-auto transition-all duration-300`}>
+          <span className="text-base md:text-base lg:text-lg">{getGreetingEmoji()}</span>
+          <h1 className="text-white text-sm md:text-sm lg:text-base font-medium flex items-center gap-1 md:gap-1.5 lg:gap-2 truncate">
+            Welcome back, {username}!
+            <Sparkles size={14} className="text-yellow-300 hidden md:block" />
           </h1>
         </div>
       </div>
       
-      <TaskLegend />
+      {/* Task Legend */}
+      <div className="my-4 md:my-5 lg:my-6">
+        <TaskLegend className="hidden md:block" />
+      </div>
 
-      <div className="ml-[40px] flex justify-between items-center pr-10 mt-4">
+      {/* Control Bar */}
+      <div className="px-4 md:px-5 lg:px-6 flex flex-row justify-between items-center md:pr-5 lg:pr-6 mt-4 gap-3 md:gap-2 lg:gap-0">
+        {/* Add Task Button*/}
         <button 
-          className="h-12 w-52 flex justify-center items-center gap-3 cursor-pointer rounded-lg transition-all transform hover:scale-105 active:scale-95 group ml-[10px]"
+          className="h-10 w-auto md:w-36 lg:w-48 flex justify-center items-center gap-2 cursor-pointer rounded-lg transition-all transform hover:scale-105 active:scale-95 bg-transparent dark:bg-transparent"
           onClick={() => setIsModalOpen(true)}
         >
-          <Plus
-            size={18}
-            className="stroke-[#053C5E]/70 group-hover:stroke-[#3A3960] group-active:stroke-[#3A3960] transition-all duration-300 dark:stroke-white"
-          />
-          <h4 className="text-[#053C5E]/70 group-hover:text-[#3A3960] group-active:text-[#3A3960] font-semibold text-lg transition-all duration-300 dark:text-white">
+          <Plus size={16} className="stroke-[#053C5E]/70 dark:stroke-white" />
+          <h4 className="text-[#053C5E]/70 font-semibold text-base md:text-base lg:text-lg dark:text-white">
             Add New Task
           </h4>
         </button>
         
-        <div className="dropdown-container relative">
-        <button 
-          className="h-10 px-5 bg-white hover:bg-[#A9BFA8]/30 text-[#053C5E]/70 font-medium text-sm rounded-lg transition-all duration-300 flex items-center gap-2 mr-[40px] border border-[#A9BFA8] dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700 max-w-xs"
-          onClick={toggleDropdown}
-        >
-          <Filter size={16} className="dark:text-gray-300 flex-shrink-0" />
-          <span className="truncate">Category: {selectedCategory}</span>
-          <ChevronDown size={16} className={`transition-transform duration-300 ${isDropdownOpen ? "rotate-180" : ""} dark:text-gray-300 flex-shrink-0`} />
-        </button>
-          
+        {/* Category Dropdown */}
+        <div className="dropdown-container relative w-auto ml-auto">
+          <button 
+            className="h-10 px-3 bg-white hover:bg-[#A9BFA8]/30 text-[#053C5E]/70 font-medium text-sm rounded-lg flex items-center justify-between gap-2 border border-[#A9BFA8] dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600"
+            onClick={toggleDropdown}
+          >
+            <div className="flex items-center gap-2 flex-1">
+              <span className="truncate">Category: {selectedCategory}</span>
+            </div>
+            <ChevronDown size={16} className={`dark:text-gray-300 ${isDropdownOpen ? "rotate-180" : ""}`} />
+          </button>
+            
           {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-full min-w-[200px] bg-white rounded-lg shadow-lg border border-[#A9BFA8] z-50 dark:bg-gray-800 dark:border-gray-600">
-              <ul className="py-2">
+            <div className="absolute right-0 mt-1 w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-[#A9BFA8] dark:border-gray-700 z-50">
+              <ul className="py-1 overflow-y-auto">
                 {uniqueCategories.map((category, index) => (
                   <li 
                     key={index}
-                    className={`px-4 py-2 hover:bg-[#FAFFC5] cursor-pointer transition-colors duration-200 dark:hover:bg-gray-700 ${
+                    className={`px-3 py-1.5 text-sm cursor-pointer hover:bg-[#FAFFC5] dark:hover:bg-gray-700 ${
                       selectedCategory === category 
-                        ? 'bg-[#A9BFA8]/20 text-[#3A3960] font-medium dark:bg-gray-600 dark:text-white' 
+                        ? 'bg-[#A9BFA8]/20 dark:bg-gray-700' 
                         : 'dark:text-gray-300'
                     }`}
                     onClick={() => {
@@ -280,15 +286,18 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <Tabs
-        tasks={filteredTasks}
-        updateTaskStatus={updateTaskStatus}
-        deleteTask={archiveTask}
-        editTask={editTask}
-        setEditingTask={setEditingTask}
-        setIsModalOpen={setIsModalOpen}
-        searchQuery={searchQuery}
-      />
+      {/* Tabs Section */}
+      <div className="mt-4 md:mt-5 lg:mt-6 px-2 sm:px-3 md:px-4 max-w-full overflow-hidden">
+        <Tabs
+          tasks={filteredTasks}
+          updateTaskStatus={updateTaskStatus}
+          deleteTask={archiveTask}
+          editTask={editTask}
+          setEditingTask={setEditingTask}
+          setIsModalOpen={setIsModalOpen}
+          searchQuery={searchQuery}
+        />
+      </div>
 
       <Input
         isOpen={isModalOpen}
