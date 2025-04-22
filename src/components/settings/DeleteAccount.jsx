@@ -61,41 +61,41 @@ const DeleteAccount = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-1 sm:p-2 md:p-4 overflow-y-auto">
-      <div className="bg-white dark:bg-gray-800 rounded-lg md:rounded-xl shadow-lg w-full max-w-xs sm:max-w-sm md:max-w-md relative border border-gray-200 dark:border-gray-700 transition-all duration-300 my-1 sm:my-2 md:my-4">
+    <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-2 sm:p-4 md:p-6 overflow-y-auto">
+      <div className="bg-white dark:bg-gray-800 rounded-lg md:rounded-xl shadow-lg w-full max-w-sm sm:max-w-md md:max-w-lg relative border border-gray-200 dark:border-gray-700 transition-all duration-300 my-2 sm:my-4">
         {/* Header with close button */}
-        <div className="flex justify-between items-center p-2 sm:p-3 md:p-4 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-base sm:text-lg md:text-xl font-semibold text-[#053C5E] dark:text-gray-200">
+        <div className="flex justify-between items-center p-3 sm:p-4 md:p-5 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-[#053C5E] dark:text-gray-200">
             {stage === "processing" ? "Account Deletion" : "Delete Account"}
           </h2>
           {stage !== "processing" && (
             <button
               onClick={handleClose}
-              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors p-1"
+              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors p-2"
               disabled={isLoading}
               aria-label="Close"
             >
-              <X size={18} />
+              <X size={20} />
             </button>
           )}
         </div>
 
         {/* Content */}
-        <div className="p-3 sm:p-4 md:p-6">
+        <div className="p-4 sm:p-5 md:p-6">
           {stage === "confirm" && (
             <>
-              <div className="mb-3 sm:mb-4 md:mb-6 p-2 sm:p-3 md:p-4 bg-red-100 dark:bg-red-900/20 rounded-md md:rounded-lg border border-red-200 dark:border-red-800">
-                <div className="flex items-start gap-2 sm:gap-2.5 md:gap-3">
-                  <AlertTriangle className="h-4 w-4 sm:h-4.5 sm:w-4.5 md:h-5 md:w-5 text-red-600 dark:text-red-400 mt-0.5" />
+              <div className="mb-4 sm:mb-5 md:mb-6 p-3 sm:p-4 bg-red-100 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6 text-red-600 dark:text-red-400 mt-0.5" />
                   <div>
-                    <h3 className="text-xs sm:text-sm font-medium text-red-800 dark:text-red-300">
+                    <h3 className="text-sm sm:text-base font-medium text-red-800 dark:text-red-300">
                       Warning: This action cannot be undone
                     </h3>
-                    <div className="mt-1 sm:mt-1.5 md:mt-2 text-xs sm:text-sm text-red-700 dark:text-red-400">
+                    <div className="mt-2 text-sm text-red-700 dark:text-red-400">
                       <p>
                         Deleting your account will permanently remove all your data, including:
                       </p>
-                      <ul className="list-disc pl-4 md:pl-5 mt-1 space-y-0.5 md:space-y-1">
+                      <ul className="list-disc pl-5 mt-2 space-y-1">
                         <li>Profile information</li>
                         <li>Activity history</li>
                         <li>All associated content</li>
@@ -105,16 +105,16 @@ const DeleteAccount = ({ isOpen, onClose }) => {
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row justify-end gap-1.5 sm:gap-2 md:gap-3">
+              <div className="flex flex-col sm:flex-row justify-end gap-3">
                 <button
                   onClick={handleClose}
-                  className="flex items-center justify-center gap-1 px-3 py-1.5 sm:px-3.5 sm:py-2 md:px-4 md:py-2.5 border border-gray-300 dark:border-gray-600 rounded-md md:rounded-lg text-[#053C5E] dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 font-medium text-xs sm:text-sm md:text-base order-2 sm:order-1 w-full sm:w-auto"
+                  className="flex items-center justify-center gap-2 py-3 sm:py-2.5 px-4 border border-gray-300 dark:border-gray-600 rounded-lg text-[#053C5E] dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 font-medium text-base order-2 sm:order-1 w-full sm:w-auto"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDeleteAccount}
-                  className="flex items-center justify-center gap-1 px-3 py-1.5 sm:px-3.5 sm:py-2 md:px-4 md:py-2.5 bg-red-600 dark:bg-red-700 text-white rounded-md md:rounded-lg hover:bg-red-700 dark:hover:bg-red-800 transition-colors duration-200 font-medium text-xs sm:text-sm md:text-base order-1 sm:order-2 w-full sm:w-auto mb-1.5 sm:mb-0"
+                  className="flex items-center justify-center gap-2 py-3 sm:py-2.5 px-4 bg-red-600 dark:bg-red-700 text-white rounded-lg hover:bg-red-700 dark:hover:bg-red-800 transition-colors duration-200 font-medium text-base order-1 sm:order-2 w-full sm:w-auto mb-2 sm:mb-0"
                 >
                   Continue
                 </button>
@@ -124,45 +124,45 @@ const DeleteAccount = ({ isOpen, onClose }) => {
 
           {stage === "password" && (
             <>
-              <p className="mb-3 sm:mb-3.5 md:mb-4 text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-400">
+              <p className="mb-4 text-sm sm:text-base text-gray-600 dark:text-gray-400">
                 For security, please enter your current password to confirm account deletion.
               </p>
 
-              <div className="mb-3 sm:mb-3.5 md:mb-4">
-                <label className="block text-xs sm:text-sm font-medium text-[#053C5E] dark:text-gray-300 mb-1">
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-[#053C5E] dark:text-gray-300 mb-2">
                   Password
                 </label>
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-2 py-1.5 sm:px-3 sm:py-2 md:px-4 md:py-2.5 rounded-md md:rounded-lg border border-[#A9BFA8] dark:border-gray-600 bg-white dark:bg-gray-700 text-[#053C5E] dark:text-gray-200 focus:ring-2 focus:ring-[#A9BFA8] focus:border-transparent transition-all duration-200 disabled:opacity-70 text-xs sm:text-sm md:text-base"
+                  className="w-full px-4 py-3 sm:py-2.5 rounded-lg border border-[#A9BFA8] dark:border-gray-600 bg-white dark:bg-gray-700 text-[#053C5E] dark:text-gray-200 focus:ring-2 focus:ring-[#A9BFA8] focus:border-transparent transition-all duration-200 disabled:opacity-70 text-base"
                   placeholder="Enter your password"
                   disabled={isLoading}
                 />
               </div>
 
               {error && (
-                <div className="mt-2 sm:mt-3 md:mt-4 p-1.5 sm:p-2 md:p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-md md:rounded-lg text-xs sm:text-sm">
+                <div className="mt-3 sm:mt-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg text-sm">
                   {error}
                 </div>
               )}
 
-              <div className="mt-4 sm:mt-6 md:mt-8 flex flex-col sm:flex-row justify-end gap-1.5 sm:gap-2 md:gap-3">
+              <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row justify-end gap-3">
                 <button
                   onClick={handleClose}
-                  className="flex items-center justify-center gap-1 px-3 py-1.5 sm:px-3.5 sm:py-2 md:px-4 md:py-2.5 border border-gray-300 dark:border-gray-600 rounded-md md:rounded-lg text-[#053C5E] dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 font-medium disabled:opacity-70 text-xs sm:text-sm md:text-base order-2 sm:order-1 w-full sm:w-auto"
+                  className="flex items-center justify-center gap-2 py-3 sm:py-2.5 px-4 border border-gray-300 dark:border-gray-600 rounded-lg text-[#053C5E] dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 font-medium disabled:opacity-70 text-base order-2 sm:order-1 w-full sm:w-auto"
                   disabled={isLoading}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDeleteAccount}
-                  className="flex items-center justify-center gap-1 px-3 py-1.5 sm:px-3.5 sm:py-2 md:px-4 md:py-2.5 bg-red-600 dark:bg-red-700 text-white rounded-md md:rounded-lg hover:bg-red-700 dark:hover:bg-red-800 transition-colors duration-200 font-medium disabled:opacity-70 text-xs sm:text-sm md:text-base order-1 sm:order-2 w-full sm:w-auto mb-1.5 sm:mb-0"
+                  className="flex items-center justify-center gap-2 py-3 sm:py-2.5 px-4 bg-red-600 dark:bg-red-700 text-white rounded-lg hover:bg-red-700 dark:hover:bg-red-800 transition-colors duration-200 font-medium disabled:opacity-70 text-base order-1 sm:order-2 w-full sm:w-auto mb-2 sm:mb-0"
                   disabled={isLoading}
                 >
                   {isLoading ? (
-                    <Loader2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 animate-spin" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
                     "Delete Account"
                   )}
@@ -172,12 +172,12 @@ const DeleteAccount = ({ isOpen, onClose }) => {
           )}
 
           {stage === "processing" && (
-            <div className="py-4 sm:py-5 md:py-6 flex flex-col items-center justify-center">
-              <Loader2 className="h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 text-red-600 dark:text-red-500 animate-spin mb-2 sm:mb-3 md:mb-4" />
-              <p className="text-gray-700 dark:text-gray-300 mb-1 sm:mb-1.5 md:mb-2 font-medium text-sm sm:text-base">
+            <div className="py-6 sm:py-8 flex flex-col items-center justify-center">
+              <Loader2 className="h-10 w-10 sm:h-12 sm:w-12 text-red-600 dark:text-red-500 animate-spin mb-4" />
+              <p className="text-gray-700 dark:text-gray-300 mb-2 font-medium text-base sm:text-lg">
                 Deleting your account...
               </p>
-              <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
                 You will be redirected shortly.
               </p>
             </div>

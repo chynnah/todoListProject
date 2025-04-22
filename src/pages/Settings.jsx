@@ -9,7 +9,7 @@ const Settings = () => {
   const [isDeleteAccountOpen, setIsDeleteAccountOpen] = useState(false);
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200 px-4 py-6 sm:px-6 md:px-8">
+    <div className="flex md:justify-center md:items-center min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200 px-4 py-6  md:px-8">
       <div className="w-full max-w-2xl p-4 sm:p-6 md:p-8 rounded-xl shadow-lg bg-white dark:bg-gray-800 flex flex-col transition-colors duration-200">
         <div className="mb-6 sm:mb-8 border-l-4 border-[#FF1654] dark:border-[#FF4757] pl-3 sm:pl-4">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200">Settings</h2>

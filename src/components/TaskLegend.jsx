@@ -14,7 +14,7 @@ const TaskLegend = () => {
     },
     {
       color: "bg-orange-500",
-      text: "Due Soon (<3h)",
+      text: "Due Soon",
       border: "border-orange-500"
     },
     {

@@ -121,7 +121,7 @@ const Landing = () => {
         </div>
       </header>
 
-      {/* Hero Section with enhanced background effects */}
+      {/* Hero Section */}
       <section className="pt-32 pb-24 px-6 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-200 overflow-hidden relative">
         {/* Grid Pattern Background */}
         <div className="absolute top-0 left-0 w-full h-full bg-grid-pattern opacity-5"></div>
@@ -153,7 +153,7 @@ const Landing = () => {
             Not just another task app. me.list transforms how you organize your life—bringing calm to your busy world with beautifully simple task management.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-5 mt-6">
+          <div className="flex flex-col justify-center items-center md:flex-row gap-5 mt-6">
             <Link to="/signup">
               <button className="group bg-[#A31621] dark:bg-[#FF4757] text-white px-8 py-4 rounded-lg text-lg font-semibold cursor-pointer hover:bg-opacity-90 transition shadow-lg flex items-center gap-2">
                 Get Started — It's Free

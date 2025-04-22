@@ -5,7 +5,6 @@ import Tabs from "../components/Tabs";
 import Input from "../components/Input";
 import { Plus, Filter, ChevronDown, Sparkles } from "lucide-react";
 import TaskLegend from "../components/TaskLegend";
-import { useTheme } from "../lib/theme";
 
 const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,6 +23,14 @@ const Dashboard = () => {
     if (hour < 12) return "🌅"; // morning
     if (hour < 18) return "☀️"; // afternoon
     return "🌙"; // evening
+  };
+  
+  // Get greeting text based on time of day
+  const getGreetingText = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
   };
 
   useEffect(() => {
@@ -225,7 +232,7 @@ const Dashboard = () => {
                         w-fit md:w-auto transition-all duration-300`}>
           <span className="text-base md:text-base lg:text-lg">{getGreetingEmoji()}</span>
           <h1 className="text-white text-sm md:text-sm lg:text-base font-medium flex items-center gap-1 md:gap-1.5 lg:gap-2 truncate">
-            Welcome back, {username}!
+            {getGreetingText()}, {username}!
             <Sparkles size={14} className="text-yellow-300 hidden md:block" />
           </h1>
         </div>
@@ -235,30 +242,29 @@ const Dashboard = () => {
       <div className="my-4 md:my-5 lg:my-6">
         <TaskLegend className="hidden md:block" />
       </div>
-
       {/* Control Bar */}
-      <div className="px-4 md:px-5 lg:px-6 flex flex-row justify-between items-center md:pr-5 lg:pr-6 mt-4 gap-3 md:gap-2 lg:gap-0">
+      <div className="px-3 md:px-5 lg:px-6 flex flex-row justify-between items-center md:pr-5 lg:pr-6 mt-4 gap-2 md:gap-2 lg:gap-0">
         {/* Add Task Button*/}
         <button 
-          className="h-10 w-auto md:w-36 lg:w-48 flex justify-center items-center gap-2 cursor-pointer rounded-lg transition-all transform hover:scale-105 active:scale-95 bg-transparent dark:bg-transparent"
+          className="h-8 md:h-10 w-auto flex justify-center items-center gap-1 md:gap-2 cursor-pointer rounded-lg transition-all transform hover:scale-105 active:scale-95 bg-transparent dark:bg-transparent"
           onClick={() => setIsModalOpen(true)}
         >
-          <Plus size={16} className="stroke-[#053C5E]/70 dark:stroke-white" />
-          <h4 className="text-[#053C5E]/70 font-semibold text-base md:text-base lg:text-lg dark:text-white">
-            Add New Task
+          <Plus size={14} className="stroke-[#053C5E]/70 dark:stroke-white md:size-6" />
+          <h4 className="text-[#053C5E]/70 font-semibold text-sm md:text-base lg:text-lg dark:text-white">
+            Add Task
           </h4>
         </button>
         
         {/* Category Dropdown */}
         <div className="dropdown-container relative w-auto ml-auto">
           <button 
-            className="h-10 px-3 bg-white hover:bg-[#A9BFA8]/30 text-[#053C5E]/70 font-medium text-sm rounded-lg flex items-center justify-between gap-2 border border-[#A9BFA8] dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600"
+            className="h-8 md:h-10 px-2 md:px-3 bg-white hover:bg-[#A9BFA8]/30 text-[#053C5E]/70 font-medium text-xs md:text-sm rounded-lg flex items-center justify-between gap-1 md:gap-2 border border-[#A9BFA8] dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600"
             onClick={toggleDropdown}
           >
-            <div className="flex items-center gap-2 flex-1">
-              <span className="truncate">Category: {selectedCategory}</span>
+            <div className="flex items-center gap-1 md:gap-2 flex-1">
+              <span className="truncate max-w-24 md:max-w-full">Category: {selectedCategory}</span>
             </div>
-            <ChevronDown size={16} className={`dark:text-gray-300 ${isDropdownOpen ? "rotate-180" : ""}`} />
+            <ChevronDown size={14} className={`dark:text-gray-300 ${isDropdownOpen ? "rotate-180" : ""}`} />
           </button>
             
           {isDropdownOpen && (
@@ -267,7 +273,7 @@ const Dashboard = () => {
                 {uniqueCategories.map((category, index) => (
                   <li 
                     key={index}
-                    className={`px-3 py-1.5 text-sm cursor-pointer hover:bg-[#FAFFC5] dark:hover:bg-gray-700 ${
+                    className={`px-3 py-1.5 text-xs md:text-sm cursor-pointer hover:bg-[#FAFFC5] dark:hover:bg-gray-700 ${
                       selectedCategory === category 
                         ? 'bg-[#A9BFA8]/20 dark:bg-gray-700' 
                         : 'dark:text-gray-300'

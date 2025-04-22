@@ -9,6 +9,7 @@ import {
   CheckCircle as CheckCircleIcon,
   AlertCircle as AlertCircleIcon
 } from 'lucide-react';
+import Pagination from '../components/Pagination'; 
 
 const Archive = () => {
   const [archivedTasks, setArchivedTasks] = useState([]);
@@ -16,6 +17,9 @@ const Archive = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 12; 
 
   const categoryEmojis = {
     Work: "💼",
@@ -67,6 +71,11 @@ const Archive = () => {
   useEffect(() => {
     fetchArchivedTasks();
   }, []);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [searchQuery, selectedCategory]);
 
   const restoreTask = (taskId) => {
     fetch("http://localhost:3000/backend/api/tasks/restore_task.php", {
@@ -148,6 +157,18 @@ const Archive = () => {
     return matchesSearch && matchesCategory;
   });
 
+  // Calculate pagination values
+  const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
+  const paginatedTasks = filteredTasks.slice(
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage
+  );
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
   useEffect(() => {
@@ -213,25 +234,25 @@ const Archive = () => {
   return (
     <div className="bg-white dark:bg-gray-900 text-[#053C5E] dark:text-gray-200 min-h-screen p-3 md:p-4">
       {/* Search and Filter Section */}
-      <div className="flex flex-row justify-end gap-2 mb-4">
+      <div className="flex flex-row justify-end gap-1 ml-2 md:gap-2 mb-3 md:mb-4">
         <div className="border border-[#DDD9D9] dark:border-gray-700 rounded-lg relative">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search tasks..."
-            className="px-3 py-1.5 w-[140px] text-sm bg-transparent rounded-lg focus:outline-none focus:ring-1 focus:ring-[#FF1654] placeholder-gray-500 dark:placeholder-gray-400"
+            placeholder="Search..."
+            className="px-2 md:px-3 py-1 md:py-1.5 w-[100px] md:w-[140px] text-xs md:text-sm bg-transparent rounded-lg focus:outline-none focus:ring-1 focus:ring-[#FF1654] placeholder-gray-500 dark:placeholder-gray-400"
           />
-          <span className="absolute right-2 top-1/2 transform -translate-y-1/2 text-[#FF1654]">🔍</span>
+          <span className="absolute right-1 md:right-2 top-1/2 transform -translate-y-1/2 text-[#FF1654] text-xs md:text-base">🔍</span>
         </div>
 
-        <div className="dropdown-container relative w-auto ml-auto">
+        <div className="dropdown-container relative w-auto ml-auto mr-2">
           <button
             onClick={toggleDropdown}
-            className="h-9 px-3 bg-white dark:bg-gray-800 border border-[#A9BFA8] dark:border-gray-700 rounded-lg flex items-center justify-between gap-2 w-full"
+            className="h-7 md:h-9 px-2 md:px-3 bg-white dark:bg-gray-800 border border-[#A9BFA8] dark:border-gray-700 rounded-lg flex items-center justify-between gap-1 md:gap-2 w-full"
           >
-            <span className="text-sm truncate">Category: {selectedCategory}</span>
-            <ChevronDown size={16} className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+            <span className="text-xs md:text-sm truncate max-w-24 md:max-w-full">Category: {selectedCategory}</span>
+            <ChevronDown size={14} className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''} md:size-4`} />
           </button>
           
           {isDropdownOpen && (
@@ -244,7 +265,7 @@ const Archive = () => {
                       setSelectedCategory(category);
                       setIsDropdownOpen(false);
                     }}
-                    className={`px-3 py-1.5 text-sm cursor-pointer hover:bg-[#FAFFC5] dark:hover:bg-gray-700 ${
+                    className={`px-2 md:px-3 py-1 md:py-1.5 text-xs md:text-sm cursor-pointer hover:bg-[#FAFFC5] dark:hover:bg-gray-700 ${
                       selectedCategory === category ? 'bg-[#A9BFA8]/20 dark:bg-gray-700' : ''
                     }`}
                   >
@@ -273,93 +294,104 @@ const Archive = () => {
             <p className="text-gray-500 dark:text-gray-400">No tasks match your search criteria</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-3">
-            {filteredTasks.map((task) => {
-              const categoryName = task.category || "Uncategorized";
-              const categoryEmoji = categoryEmojis[categoryName] || "📌";
-              const deadlineStyles = getDeadlineStyles(task);
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-3">
+              {paginatedTasks.map((task) => {
+                const categoryName = task.category || "Uncategorized";
+                const categoryEmoji = categoryEmojis[categoryName] || "📌";
+                const deadlineStyles = getDeadlineStyles(task);
 
-              return (
-                <div
-                  key={task.id}
-                  className={`relative rounded-lg border shadow-sm hover:shadow-md transition-all
-                    ${task.status === "completed" ? 'bg-gray-50 dark:bg-gray-800/50' : 'bg-white dark:bg-gray-800'}
-                    ${searchQuery ? 'ring-1 ring-yellow-300 dark:ring-yellow-500' : 'ring-0'}
-                    ${task.is_favorite ? 'border-l-4 border-l-yellow-400 dark:border-l-yellow-500' : ''}
-                    border-gray-200 dark:border-gray-700`}
-                >
-                  {/* Card Header */}
-                  <div className="flex justify-between items-center px-3 py-2 border-b border-gray-100 dark:border-gray-700">
-                    <div className="flex items-center gap-2 truncate">
-                      <span className="text-sm">{categoryEmoji}</span>
-                      <span className="text-xs font-medium text-gray-600 dark:text-gray-300 truncate">
-                        {highlightText(categoryName)}
-                      </span>
+                return (
+                  <div
+                    key={task.id}
+                    className={`relative rounded-lg border shadow-sm hover:shadow-md transition-all
+                      ${task.status === "completed" ? 'bg-gray-50 dark:bg-gray-800/50' : 'bg-white dark:bg-gray-800'}
+                      ${searchQuery ? 'ring-1 ring-yellow-300 dark:ring-yellow-500' : 'ring-0'}
+                      ${task.is_favorite ? 'border-l-4 border-l-yellow-400 dark:border-l-yellow-500' : ''}
+                      border-gray-200 dark:border-gray-700`}
+                  >
+                    {/* Card Header */}
+                    <div className="flex justify-between items-center px-3 py-2 border-b border-gray-100 dark:border-gray-700">
+                      <div className="flex items-center gap-2 truncate">
+                        <span className="text-sm">{categoryEmoji}</span>
+                        <span className="text-xs font-medium text-gray-600 dark:text-gray-300 truncate">
+                          {highlightText(categoryName)}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        {task.is_favorite && (
+                          <StarIcon size={14} className="fill-yellow-400 dark:fill-yellow-500 text-yellow-600" />
+                        )}
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${deadlineStyles.badgeColors}`}>
+                          {task.status === "completed" ? 'Done' : 
+                          getDeadlineStatus(task) === 'overdue' ? 'Overdue' :
+                          getDeadlineStatus(task) === 'verySoon' ? 'Soon' : 'Pending'}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      {task.is_favorite && (
-                        <StarIcon size={14} className="fill-yellow-400 dark:fill-yellow-500 text-yellow-600" />
-                      )}
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${deadlineStyles.badgeColors}`}>
-                        {task.status === "completed" ? 'Done' : 
-                         getDeadlineStatus(task) === 'overdue' ? 'Overdue' :
-                         getDeadlineStatus(task) === 'verySoon' ? 'Soon' : 'Pending'}
-                      </span>
-                    </div>
-                  </div>
 
-                  {/* Card Body */}
-                  <div className="p-3">
-                    <h3 className={`text-sm font-medium mb-2 ${
-                      task.status === "completed" ? 'line-through text-gray-400 dark:text-gray-500' : 'text-gray-800 dark:text-gray-200'
-                    }`}>
-                      {highlightText(task.task)}
-                    </h3>
-                    
-                    <div className="space-y-2">
-                      <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                        <Clock size={12} />
-                        {task.updated_at ? `Updated: ${getRelativeTime(task.updated_at)}` : `Created: ${getRelativeTime(task.created_at)}`}
-                      </p>
+                    {/* Card Body */}
+                    <div className="p-3">
+                      <h3 className={`text-sm font-medium mb-2 ${
+                        task.status === "completed" ? 'line-through text-gray-400 dark:text-gray-500' : 'text-gray-800 dark:text-gray-200'
+                      }`}>
+                        {highlightText(task.task)}
+                      </h3>
                       
-                      {task.deadline && (
-                        <div className="flex flex-col gap-1">
-                          <div className={`flex items-center gap-1 text-xs px-2 py-1 rounded-md ${deadlineStyles.badgeColors}`}>
-                            <Calendar size={12} className={deadlineStyles.deadlineIcon} />
-                            <span className={deadlineStyles.deadlineText}>
-                              {getRelativeTime(task.deadline)}
+                      <div className="space-y-2">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                          <Clock size={12} />
+                          {task.updated_at ? `Updated: ${getRelativeTime(task.updated_at)}` : `Created: ${getRelativeTime(task.created_at)}`}
+                        </p>
+                        
+                        {task.deadline && (
+                          <div className="flex flex-col gap-1">
+                            <div className={`flex items-center gap-1 text-xs px-2 py-1 rounded-md ${deadlineStyles.badgeColors}`}>
+                              <Calendar size={12} className={deadlineStyles.deadlineIcon} />
+                              <span className={deadlineStyles.deadlineText}>
+                                {getRelativeTime(task.deadline)}
+                              </span>
+                            </div>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                              {new Date(task.deadline).toLocaleDateString()} {' '}
+                              {new Date(task.deadline).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </span>
                           </div>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
-                            {new Date(task.deadline).toLocaleDateString()} {' '}
-                            {new Date(task.deadline).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </span>
-                        </div>
-                      )}
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Card Footer */}
+                    <div className="flex justify-between items-center px-3 py-2 bg-gray-50/80 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-700">
+                      <button
+                        onClick={() => restoreTask(task.id)}
+                        className="text-xs flex items-center gap-1 text-blue-600 hover:text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 px-2 py-1 rounded-md"
+                      >
+                        <CheckCircleIcon size={14} />
+                        Restore
+                      </button>
+                      <button
+                        onClick={() => permanentlyDeleteTask(task.id)}
+                        className="text-xs flex items-center gap-1 text-rose-600 hover:text-rose-700 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 px-2 py-1 rounded-md"
+                      >
+                        <Trash2 size={14} />
+                        Delete
+                      </button>
                     </div>
                   </div>
-
-                  {/* Card Footer */}
-                  <div className="flex justify-between items-center px-3 py-2 bg-gray-50/80 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-700">
-                    <button
-                      onClick={() => restoreTask(task.id)}
-                      className="text-xs flex items-center gap-1 text-blue-600 hover:text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 px-2 py-1 rounded-md"
-                    >
-                      <CheckCircleIcon size={14} />
-                      Restore
-                    </button>
-                    <button
-                      onClick={() => permanentlyDeleteTask(task.id)}
-                      className="text-xs flex items-center gap-1 text-rose-600 hover:text-rose-700 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 px-2 py-1 rounded-md"
-                    >
-                      <Trash2 size={14} />
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+            
+            {/* Add Pagination Component */}
+            {filteredTasks.length > 0 && (
+              <Pagination 
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            )}
+          </>
         )}
       </div>
     </div>

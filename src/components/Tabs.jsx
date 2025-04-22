@@ -24,9 +24,9 @@ const Tabs = ({
       if (window.innerWidth < 640) { // Mobile
         setItemsPerPage(3); 
       } else if (window.innerWidth < 1024) { // Tablet
-        setItemsPerPage(5); 
+        setItemsPerPage(4); 
       } else { // Desktop
-        setItemsPerPage(5); 
+        setItemsPerPage(4); 
       }
     };
 

@@ -53,12 +53,14 @@ const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOp
   const deadlineStatus = getDeadlineStatus();
   
   const getRelativeTime = (dateString) => {
+    if (!dateString) return 'Just now';
+    
     const date = new Date(dateString);
     const now = new Date();
     const diffTime = Math.abs(now - date);
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
-    const diffMinutes = Math.floor(diffTime / (1000 * 60));
+    const diffHours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const diffMinutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
     
     if (diffDays > 0) return `${diffDays}d ago`;
     if (diffHours > 0) return `${diffHours}h ago`;
@@ -78,13 +80,16 @@ const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOp
       const overdueHours = Math.floor((overdueDiffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       
       if (overdueDays > 0) return `Overdue ${overdueDays}d`;
-      return `Overdue ${overdueHours}h`;
+      if (overdueHours > 0) return `Overdue ${overdueHours}h`;
+      return `Overdue`;
     }
     
     const days = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    
     if (days > 0) return `Due in ${days}d`;
-    return `Due in ${hours}h`;
+    if (hours > 0) return `Due in ${hours}h`;
+    return `Due soon`;
   };
   
   const getDeadlineStyles = () => {
@@ -191,9 +196,9 @@ const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOp
                 "bg-gray-100 dark:bg-gray-800"}`}
               >
                 {deadlineStatus === "overdue" && task.status !== "completed" ? (
-                  <Clock size={12} className={`md:size-3 ${deadlineStyles.deadlineIcon} flex-shrink-0`} />
-                ) : deadlineStatus === "verySoon" && task.status !== "completed" ? (
                   <AlertCircle size={12} className={`md:size-3 ${deadlineStyles.deadlineIcon} flex-shrink-0`} />
+                ) : deadlineStatus === "verySoon" && task.status !== "completed" ? (
+                  <Clock size={12} className={`md:size-3 ${deadlineStyles.deadlineIcon} flex-shrink-0`} />
                 ) : (
                   <Calendar size={12} className={`md:size-3 ${deadlineStyles.deadlineIcon} flex-shrink-0`} />
                 )}
@@ -202,7 +207,7 @@ const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOp
                 </span>
               </div>
               <span className="text-xs md:text-xs text-gray-500 dark:text-gray-400 truncate w-full">
-                {new Date(task.deadline).toLocaleDateString()} {new Date(task.deadline).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                {new Date(task.deadline).toLocaleDateString(undefined, {year: 'numeric', month: 'short', day: 'numeric'})} {new Date(task.deadline).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
               </span>
             </div>
           )}

@@ -6,6 +6,8 @@ const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories
   const [category, setCategory] = useState("");
   const [dateTime, setDateTime] = useState("");
   const [deadline, setDeadline] = useState(""); 
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = React.useRef(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -36,6 +38,20 @@ const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories
       setDeadline(""); 
     }
   }, [isOpen, editingTask]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   if (!isOpen) return null;
 
@@ -97,28 +113,59 @@ const Input = ({ isOpen, onClose, onAddTask, onEditTask, editingTask, categories
             />
           </div>
 
-          {/* Category Selection */}
-          <div className="space-y-1 sm:space-y-2">
+          {/* Custom Category Dropdown */}
+          <div className="space-y-1 sm:space-y-2 relative" ref={dropdownRef}>
             <label htmlFor="category" className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
               <Tag size={14} />
               Category
             </label>
-            <select
-              id="category"
+            <button
+              type="button"
               className="w-full p-2 sm:p-3 rounded-md text-gray-800 dark:text-gray-200 
                         bg-white dark:bg-gray-700 
                         border border-gray-200 dark:border-gray-600 
-                        focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
+                        focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400
+                        flex justify-between items-center"
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             >
-              <option value="">Select a Category</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.name} className="bg-white dark:bg-gray-700">
-                  {categoryEmojis[cat.name] || "📌"} {cat.name}
-                </option>
-              ))}
-            </select>
+              <span className="truncate">
+                {category ? `${categoryEmojis[category] || "📌"} ${category}` : "Select a Category"}
+              </span>
+              <svg
+                className={`w-4 h-4 ml-2 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            
+            {isDropdownOpen && (
+              <div className="absolute left-0 right-0 mt-1 z-10 max-h-40 md:max-h-100 overflow-y-auto
+                          bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600
+                          rounded-md shadow-lg">
+                <ul className="py-1">
+                  {categories.map((cat) => (
+                    <li
+                      key={cat.id}
+                      className={`px-3 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600
+                                ${category === cat.name ? "bg-gray-100 dark:bg-gray-600" : ""}`}
+                      onClick={() => {
+                        setCategory(cat.name);
+                        setIsDropdownOpen(false);
+                      }}
+                    >
+                      <div className="flex items-center">
+                        <span className="mr-2">{categoryEmojis[cat.name] || "📌"}</span>
+                        <span className="truncate">{cat.name}</span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
 
           {/* Deadline Input */}
