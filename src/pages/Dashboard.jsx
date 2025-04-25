@@ -5,6 +5,7 @@ import Tabs from "../components/Tabs";
 import Input from "../components/Input";
 import { Plus, Filter, ChevronDown, Sparkles } from "lucide-react";
 import TaskLegend from "../components/TaskLegend";
+import DateDisplay from "../components/DateDisplay";
 
 const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -220,7 +221,7 @@ const Dashboard = () => {
   }, [isDropdownOpen]);
   
   return (
-    <div className="bg-white dark:bg-gray-900 text-[#053C5E] dark:text-gray-200 font-sans transition-colors min-h-screen max-w-full">
+    <div className="bg-white dark:bg-gray-900 text-[#053C5E] dark:text-gray-200 font-sans transition-colors min-h-screen max-w-screen  md:min-w-full ">
       <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       
       {/* Welcome Banner */}
@@ -238,6 +239,9 @@ const Dashboard = () => {
         </div>
       </div>
       
+      {/*Date Display*/}
+      <DateDisplay />
+
       {/* Task Legend */}
       <div className="my-4 md:my-5 lg:my-6">
         <TaskLegend className="hidden md:block" />

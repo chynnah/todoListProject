@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Smile, RefreshCw, Gamepad2, Zap, Star, X, CheckCircle, Coffee, Battery } from "lucide-react";
+import { Smile, RefreshCw, Gamepad2, Zap, Star, X, CheckCircle, Coffee, Battery, Droplet } from "lucide-react";
 import TicTacToe from "../components/games/TicTacToe";
 import RockPaperScissors from "../components/games/RockPaperScissors";
 import MemoryCardMatch from "../components/games/MemoryCardMatch";
@@ -13,10 +13,6 @@ const Entertainment = () => {
     tip: true,
     motivation: true,
     streak: false
-  });
-  const [productivityStreak, setProductivityStreak] = useState(() => {
-    const saved = localStorage.getItem('todoApp_productivityStreak');
-    return saved !== null ? JSON.parse(saved) : null;
   });
   const [currentEnergy, setCurrentEnergy] = useState(() => {
     const saved = localStorage.getItem('todoApp_currentEnergy');
@@ -122,15 +118,6 @@ const Entertainment = () => {
     }, 800);
   };
 
-  const generateProductivityStreak = () => {
-    setLoading(prev => ({ ...prev, streak: true }));
-    setTimeout(() => {
-      const currentStreak = Math.floor(Math.random() * 10) + 1;
-      setProductivityStreak(currentStreak);
-      localStorage.setItem('todoApp_productivityStreak', JSON.stringify(currentStreak));
-      setLoading(prev => ({ ...prev, streak: false }));
-    }, 1000);
-  };
 
   const renderGameComponent = () => {
     switch(selectedGame) {
@@ -150,9 +137,6 @@ const Entertainment = () => {
   useEffect(() => {
     fetchProductivityTip();
     fetchMotivation();
-    if (productivityStreak === null) {
-      generateProductivityStreak();
-    }
   }, []);
 
   const LoadingSpinner = () => (
@@ -202,101 +186,162 @@ const Entertainment = () => {
     </div>
   );
 
-  const ProductivityStreakWidget = () => (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-indigo-100 dark:border-indigo-900/30 shadow-md shadow-indigo-500/5 dark:shadow-indigo-900/10 transition-all hover:shadow-lg hover:shadow-indigo-500/10 dark:hover:shadow-indigo-900/20">
-      <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
-        <Star className="h-5 w-5" />
-        <span>Productivity Streak</span>
-      </h2>
-      <div className="flex flex-col items-center justify-center py-4">
-        {loading.streak ? (
-          <LoadingSpinner />
-        ) : (
-          productivityStreak && (
-            <div className="flex items-center justify-center mb-4 relative">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-24 h-24 rounded-full bg-indigo-200 dark:bg-indigo-900/30 animate-pulse opacity-40"></div>
+
+  const WaterTracker = () => {
+    const [waterIntake, setWaterIntake] = useState(() => {
+      const saved = localStorage.getItem('todoApp_waterIntake');
+      return saved !== null ? JSON.parse(saved) : { glasses: 0, goal: 8, lastUpdated: new Date().toDateString() };
+    });
+    
+    useEffect(() => {
+      const today = new Date().toDateString();
+      if (waterIntake.lastUpdated !== today) {
+        const resetIntake = { ...waterIntake, glasses: 0, lastUpdated: today };
+        setWaterIntake(resetIntake);
+        localStorage.setItem('todoApp_waterIntake', JSON.stringify(resetIntake));
+      }
+    }, []);
+
+    const addWater = () => {
+      if (waterIntake.glasses < waterIntake.goal * 2) {
+        const updatedIntake = { 
+          ...waterIntake, 
+          glasses: waterIntake.glasses + 1, 
+          lastUpdated: new Date().toDateString() 
+        };
+        setWaterIntake(updatedIntake);
+        localStorage.setItem('todoApp_waterIntake', JSON.stringify(updatedIntake));
+      }
+    };
+
+    const removeWater = () => {
+      if (waterIntake.glasses > 0) {
+        const updatedIntake = { 
+          ...waterIntake, 
+          glasses: waterIntake.glasses - 1, 
+          lastUpdated: new Date().toDateString() 
+        };
+        setWaterIntake(updatedIntake);
+        localStorage.setItem('todoApp_waterIntake', JSON.stringify(updatedIntake));
+      }
+    };
+
+    const updateGoal = (newGoal) => {
+      if (newGoal >= 1 && newGoal <= 16) {
+        const updatedIntake = { ...waterIntake, goal: newGoal };
+        setWaterIntake(updatedIntake);
+        localStorage.setItem('todoApp_waterIntake', JSON.stringify(updatedIntake));
+      }
+    };
+
+    const resetCounter = () => {
+      const updatedIntake = { 
+        ...waterIntake, 
+        glasses: 0, 
+        lastUpdated: new Date().toDateString() 
+      };
+      setWaterIntake(updatedIntake);
+      localStorage.setItem('todoApp_waterIntake', JSON.stringify(updatedIntake));
+    };
+
+    const progressPercentage = Math.min((waterIntake.glasses / waterIntake.goal) * 100, 100);
+    
+    const getFeedback = () => {
+      const percentage = waterIntake.glasses / waterIntake.goal;
+      if (percentage === 0) return "Start your hydration routine!";
+      if (percentage < 0.25) return "You're just getting started!";
+      if (percentage < 0.5) return "Keep drinking, you're doing well!";
+      if (percentage < 0.75) return "Over halfway to your goal!";
+      if (percentage < 1) return "Almost there, keep going!";
+      if (percentage === 1) return "You've hit your daily goal!";
+      return "Excellent hydration today!";
+    };
+
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-blue-100 dark:border-blue-900/30 shadow-md shadow-blue-500/5 dark:shadow-blue-900/10 transition-all hover:shadow-lg hover:shadow-blue-500/10 dark:hover:shadow-blue-900/20">
+        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-blue-600 dark:text-blue-400">
+          <Droplet className="h-5 w-5" />
+          <span>Water Tracker</span>
+        </h2>
+        
+        <div className="flex flex-col items-center">
+          <div className="w-full px-4 mb-6 relative">
+            <div className="relative h-36 w-36 mx-auto">
+              <div className="absolute inset-0 rounded-full border-4 border-blue-200 dark:border-blue-900/50 overflow-hidden">
+                <div 
+                  className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-blue-500 to-blue-400 dark:from-blue-600 dark:to-blue-500 transition-all duration-500 ease-out"
+                  style={{ height: `${progressPercentage}%` }}
+                >
+                  <div className="absolute top-0 left-0 right-0 h-2 bg-white/20 transform -translate-y-1/2 rounded-full"></div>
+                </div>
               </div>
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-blue-600 dark:from-indigo-600 dark:to-blue-700 flex items-center justify-center shadow-lg shadow-indigo-500/20 dark:shadow-indigo-600/30 z-10">
-                <span className="text-2xl font-bold text-white">{productivityStreak}</span>
+              
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-3xl font-bold text-blue-600 dark:text-blue-400">{waterIntake.glasses}</span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">of {waterIntake.goal} glasses</span>
               </div>
             </div>
-          )
-        )}
-        <button 
-          onClick={generateProductivityStreak}
-          className="w-full py-2.5 bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 dark:from-indigo-600 dark:to-blue-700 dark:hover:from-indigo-700 dark:hover:to-blue-800 text-white rounded-xl shadow-md shadow-indigo-500/20 dark:shadow-indigo-600/30 font-medium transition-all hover:shadow-lg hover:scale-105 active:scale-100"
-        >
-          Update Streak
-        </button>
-        <p className="text-sm text-center text-gray-500 dark:text-gray-400 mt-3">
-          Complete your daily tasks to maintain your streak!
-        </p>
+            
+            <p className="text-center mt-4 text-sm text-gray-600 dark:text-gray-400">
+              {getFeedback()}
+            </p>
+          </div>
+          
+          <div className="w-full grid grid-cols-3 gap-3 mb-5">
+            <button 
+              onClick={removeWater} 
+              disabled={waterIntake.glasses <= 0}
+              className="p-3 rounded-lg bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 text-red-600 dark:text-red-400 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors"
+            >
+              <span className="text-lg">-</span>
+            </button>
+            
+            <button 
+              onClick={resetCounter}
+              className="p-3 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-100 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-sm"
+            >
+              Reset
+            </button>
+            
+            <button 
+              onClick={addWater}
+              className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/20 transition-colors"
+            >
+              <span className="text-lg">+</span>
+            </button>
+          </div>
+          
+          <div className="w-full bg-blue-50/50 dark:bg-blue-900/10 rounded-xl p-4 border border-blue-100 dark:border-blue-900/30">
+            <h3 className="text-sm font-medium mb-3 text-gray-700 dark:text-gray-300">Adjust Your Daily Goal</h3>
+            
+            <div className="flex items-center justify-between">
+              <button 
+                onClick={() => updateGoal(Math.max(1, waterIntake.goal - 1))}
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
+              >
+                -
+              </button>
+              
+              <span className="px-3 py-1.5 rounded-lg bg-white dark:bg-gray-800 border border-blue-100 dark:border-blue-900/30 text-gray-700 dark:text-gray-300">
+                {waterIntake.goal} glasses
+              </span>
+              
+              <button 
+                onClick={() => updateGoal(Math.min(16, waterIntake.goal + 1))}
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
+              >
+                +
+              </button>
+            </div>
+            
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 text-center">
+              The recommended daily water intake is about 8 glasses (2L)
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
-  );
-
-  const TaskSuggestionWidget = () => (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-purple-100 dark:border-purple-900/30 shadow-md shadow-purple-500/5 dark:shadow-purple-900/10">
-      <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-purple-600 dark:text-purple-400">
-        <Battery className="h-5 w-5" />
-        <span>Energy-Based Tasks</span>
-      </h2>
-      <div className="bg-purple-50/50 dark:bg-purple-900/10 rounded-xl p-4 border border-purple-100 dark:border-purple-900/30">
-        <h3 className="font-medium mb-2">Recommended for {currentEnergy?.label}</h3>
-        <ul className="space-y-2 text-gray-700 dark:text-gray-300">
-          {currentEnergy?.level === "high" && (
-            <>
-              <li className="flex items-center gap-2">
-                <CheckCircle size={16} className="text-green-500" />
-                <span>Tackle your most challenging tasks</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle size={16} className="text-green-500" />
-                <span>Work on creative problem-solving</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle size={16} className="text-green-500" />
-                <span>Learn something new and complex</span>
-              </li>
-            </>
-          )}
-          {currentEnergy?.level === "medium" && (
-            <>
-              <li className="flex items-center gap-2">
-                <CheckCircle size={16} className="text-blue-500" />
-                <span>Focus on moderate difficulty tasks</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle size={16} className="text-blue-500" />
-                <span>Complete your required daily tasks</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle size={16} className="text-blue-500" />
-                <span>Plan and organize upcoming work</span>
-              </li>
-            </>
-          )}
-          {currentEnergy?.level === "low" && (
-            <>
-              <li className="flex items-center gap-2">
-                <CheckCircle size={16} className="text-amber-500" />
-                <span>Handle simple, routine tasks</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle size={16} className="text-amber-500" />
-                <span>Clear small items from your todo list</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle size={16} className="text-amber-500" />
-                <span>Take short breaks between tasks</span>
-              </li>
-            </>
-          )}
-        </ul>
-      </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="min-h-screen text-gray-800 dark:text-gray-200 bg-gradient-to-b from-purple-50 to-white dark:from-gray-900 dark:to-gray-950">
@@ -486,18 +531,17 @@ const Entertainment = () => {
 
               {/* Mobile-only widgets */}
               <div className="md:hidden space-y-6 mt-6">
-                <ProductivityStreakWidget />
+                <WaterTracker />
                 <TimerWidget />
-                <TaskSuggestionWidget />
               </div>
             </div>
           </div>
 
           {/* Desktop-only right column */}
           <div className="hidden md:block space-y-6">
-            <ProductivityStreakWidget />
+            <WaterTracker />
             <TimerWidget />
-            <TaskSuggestionWidget />
+
           </div>
         </div>
       </div>

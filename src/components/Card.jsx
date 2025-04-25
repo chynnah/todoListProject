@@ -1,7 +1,7 @@
 import React from "react";
 import { Star, CheckCircle, Pencil, Clock, AlertCircle, Calendar, Archive } from "lucide-react";
 
-const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOpen, searchQuery }) => {
+const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOpen, searchQuery, onDragStart }) => {
   const categoryEmojis = {
     Work: "💼",
     Personal: "🏡",
@@ -130,15 +130,42 @@ const Card = ({ task, updateTaskStatus, deleteTask, setEditingTask, setIsModalOp
   };
   
   const deadlineStyles = getDeadlineStyles();
+
+  // Drag and drop handlers
+  const handleDragStart = (e) => {
+    // Set the data to be transferred - the task ID
+    e.dataTransfer.setData("text/plain", task.id);
+    
+    // Set a custom property to indicate task status
+    e.dataTransfer.setData("application/taskstatus", task.status);
+    
+    setTimeout(() => {
+      e.target.style.opacity = "0.6";
+    }, 0);
+    
+    // Call the parent's onDragStart if provided
+    if (onDragStart) {
+      onDragStart(task);
+    }
+  };
+
+  const handleDragEnd = (e) => {
+    e.target.style.opacity = "1";
+    e.target.style.transform = "none";
+  };
   
   return (
-    <div className={`relative rounded-lg border shadow-sm hover:shadow-md transition-all duration-300 mb-2 md:mb-3 w-full max-w-full overflow-hidden 
-      ${task.status === "completed" ? "bg-gray-50 dark:bg-gray-800/50" : "bg-white dark:bg-gray-800"}
-      ${searchQuery && (task.task.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        (task.category && task.category.toLowerCase().includes(searchQuery.toLowerCase()))) 
-        ? 'ring-1 md:ring-2 ring-yellow-300 dark:ring-yellow-500' : 'ring-0'}
-      ${task.is_favorite ? 'border-l-2 md:border-l-4 border-l-yellow-400 dark:border-l-yellow-500' : ''}
-      border-gray-200 dark:border-gray-700`}
+    <div 
+      className={`relative rounded-lg border shadow-sm hover:shadow-md transition-all duration-300 mb-2 md:mb-3 w-full max-w-full overflow-hidden cursor-grab active:cursor-grabbing
+        ${task.status === "completed" ? "bg-gray-50 dark:bg-gray-800/50" : "bg-white dark:bg-gray-800"}
+        ${searchQuery && (task.task.toLowerCase().includes(searchQuery.toLowerCase()) || 
+          (task.category && task.category.toLowerCase().includes(searchQuery.toLowerCase()))) 
+          ? 'ring-1 md:ring-2 ring-yellow-300 dark:ring-yellow-500' : 'ring-0'}
+        ${task.is_favorite ? 'border-l-2 md:border-l-4 border-l-yellow-400 dark:border-l-yellow-500' : ''}
+        border-gray-200 dark:border-gray-700`}
+      draggable="true"
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
     >
       {/* Card Header */}
       <div className="flex justify-between items-center px-3 py-1.5 md:px-3 md:py-2 border-b border-gray-100 dark:border-gray-700 w-full overflow-hidden">

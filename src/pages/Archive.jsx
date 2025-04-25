@@ -234,30 +234,30 @@ const Archive = () => {
   return (
     <div className="bg-white dark:bg-gray-900 text-[#053C5E] dark:text-gray-200 min-h-screen p-3 md:p-4">
       {/* Search and Filter Section */}
-      <div className="flex flex-row justify-end gap-1 ml-2 md:gap-2 mb-3 md:mb-4">
+      <div className="flex flex-row justify-end items-center gap-2 md:gap-3 mb-3 md:mb-4">
         <div className="border border-[#DDD9D9] dark:border-gray-700 rounded-lg relative">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search..."
-            className="px-2 md:px-3 py-1 md:py-1.5 w-[100px] md:w-[140px] text-xs md:text-sm bg-transparent rounded-lg focus:outline-none focus:ring-1 focus:ring-[#FF1654] placeholder-gray-500 dark:placeholder-gray-400"
+            placeholder="Search tasks..."
+            className="px-3 py-1.5 w-[150px] md:w-[180px] text-sm bg-transparent rounded-lg focus:outline-none focus:ring-1 focus:ring-[#FF1654] placeholder-gray-500 dark:placeholder-gray-400"
           />
-          <span className="absolute right-1 md:right-2 top-1/2 transform -translate-y-1/2 text-[#FF1654] text-xs md:text-base">🔍</span>
+          <span className="absolute right-2 top-1/2 transform -translate-y-1/2 text-[#FF1654] text-xs md:text-base">🔍</span>
         </div>
 
-        <div className="dropdown-container relative w-auto ml-auto mr-2">
+        <div className="dropdown-container relative">
           <button
             onClick={toggleDropdown}
-            className="h-7 md:h-9 px-2 md:px-3 bg-white dark:bg-gray-800 border border-[#A9BFA8] dark:border-gray-700 rounded-lg flex items-center justify-between gap-1 md:gap-2 w-full"
+            className="h-8 md:h-9 px-2 md:px-3 bg-white dark:bg-gray-800 border border-[#A9BFA8] dark:border-gray-700 rounded-lg flex items-center justify-between gap-1 md:gap-2"
           >
-            <span className="text-xs md:text-sm truncate max-w-24 md:max-w-full">Category: {selectedCategory}</span>
+            <span className="text-xs md:text-sm truncate max-w-24 md:max-w-32">Category: {selectedCategory}</span>
             <ChevronDown size={14} className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''} md:size-4`} />
           </button>
           
           {isDropdownOpen && (
-            <div className="absolute right-0 mt-1 w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-[#A9BFA8] dark:border-gray-700 z-50">
-              <ul className="py-1 overflow-y-auto">
+            <div className="absolute right-0 mt-1 w-full min-w-[120px] bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-[#A9BFA8] dark:border-gray-700 z-50">
+              <ul className="py-1 overflow-y-auto max-h-[200px]">
                 {uniqueCategories.map((category) => (
                   <li
                     key={category}
@@ -277,7 +277,6 @@ const Archive = () => {
           )}
         </div>
       </div>
-
       {/* Content Section */}
       <div className="mx-1 sm:mx-2">
         {loading ? (
