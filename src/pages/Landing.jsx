@@ -1,23 +1,41 @@
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ThemeToggle } from '../lib/theme';
+import lightDashboard from '../assets/img/light_dashboard.png';
+import darkDashboard from '../assets/img/dark_dashboard.png';
 
 const Landing = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Dark mode detection
+  useEffect(() => {
+    const htmlElement = document.documentElement;
+    const checkDarkMode = () => setIsDarkMode(htmlElement.classList.contains('dark'));
+    
+    // Initial check
+    checkDarkMode();
+     
+    // Create observer
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(htmlElement, { attributes: true });
+    
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-sans transition-colors h-screen overflow-x-hidden">
-    {/* Navigation */}
-    <header className="fixed top-0 left-0 right-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg z-50 transition-colors duration-200">
-      <div className="flex items-center justify-between px-6 sm:px-10 py-5 max-w-7xl mx-auto">
+      {/* Navigation */}
+      <header className="fixed top-0 left-0 right-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg z-50 transition-colors duration-200">
+        <div className="flex items-center justify-between px-6 sm:px-10 py-5 max-w-7xl mx-auto">
           <div className="flex items-center gap-2">
             <h1 className="font-sans font-extrabold text-[#A31621] dark:text-[#FF6B7D] text-md lg:text-3xl tracking-tight">
               me.list
             </h1>
           </div>
 
-           {/* Desktop Navigation */}
-           <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
             <Link to="/" className="hover:text-[#A31621] dark:hover:text-[#FF6B7D] transition font-medium relative group">
               Home
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#A31621] dark:bg-[#FF6B7D] transition-all duration-300 group-hover:w-full"></span>
@@ -123,36 +141,26 @@ const Landing = () => {
 
       {/* Hero Section */}
       <section className="pt-32 pb-24 px-6 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-200 overflow-hidden relative">
-        {/* Grid Pattern Background */}
         <div className="absolute top-0 left-0 w-full h-full bg-grid-pattern opacity-5"></div>
-        
-        {/* Animated background shapes */}
         <div className="absolute top-40 -left-32 w-64 h-64 bg-[#A31621]/20 dark:bg-[#FF6B7D]/10 rounded-full filter blur-3xl animate-pulse"></div>
         <div className="absolute bottom-40 -right-32 w-64 h-64 bg-[#A31621]/10 dark:bg-[#FF6B7D]/5 rounded-full filter blur-3xl animate-pulse" style={{animationDelay: "1s"}}></div>
-        
-        {/* Additional floating circles */}
         <div className="absolute top-20 right-20 w-12 h-12 bg-[#A31621]/40 dark:bg-[#FF6B7D]/20 rounded-full animate-bounce" style={{animationDuration: "6s"}}></div>
         <div className="absolute top-60 left-1/4 w-8 h-8 bg-[#A31621]/30 dark:bg-[#FF6B7D]/15 rounded-full animate-bounce" style={{animationDuration: "4s"}}></div>
         <div className="absolute bottom-20 right-1/3 w-16 h-16 bg-[#A31621]/25 dark:bg-[#FF6B7D]/10 rounded-full animate-bounce" style={{animationDuration: "7s"}}></div>
-        
-        {/* Abstract shapes */}
         <div className="absolute top-1/4 right-1/4 w-24 h-24 border-2 border-[#A31621]/20 dark:border-[#FF6B7D]/10 rounded-lg transform rotate-45 animate-spin" style={{animationDuration: "15s"}}></div>
         <div className="absolute bottom-1/3 left-1/5 w-32 h-32 border border-[#A31621]/10 dark:border-[#FF6B7D]/5 rounded-full transform animate-spin" style={{animationDuration: "20s"}}></div>
         
-        <div className="max-w-6xl mx-auto flex flex-col items-center mt-24 relative z-10">
-          <div className="inline-block px-6 py-2 bg-[#A31621]/10 dark:bg-[#FF6B7D]/20 rounded-full text-[#A31621] dark:text-[#FF6B7D] font-medium text-sm mb-8">
-            🚀 Your Tasks, Your Way, Every Day
-          </div>
+        <div className="max-w-6xl mx-auto flex flex-col items-center mt-32 relative z-10">
           
           <h2 className="text-5xl md:text-7xl font-bold mb-4 text-center leading-tight">
-            Turn <span className="text-[#A31621] dark:text-[#FF6B7D]">Chaos</span> into
-            <br />
-            Effortless <span className="text-[#A31621] dark:text-[#FF6B7D]">Clarity</span>
+            <span className="text-[#A31621] dark:text-[#FF6B7D]">Plan. </span>
+            <span className="text-[#A31621] dark:text-[#FF6B7D]">Track. </span>
+            <span>Done. </span>
           </h2>
           <p className="text-xl max-w-2xl mx-auto my-8 text-gray-600 dark:text-gray-300 text-center leading-relaxed">
-            Not just another task app. me.list transforms how you organize your life—bringing calm to your busy world with beautifully simple task management.
+             Not just another task app. me.list transforms how you organize your life—bringing calm to your busy world with beautifully simple task management.
           </p>
-          
+
           <div className="flex flex-col justify-center items-center md:flex-row gap-5 mt-6">
             <Link to="/signup">
               <button className="group bg-[#A31621] dark:bg-[#FF4757] text-white px-8 py-4 rounded-lg text-lg font-semibold cursor-pointer hover:bg-opacity-90 transition shadow-lg flex items-center gap-2">
@@ -172,7 +180,7 @@ const Landing = () => {
             </a>
           </div>
 
-          {/* Stats with decorative elements */}
+          {/* Stats */}
           <div className="flex flex-wrap justify-center gap-8 mt-16">
             {[
               { number: "10k+", label: "Active Users" },
@@ -187,12 +195,15 @@ const Landing = () => {
             ))}
           </div>
 
-          {/* Hero Image with enhanced floating elements */}
+          {/* Hero Image */}
           <div className="mt-20 w-full max-w-5xl shadow-2xl rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 relative group">
             <div className="absolute inset-0 bg-gradient-to-r from-[#A31621]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <img src="/api/placeholder/1200/650" alt="App Interface Preview" className="w-full" />
+            <img 
+              src={isDarkMode ? darkDashboard : lightDashboard} 
+              alt="App Interface Preview" 
+              className="w-full" 
+            />
             
-            {/* Enhanced Floating UI Elements */}
             <div className="absolute top-4 right-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3 transform rotate-3 transition-transform group-hover:rotate-0 hover:scale-110">
               <div className="w-4 h-4 rounded-full bg-[#A31621] dark:bg-[#FF6B7D] mb-2"></div>
               <div className="w-16 h-2 bg-gray-300 dark:bg-gray-600 rounded"></div>
@@ -201,8 +212,6 @@ const Landing = () => {
               <div className="w-16 h-2 bg-gray-300 dark:bg-gray-600 rounded mb-2"></div>
               <div className="w-12 h-2 bg-gray-300 dark:bg-gray-600 rounded"></div>
             </div>
-            
-            {/* Additional UI elements for more liveliness */}
             <div className="absolute top-1/4 left-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-2 transform rotate-6 transition-all duration-300 group-hover:translate-y-2">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-green-500"></div>
@@ -220,13 +229,10 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Features */}
+      {/* Features Section */}
       <section id="features" className="py-28 px-6 bg-gray-50 dark:bg-gray-800 transition-colors duration-200 relative">
-        {/* Background effects */}
         <div className="absolute top-40 -right-32 w-64 h-64 bg-[#A31621]/10 dark:bg-[#FF6B7D]/5 rounded-full filter blur-3xl"></div>
         <div className="absolute -bottom-20 left-10 w-40 h-40 bg-[#A31621]/15 dark:bg-[#FF6B7D]/5 rounded-full filter blur-2xl"></div>
-        
-        {/* Abstract geometric shapes */}
         <div className="absolute top-20 left-1/4 w-20 h-20 border border-[#A31621]/10 dark:border-[#FF6B7D]/5 transform rotate-45"></div>
         <div className="absolute bottom-40 right-1/4 w-16 h-16 border-2 border-[#A31621]/15 dark:border-[#FF6B7D]/10 rounded-full"></div>
         <div className="absolute top-1/3 right-20 w-24 h-6 bg-[#A31621]/5 dark:bg-[#FF6B7D]/5 rounded-full"></div>
@@ -277,15 +283,39 @@ const Landing = () => {
             ))}
           </div>
           
-          {/* App Features Grid */}
+          
           <div className="mt-24 grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
-              { icon: "🔔", title: "Smart Notifications" },
-              { icon: "🔄", title: "Cross-device Sync" },
-              { icon: "🔒", title: "Secure Data" },
-              { icon: "🎨", title: "Customizable Themes" },
-              { icon: "📊", title: "Progress Analytics" },
-              { icon: "🔗", title: "Integrations" }
+              { 
+                icon: "⏳", 
+                title: "Due Date Alerts",
+                description: "Visual indicators for approaching deadlines and overdue tasks" 
+              },
+              { 
+                icon: "📈", 
+                title: "Progress Analytics",
+                description: "Track completion rates and productivity trends" 
+              },
+              { 
+                icon: "🌓", 
+                title: "Light/Dark Themes",
+                description: "Switch between eye-friendly themes day and night" 
+              },
+              { 
+                icon: "📊", 
+                title: "Visual Charts",
+                description: "Interactive graphs showing task completion patterns" 
+              },
+              { 
+                icon: "📦", 
+                title: "Task Archive",
+                description: "Organize completed tasks while keeping them accessible" 
+              },
+              { 
+                icon: "🎯", 
+                title: "Priority Tags",
+                description: "Highlight urgent tasks with visual markers" 
+              }
             ].map((item, idx) => (
               <div key={idx} className="flex items-center p-6 bg-white dark:bg-gray-700 rounded-lg shadow hover:shadow-md transition-shadow">
                 <div className="mr-4 bg-[#A31621]/10 dark:bg-[#FF4757]/20 w-12 h-12 rounded-lg flex items-center justify-center">
@@ -293,7 +323,7 @@ const Landing = () => {
                 </div>
                 <div>
                   <h5 className="font-semibold text-lg">{item.title}</h5>
-                  <p className="text-gray-600 dark:text-gray-400">Everything you need to stay organized.</p>
+                  <p className="text-gray-600 dark:text-gray-400">{item.description}</p>
                 </div>
               </div>
             ))}
@@ -301,13 +331,10 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Testimonials Section */}
       <section id="testimonials" className="py-28 px-6 bg-white dark:bg-gray-900 transition-colors duration-200 relative">
-        {/* Background effects */}
         <div className="absolute top-40 -left-32 w-64 h-64 bg-[#A31621]/10 dark:bg-[#FF6B7D]/5 rounded-full filter blur-3xl"></div>
         <div className="absolute bottom-20 right-10 w-32 h-32 bg-[#A31621]/15 dark:bg-[#FF6B7D]/10 rounded-full filter blur-xl"></div>
-        
-        {/* Decorative elements */}
         <div className="absolute top-1/4 right-1/3 w-8 h-8 border-4 border-[#A31621]/10 dark:border-[#FF6B7D]/10 rounded-full"></div>
         <div className="absolute bottom-1/3 left-1/4 w-16 h-4 bg-[#A31621]/5 dark:bg-[#FF6B7D]/5 rounded-full"></div>
         <div className="absolute top-2/3 right-1/4 w-12 h-12 border border-[#A31621]/10 dark:border-[#FF6B7D]/5 transform rotate-45"></div>
@@ -367,27 +394,14 @@ const Landing = () => {
               </div>
             ))}
           </div>
-          
-          {/* Trust Indicators */}
-          <div className="mt-24 text-center">
-            <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">Trusted by individuals and teams worldwide</p>
-            <div className="flex flex-wrap justify-center gap-12 opacity-70">
-              {["Company A", "Company B", "Company C", "Company D", "Company E"].map((company, idx) => (
-                <div key={idx} className="font-bold text-xl text-gray-400">{company}</div>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 
-      {/* Call to Action */}
+      {/* CTA Section */}
       <section className="py-24 px-6 bg-[#053C5E] dark:bg-gray-800 text-white text-center transition-colors duration-200 relative overflow-hidden">
-        {/* Background pattern and effects */}
         <div className="absolute top-0 left-0 w-full h-full bg-grid-pattern opacity-5"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#A31621]/20 dark:bg-[#FF6B7D]/10 rounded-full filter blur-3xl"></div>
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-[#A31621]/30 dark:bg-[#FF6B7D]/20 rounded-full filter blur-2xl"></div>
-        
-        {/* Floating objects */}
         <div className="absolute top-1/4 left-1/4 w-6 h-6 bg-white/10 rounded-full animate-bounce" style={{animationDuration: "4s"}}></div>
         <div className="absolute bottom-1/3 right-1/3 w-8 h-8 bg-white/5 rounded-full animate-bounce" style={{animationDuration: "5s", animationDelay: "1s"}}></div>
         <div className="absolute top-2/3 left-10 w-4 h-4 bg-white/10 rounded-full animate-bounce" style={{animationDuration: "3s"}}></div>
@@ -557,24 +571,6 @@ const Landing = () => {
                 </ul>
               </div>
             ))}
-          </div>
-          
-          {/* Newsletter */}
-          <div className="border-t border-gray-700 pt-12 pb-8">
-            <div className="max-w-3xl mx-auto text-center">
-              <h4 className="text-xl font-bold text-white mb-4">Stay in the loop</h4>
-              <p className="text-gray-400 mb-6">Subscribe to our newsletter for the latest updates, tips, and exclusive offers.</p>
-              <div className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
-                <input 
-                  type="email" 
-                  placeholder="Enter your email" 
-                  className="bg-gray-800 text-white px-4 py-3 rounded-lg flex-grow focus:outline-none focus:ring-2 focus:ring-[#A31621] dark:focus:ring-[#FF6B7D]"
-                />
-                <button className="bg-[#A31621] dark:bg-[#FF4757] hover:bg-opacity-90 text-white font-medium px-6 py-3 rounded-lg transition">
-                  Subscribe
-                </button>
-              </div>
-            </div>
           </div>
           
           {/* Bottom section with copyright and legal links */}
