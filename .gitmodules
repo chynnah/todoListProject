@@ -1,0 +1,7 @@
+[submodule "vendor/cloudinary/cloudinary_php"]
+    path = vendor/cloudinary/cloudinary_php
+    url = https://github.com/cloudinary/cloudinary_php.git
+
+[submodule "vendor/cloudinary/transformation-builder-sdk"]
+    path = vendor/cloudinary/transformation-builder-sdk
+    url = https://github.com/cloudinary/transformation-builder-php.git
